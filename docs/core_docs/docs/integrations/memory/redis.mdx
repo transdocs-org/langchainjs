@@ -4,13 +4,13 @@ hide_table_of_contents: true
 
 import CodeBlock from "@theme/CodeBlock";
 
-# Redis-Backed Chat Memory
+# 基于 Redis 的聊天记忆
 
-For longer-term persistence across chat sessions, you can swap out the default in-memory `chatHistory` that backs chat memory classes like `BufferMemory` for a [Redis](https://redis.io/) instance.
+为了在多个聊天会话中实现更长期的持久化存储，您可以将 `BufferMemory` 等聊天记忆类默认使用的内存中 `chatHistory` 替换为 [Redis](https://redis.io/) 实例。
 
-## Setup
+## 环境准备
 
-You will need to install [node-redis](https://github.com/redis/node-redis) in your project:
+您需要在项目中安装 [node-redis](https://github.com/redis/node-redis)：
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -20,30 +20,30 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/openai @langchain/community @langchain/core redis
 ```
 
-You will also need a Redis instance to connect to. See instructions on [the official Redis website](https://redis.io/docs/getting-started/) for running the server locally.
+同时，您还需要一个可以连接的 Redis 实例。关于如何在本地运行 Redis 服务器，请参阅 [Redis 官方网站](https://redis.io/docs/getting-started/) 上的说明。
 
-## Usage
+## 使用方法
 
-Each chat history session stored in Redis must have a unique id. You can provide an optional `sessionTTL` to make sessions expire after a give number of seconds.
-The `config` parameter is passed directly into the `createClient` method of [node-redis](https://github.com/redis/node-redis), and takes all the same arguments.
+存储在 Redis 中的每个聊天历史会话都必须具有唯一的 ID。您还可以提供可选的 `sessionTTL` 参数，用于设置会话在指定秒数后自动过期。
+`config` 参数将直接传递给 [node-redis](https://github.com/redis/node-redis) 的 `createClient` 方法，支持其所有相同的参数。
 
 import Example from "@examples/memory/redis.ts";
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-## Advanced Usage
+## 高级用法
 
-You can also directly pass in a previously created [node-redis](https://github.com/redis/node-redis) client instance:
+您也可以直接传入一个先前创建的 [node-redis](https://github.com/redis/node-redis) 客户端实例：
 
 import AdvancedExample from "@examples/memory/redis-advanced.ts";
 
 <CodeBlock language="typescript">{AdvancedExample}</CodeBlock>
 
-### Redis Sentinel Support
+### Redis Sentinel 支持
 
-You can enable a Redis Sentinel backed cache using [ioredis](https://github.com/redis/ioredis)
+您可以使用 [ioredis](https://github.com/redis/ioredis) 启用基于 Redis Sentinel 的缓存。
 
-This will require the installation of [ioredis](https://github.com/redis/ioredis) in your project.
+这需要在项目中安装 [ioredis](https://github.com/redis/ioredis)。
 
 ```bash npm2yarn
 npm install ioredis

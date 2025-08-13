@@ -2,26 +2,26 @@ import CodeBlock from "@theme/CodeBlock";
 
 # Voy
 
-[Voy](https://github.com/tantaraio/voy) is a WASM vector similarity search engine written in Rust.
-It's supported in non-Node environments like browsers. You can use Voy as a vector store with LangChain.js.
+[Voy](https://github.com/tantaraio/voy) 是一个使用 Rust 编写的 WASM 向量相似性搜索引擎。
+它支持在非 Node 环境（如浏览器）中运行。您可以将 Voy 与 LangChain.js 一起用作向量存储。
 
-### Install Voy
+### 安装 Voy
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
 <IntegrationInstallTooltip></IntegrationInstallTooltip>
 
 ```bash npm2yarn
-npm install @langchain/openai voy-search @langchain/community @langchain/core
+npm 安装 @langchain/openai voy-search @langchain/community @langchain/core
 ```
 
-## Usage
+## 使用方法
 
 import Example from "@examples/indexes/vector_stores/voy.ts";
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Vector store [conceptual guide](/docs/concepts/#vectorstores)
-- Vector store [how-to guides](/docs/how_to/#vectorstores)
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

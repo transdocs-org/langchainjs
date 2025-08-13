@@ -1,143 +1,143 @@
-# Retrievers
+# 检索器
 
 <span data-heading-keywords="retriever,retrievers"></span>
 
-:::info[Prerequisites]
+:::info[前提条件]
 
-- [Vector stores](/docs/concepts/vectorstores/)
-- [Embeddings](/docs/concepts/embedding_models/)
-- [Text splitters](/docs/concepts/text_splitters/)
+- [向量存储](/docs/concepts/vectorstores/)
+- [嵌入模型](/docs/concepts/embedding_models/)
+- [文本分割器](/docs/concepts/text_splitters/)
 
 :::
 
-## Overview
+## 概览
 
-Many different types of retrieval systems exist, including vectorstores, graph databases, and relational databases.
-With the rise on popularity of large language models, retrieval systems have become an important component in AI application (e.g., [RAG](/docs/concepts/rag/)).
-Because of their importance and variability, LangChain provides a uniform interface for interacting with different types of retrieval systems.
-The LangChain [retriever](/docs/concepts/retrievers/) interface is straightforward:
+存在多种不同类型的检索系统，包括向量存储、图数据库和关系型数据库。  
+随着大型语言模型的流行，检索系统已成为AI应用中的重要组件（例如，[RAG](/docs/concepts/rag/)）。  
+由于其重要性和多样性，LangChain 提供了一个统一的接口来与不同类型的检索系统进行交互。  
+LangChain [检索器](/docs/concepts/retrievers/) 接口非常简单：
 
-1. Input: A query (string)
-2. Output: A list of documents (standardized LangChain [Document](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html) objects)
+1. 输入：一个查询（字符串）
+2. 输出：文档列表（标准化的 LangChain [Document](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html) 对象）
 
-## Key concept
+## 关键概念
 
-![Retriever](/img/retriever_concept.png)
+![检索器](/img/retriever_concept.png)
 
-All retrievers implement a simple interface for retrieving documents using natural language queries.
+所有检索器都实现了一个简单的接口，用于使用自然语言查询来检索文档。
 
-## Interface
+## 接口
 
-The only requirement for a retriever is the ability to accepts a query and return documents.
-In particular, [LangChain's retriever class](https://api.js.langchain.com/classes/_langchain_core.retrievers.BaseRetriever.html) only requires that the `_getRelevantDocuments` method is implemented, which takes a `query: string` and returns a list of [Document](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html) objects that are most relevant to the query.
-The underlying logic used to get relevant documents is specified by the retriever and can be whatever is most useful for the application.
+检索器的唯一要求是能够接受查询并返回文档。  
+具体来说，[LangChain 的检索器类](https://api.js.langchain.com/classes/_langchain_core.retrievers.BaseRetriever.html) 只需要实现 `_getRelevantDocuments` 方法，该方法接受一个 `query: string` 并返回与查询最相关的 [Document](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html) 对象列表。  
+获取相关文档所使用的底层逻辑由检索器指定，并且可以根据应用程序的需要灵活设计。
 
-A LangChain retriever is a [runnable](/docs/how_to/lcel_cheatsheet/), which is a standard interface is for LangChain components.
-This means that it has a few common methods, including `invoke`, that are used to interact with it. A retriever can be invoked with a query:
+一个 LangChain 检索器是一个 [可执行对象](/docs/how_to/lcel_cheatsheet/)，这是 LangChain 组件的标准接口。  
+这意味着它具有一些通用方法，包括 `invoke`，用于与之交互。可以使用查询调用检索器：
 
 ```typescript
 const docs = await retriever.invoke(query);
 ```
 
-Retrievers return a list of [Document](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html) objects, which have two attributes:
+检索器返回一个 [Document](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html) 对象列表，每个对象具有两个属性：
 
-- `pageContent`: The content of this document. Currently is a string.
-- `metadata`: Arbitrary metadata associated with this document (e.g., document id, file name, source, etc).
+- `pageContent`：文档的内容，目前是一个字符串。
+- `metadata`：与此文档关联的任意元数据（例如文档ID、文件名、来源等）。
 
-:::info[Further reading]
+:::info[进一步阅读]
 
-- See our [how-to guide](/docs/how_to/custom_retriever/) on building your own custom retriever.
-
-:::
-
-## Common types
-
-Despite the flexibility of the retriever interface, a few common types of retrieval systems are frequently used.
-
-### Search apis
-
-It's important to note that retrievers don't need to actually _store_ documents.
-For example, we can be built retrievers on top of search APIs that simply return search results!
-
-### Relational or graph database
-
-Retrievers can be built on top of relational or graph databases.
-In these cases, [query analysis](/docs/concepts/retrieval/) techniques to construct a structured query from natural language is critical.
-For example, you can build a retriever for a SQL database using text-to-SQL conversion. This allows a natural language query (string) retriever to be transformed into a SQL query behind the scenes.
-
-:::info[Further reading]
-
-- See our [tutorial](/docs/tutorials/sql_qa/) for context on how to build a retreiver using a SQL database and text-to-SQL.
-- See our [tutorial](/docs/tutorials/graph/) for context on how to build a retreiver using a graph database and text-to-Cypher.
+- 请参阅我们的[如何构建自定义检索器指南](/docs/how_to/custom_retriever/)。
 
 :::
 
-### Lexical search
+## 常见类型
 
-As discussed in our conceptual review of [retrieval](/docs/concepts/retrieval/), many search engines are based upon matching words in a query to the words in each document.
-[BM25](https://en.wikipedia.org/wiki/Okapi_BM25#:~:text=BM25%20is%20a%20bag%2Dof,slightly%20different%20components%20and%20parameters.) and [TF-IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) are [two popular lexical search algorithms](https://cameronrwolfe.substack.com/p/the-basics-of-ai-powered-vector-search?utm_source=profile&utm_medium=reader2).
-LangChain has retrievers for many popular lexical search algorithms / engines.
+尽管检索器接口非常灵活，但一些常见的检索系统类型被频繁使用。
 
-:::info[Further reading]
+### 搜索API
 
-- See the [BM25](/docs/integrations/retrievers/bm25/) retriever integration.
+需要注意的是，检索器不需要实际_存储_文档。  
+例如，我们可以基于搜索API构建检索器，该API仅返回搜索结果！
+
+### 关系型或图数据库
+
+检索器可以建立在关系型或图数据库之上。  
+在这种情况下，从自然语言构建结构化查询的 [查询分析](/docs/concepts/retrieval/) 技术是关键。  
+例如，你可以使用文本到SQL转换为SQL数据库构建一个检索器。这允许将自然语言查询（字符串）在后台转换为SQL查询。
+
+:::info[进一步阅读]
+
+- 请参阅我们的 [SQL问答教程](/docs/tutorials/sql_qa/)，了解如何使用SQL数据库和文本到SQL构建检索器。
+- 请参阅我们的 [图数据库教程](/docs/tutorials/graph/)，了解如何使用图数据库和文本到Cypher构建检索器。
 
 :::
 
-### Vector store
+### 词汇搜索
 
-[Vector stores](/docs/concepts/vectorstores/) are a powerful and efficient way to index and retrieve unstructured data.
-An vectorstore can be used as a retriever by calling the `asRetriever()` method.
+正如我们在 [检索](/docs/concepts/retrieval/) 的概念回顾中所讨论的，许多搜索引擎是基于匹配查询中的词与文档中的词。  
+[BM25](https://en.wikipedia.org/wiki/Okapi_BM25#:~:text=BM25%20is%20a%20bag%2Dof,slightly%20different%20components%20and%20parameters.) 和 [TF-IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) 是 [两种流行的词汇搜索算法](https://cameronrwolfe.substack.com/p/the-basics-of-ai-powered-vector-search?utm_source=profile&utm_medium=reader2)。  
+LangChain 为许多流行的词汇搜索算法/引擎提供了检索器。
+
+:::info[进一步阅读]
+
+- 请参阅 [BM25](/docs/integrations/retrievers/bm25/) 检索器集成。
+
+:::
+
+### 向量存储
+
+[向量存储](/docs/concepts/vectorstores/) 是一种强大且高效的方式来索引和检索非结构化数据。  
+通过调用 `asRetriever()` 方法，可以将向量存储用作检索器。
 
 ```typescript
 const vectorstore = new MyVectorStore();
 const retriever = vectorstore.asRetriever();
 ```
 
-## Advanced retrieval patterns
+## 高级检索模式
 
-### Ensemble
+### 集成检索
 
-Because the retriever interface is so simple, returning a list of `Document` objects given a search query, it is possible to combine multiple retrievers using ensembling.
-This is particularly useful when you have multiple retrievers that are good at finding different types of relevant documents.
-It is easy to create an [ensemble retriever](/docs/how_to/ensemble_retriever/) that combines multiple retrievers with linear weighted scores:
+由于检索器接口非常简单，给定一个搜索查询返回 `Document` 对象列表，因此可以使用集成方法组合多个检索器。  
+当你有多个擅长查找不同类型相关文档的检索器时，这特别有用。  
+创建一个 [集成检索器](/docs/how_to/ensemble_retriever/)，结合多个检索器并采用线性加权评分非常容易：
 
 ```typescript
-// Initialize the ensemble retriever
+// 初始化集成检索器
 const ensembleRetriever = new EnsembleRetriever({
   retrievers: [bm25Retriever, vectorStoreRetriever],
   weights: [0.5, 0.5],
 });
 ```
 
-When ensembling, how do we combine search results from many retrievers?
-This motivates the concept of re-ranking, which takes the output of multiple retrievers and combines them using a more sophisticated algorithm such as [Reciprocal Rank Fusion (RRF)](https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf).
+在集成时，我们如何组合多个检索器的结果？  
+这促使了重新排序的概念出现，它采用更复杂的算法（例如 [互惠秩融合（RRF）](https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf)）来整合多个检索器的输出。
 
-### Source document retention
+### 源文档保留
 
-Many retrievers utilize some kind of index to make documents easily searchable.
-The process of indexing can include a transformation step (e.g., vectorstores often use document splitting).
-Whatever transformation is used, can be very useful to retain a link between the _transformed document_ and the original, giving the retriever the ability to return the _original_ document.
+许多检索器使用某种索引机制来使文档易于搜索。  
+索引过程可能包括一个转换步骤（例如，向量存储通常使用文档分割）。  
+无论使用何种转换，保留 _转换后的文档_ 与原始文档之间的链接都非常有用，这样检索器可以返回 _原始_ 文档。
 
-![Retrieval with full docs](/img/retriever_full_docs.png)
+![使用完整文档的检索](/img/retriever_full_docs.png)
 
-This is particularly useful in AI applications, because it ensures no loss in document context for the model.
-For example, you may use small chunk size for indexing documents in a vectorstore.
-If you return _only_ the chunks as the retrieval result, then the model will have lost the original document context for the chunks.
+这在AI应用中尤其有用，因为它确保模型不会丢失文档的上下文。  
+例如，你可能使用较小的块大小对向量存储中的文档进行索引。  
+如果你仅返回 _块_ 作为检索结果，那么模型将失去这些块的原始文档上下文。
 
-LangChain has two different retrievers that can be used to address this challenge.
-The [Multi-Vector](/docs/how_to/multi_vector/) retriever allows the user to use any document transformation (e.g., use an LLM to write a summary of the document) for indexing while retaining linkage to the source document.
-The [ParentDocument](/docs/how_to/parent_document_retriever/) retriever links document chunks from a text-splitter transformation for indexing while retaining linkage to the source document.
+LangChain 提供了两种不同的检索器来解决这个问题。  
+[Multi-Vector](/docs/how_to/multi_vector/) 检索器允许用户使用任何文档转换（例如，使用LLM编写文档摘要）进行索引，同时保留与源文档的链接。  
+[ParentDocument](/docs/how_to/parent_document_retriever/) 检索器将文本分割器转换生成的文档块进行索引，同时保留与源文档的链接。
 
-| Name                                                      | Index Type                    | Uses an LLM               | When to Use                                                                                                                             | Description                                                                                                                                                                                                              |
+| 名称                                                      | 索引类型                    | 使用LLM               | 使用场景                                                                                                                             | 描述                                                                                                                                                                                                              |
 | --------------------------------------------------------- | ----------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [ParentDocument](/docs/how_to/parent_document_retriever/) | Vector store + Document Store | No                        | If your pages have lots of smaller pieces of distinct information that are best indexed by themselves, but best retrieved all together. | This involves indexing multiple chunks for each document. Then you find the chunks that are most similar in embedding space, but you retrieve the whole parent document and return that (rather than individual chunks). |
-| [Multi Vector](/docs/how_to/multi_vector/)                | Vector store + Document Store | Sometimes during indexing | If you are able to extract information from documents that you think is more relevant to index than the text itself.                    | This involves creating multiple vectors for each document. Each vector could be created in a myriad of ways - examples include summaries of the text and hypothetical questions.                                         |
+| [ParentDocument](/docs/how_to/parent_document_retriever/) | 向量存储 + 文档存储           | 否                        | 如果你的页面包含大量需要单独索引但最好整体检索的不同小信息块。                                                                         | 这涉及到为每个文档索引多个块。然后你找到嵌入空间中最相似的块，但检索整个父文档并返回它（而不是单个块）。                                                   |
+| [Multi Vector](/docs/how_to/multi_vector/)                | 向量存储 + 文档存储           | 有时在索引期间            | 如果你能从文档中提取出你认为比文本本身更适合索引的信息。                                                                               | 这涉及到为每个文档创建多个向量。每个向量可以通过多种方式创建 - 示例包括文本摘要和假设性问题。                                                              |
 
-:::info[Further reading]
+:::info[进一步阅读]
 
-- See our [how-to guide](/docs/how_to/parent_document_retriever/) on using the ParentDocument retriever.
-- See our [how-to guide](/docs/how_to/multi_vector/) on using the MultiVector retriever.
-- See our RAG from Scratch video on the [multi vector retriever](https://youtu.be/gTCU9I6QqCE?feature=shared).
+- 请参阅我们的 [ParentDocument 检索器使用指南](/docs/how_to/parent_document_retriever/)。
+- 请参阅我们的 [MultiVector 检索器使用指南](/docs/how_to/multi_vector/)。
+- 请观看我们的从头开始的RAG视频，讲解 [Multi Vector 检索器](https://youtu.be/gTCU9I6QqCE?feature=shared)。
 
 :::

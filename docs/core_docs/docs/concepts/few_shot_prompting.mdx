@@ -1,90 +1,84 @@
-# Few-shot prompting
+# 少样本提示（Few-shot prompting）
 
-:::note Prerequisites
+:::note 前提条件
 
-- [Chat models](/docs/concepts/chat_models/)
+- [聊天模型](/docs/concepts/chat_models/)
 
 :::
 
-## Overview
+## 概述
 
-One of the most effective ways to improve model performance is to give a model examples of
-what you want it to do. The technique of adding example inputs and expected outputs
-to a model prompt is known as "few-shot prompting". The technique is based on the
-[Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165) paper.
-There are a few things to think about when doing few-shot prompting:
+提升模型性能最有效的方法之一，就是为模型提供你希望它完成任务的示例。这种在模型提示中添加输入示例和期望输出的技术，被称为“**少样本提示**”。该技术基于论文 [Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)。在使用少样本提示时，有几个关键点需要考虑：
 
-1. How are examples generated?
-2. How many examples are in each prompt?
-3. How are examples selected at runtime?
-4. How are examples formatted in the prompt?
+1. 示例是如何生成的？
+2. 每个提示中应包含多少示例？
+3. 运行时如何选择示例？
+4. 提示中如何格式化示例？
 
-Here are the considerations for each.
+以下是对每个问题的详细说明。
 
-## 1. Generating examples
+## 1. 生成示例
 
-The first and most important step of few-shot prompting is coming up with a good dataset of examples. Good examples should be relevant at runtime, clear, informative, and provide information that was not already known to the model.
+少样本提示的第一步也是最重要的一步是创建一个高质量的示例数据集。好的示例应当在运行时具有相关性、清晰、有信息量，并能提供模型原本不具备的知识。
 
-At a high-level, the basic ways to generate examples are:
+总体而言，生成示例的基本方式有以下几种：
 
-- Manual: a person/people generates examples they think are useful.
-- Better model: a better (presumably more expensive/slower) model's responses are used as examples for a worse (presumably cheaper/faster) model.
-- User feedback: users (or labelers) leave feedback on interactions with the application and examples are generated based on that feedback (for example, all interactions with positive feedback could be turned into examples).
-- LLM feedback: same as user feedback but the process is automated by having models evaluate themselves.
+- **手动**：由人（或多人）生成他们认为有用的示例。
+- **更优模型**：使用一个性能更好（可能更昂贵/更慢）的模型的响应作为示例，用于训练一个较差（可能更便宜/更快）的模型。
+- **用户反馈**：用户（或标注人员）在与应用交互时提供反馈，并基于这些反馈生成示例（例如，所有获得积极反馈的交互都可以转化为示例）。
+- **LLM反馈**：类似于用户反馈，但通过模型自我评估实现自动化。
 
-Which approach is best depends on your task. For tasks where a small number core principles need to be understood really well, it can be valuable hand-craft a few really good examples.
-For tasks where the space of correct behaviors is broader and more nuanced, it can be useful to generate many examples in a more automated fashion so that there's a higher likelihood of there being some highly relevant examples for any runtime input.
+哪种方法最好取决于你的任务。对于需要深入理解少量核心原则的任务，手工精心制作几个高质量的示例是非常有价值的。而对于正确行为范围更广、更复杂的情况，可以通过更自动化的方式生成大量示例，以提高运行时匹配到高度相关示例的可能性。
 
-**Single-turn v.s. multi-turn examples**
+**单轮 vs 多轮示例**
 
-Another dimension to think about when generating examples is what the example is actually showing.
+生成示例时还需要考虑另一个维度：示例展示的内容类型。
 
-The simplest types of examples just have a user input and an expected model output. These are single-turn examples.
+最简单的示例只包含用户输入和期望的模型输出，这类示例称为**单轮示例**。
 
-One more complex type if example is where the example is an entire conversation, usually in which a model initially responds incorrectly and a user then tells the model how to correct its answer.
-This is called a multi-turn example. Multi-turn examples can be useful for more nuanced tasks where its useful to show common errors and spell out exactly why they're wrong and what should be done instead.
+更复杂的示例则可能是一整段对话，通常情况下是模型先给出了错误回答，然后用户指出问题并指导模型如何修正。这种类型的示例称为**多轮示例**。多轮示例适用于更复杂的任务，可以展示常见错误，并明确解释错误原因及应采取的正确做法。
 
-## 2. Number of examples
+## 2. 示例数量
 
-Once we have a dataset of examples, we need to think about how many examples should be in each prompt.
-The key tradeoff is that more examples generally improve performance, but larger prompts increase costs and latency.
-And beyond some threshold having too many examples can start to confuse the model.
-Finding the right number of examples is highly dependent on the model, the task, the quality of the examples, and your cost and latency constraints.
-Anecdotally, the better the model is the fewer examples it needs to perform well and the more quickly you hit steeply diminishing returns on adding more examples.
-But, the best/only way to reliably answer this question is to run some experiments with different numbers of examples.
+一旦有了示例数据集，就需要考虑每个提示中应包含多少示例。
 
-## 3. Selecting examples
+关键权衡在于：示例越多通常性能越好，但提示越长会导致成本和延迟增加。超过一定阈值后，过多的示例反而会让模型混淆。
 
-Assuming we are not adding our entire example dataset into each prompt, we need to have a way of selecting examples from our dataset based on a given input. We can do this:
+最佳的示例数量高度依赖于模型本身、任务类型、示例质量以及成本和延迟限制。
 
-- Randomly
-- By (semantic or keyword-based) similarity of the inputs
-- Based on some other constraints, like token size
+经验表明，模型越强大，所需的示例就越少，且添加更多示例带来的收益迅速递减。因此，最可靠的方法是尝试使用不同数量的示例进行实验。
 
-LangChain has a number of [`ExampleSelectors`](/docs/concepts/example_selectors) which make it easy to use any of these techniques.
+## 3. 选择示例
 
-Generally, selecting by semantic similarity leads to the best model performance. But how important this is is again model and task specific, and is something worth experimenting with.
+假设我们不会将整个示例数据集都放入每个提示中，就需要一种根据当前输入选择示例的方法。可以采用以下策略：
 
-## 4. Formatting examples
+- 随机选择
+- 根据输入的语义或关键词相似性选择
+- 根据其他约束（如 token 数量）选择
 
-Most state-of-the-art models these days are chat models, so we'll focus on formatting examples for those. Our basic options are to insert the examples:
+LangChain 提供了多种 [`ExampleSelectors`](/docs/concepts/example_selectors)，可以方便地使用上述任何一种选择技术。
 
-- In the system prompt as a string
-- As their own messages
+通常，基于语义相似性选择示例可以获得最佳模型性能。但其重要性仍取决于所使用的模型和具体任务，建议进行实验验证。
 
-If we insert our examples into the system prompt as a string, we'll need to make sure it's clear to the model where each example begins and which parts are the input versus output. Different models respond better to different syntaxes, like [ChatML](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/chat-markup-language), XML, TypeScript, etc.
+## 4. 格式化示例
 
-If we insert our examples as messages, where each example is represented as a sequence of Human, AI messages, we might want to also assign [names](/docs/concepts/messages) to our messages like `"example_user"` and `"example_assistant"` to make it clear that these messages correspond to different actors than the latest input message.
+目前最先进的模型大多是聊天模型，因此我们将重点介绍如何格式化这些模型的示例。基本的格式化选项包括将示例插入：
 
-**Formatting tool call examples**
+- 系统提示中作为字符串
+- 作为独立的消息
 
-One area where formatting examples as messages can be tricky is when our example outputs have tool calls. This is because different models have different constraints on what types of message sequences are allowed when any tool calls are generated.
+如果你将示例作为字符串插入到系统提示中，需要确保模型能清楚识别每个示例的起始位置以及输入和输出的区分。不同模型对语法格式的响应不同，例如 [ChatML](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/chat-markup-language)、XML、TypeScript 等格式可能更受某些模型欢迎。
 
-- Some models require that any `AIMessage` with tool calls be immediately followed by `ToolMessage`s for every tool call,
-- Some models additionally require that any `ToolMessage`s be immediately followed by an `AIMessage` before the next `HumanMessage`,
-- Some models require that tools are passed in to the model if there are any tool calls / `ToolMessage`s in the chat history.
+如果你将示例作为消息插入，其中每个示例由 Human 和 AI 消息组成，建议为这些消息指定 [名称](/docs/concepts/messages)，如 `"example_user"` 和 `"example_assistant"`，以明确这些消息代表不同的参与者，与当前输入消息区分开。
 
-These requirements are model-specific and should be checked for the model you are using. If your model requires `ToolMessage`s after tool calls and/or `AIMessage`s after `ToolMessage`s and your examples only include expected tool calls and not the actual tool outputs, you can try adding dummy `ToolMessage`s / `AIMessage`s to the end of each example with generic contents to satisfy the API constraints.
-In these cases it's especially worth experimenting with inserting your examples as strings versus messages, as having dummy messages can adversely affect certain models.
+**格式化工具调用示例**
 
-You can see a case study of how Anthropic and OpenAI respond to different few-shot prompting techniques on two different tool calling benchmarks [here](https://blog.langchain.dev/few-shot-prompting-to-improve-tool-calling-performance/).
+当示例输出包含工具调用时，将示例格式化为消息可能会比较复杂。这是因为不同模型对包含工具调用的消息序列有不同的限制：
+
+- 一些模型要求任何包含工具调用的 `AIMessage` 后必须立即跟上每个工具调用对应的 `ToolMessage`；
+- 一些模型还要求任何 `ToolMessage` 后必须立即跟上一个 `AIMessage`，然后才能出现下一个 `HumanMessage`；
+- 一些模型要求如果聊天历史中包含工具调用或 `ToolMessage`，则必须将工具传递给模型。
+
+这些要求是模型特定的，使用前应查阅所用模型的文档。如果你的模型要求在工具调用后包含 `ToolMessage` 和/或 `AIMessage`，但你的示例只包含预期的工具调用而没有实际工具输出，你可以尝试在每个示例末尾添加带有通用内容的虚拟 `ToolMessage` / `AIMessage` 来满足 API 约束。在这种情况下，值得尝试将示例作为字符串或消息插入，因为虚拟消息可能对某些模型产生负面影响。
+
+你可以在这里查看 [Anthropic 和 OpenAI 在两个不同的工具调用基准测试中对不同少样本提示技术的响应情况](https://blog.langchain.dev/few-shot-prompting-to-improve-tool-calling-performance/)。

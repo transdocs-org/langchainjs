@@ -1,137 +1,126 @@
 ---
-sidebar_label: "Style guide"
+sidebar_label: "样式指南"
 ---
 
-# LangChain Documentation Style Guide
+# LangChain 文档样式指南
 
-## Introduction
+## 简介
 
-As LangChain continues to grow, the surface area of documentation required to cover it continues to grow too.
-This page provides guidelines for anyone writing documentation for LangChain, as well as some of our philosophies around
-organization and structure.
+随着 LangChain 的不断发展，覆盖其功能所需的文档内容也在不断增长。  
+本页面为所有为 LangChain 编写文档的人员提供编写指南，同时介绍我们关于文档组织和结构的一些理念。
 
-## Philosophy
+## 理念
 
-LangChain's documentation aspires to follow the [Diataxis framework](https://diataxis.fr).
-Under this framework, all documentation falls under one of four categories:
+LangChain 的文档力求遵循 [Diataxis 框架](https://diataxis.fr)。  
+根据该框架，所有文档内容可以归入以下四类之一：
 
-- **Tutorials**: Lessons that take the reader by the hand through a series of conceptual steps to complete a project.
-  - An example of this is our [LCEL streaming guide](/docs/how_to/streaming).
-  - Our guides on [custom components](/docs/how_to/custom_chat) is another one.
-- **How-to guides**: Guides that take the reader through the steps required to solve a real-world problem.
-  - The clearest examples of this are our [Use case](/docs/how_to/#use-cases) pages.
-- **Reference**: Technical descriptions of the machinery and how to operate it.
-  - Our [Runnable](/docs/how_to/#langchain-expression-language-lcel) pages is an example of this.
-  - The [API reference pages](https://api.js.langchain.com/) are another.
-- **Explanation**: Explanations that clarify and illuminate a particular topic.
+- **教程**：带领读者一步步完成一个项目的指导性内容。
+  - 示例包括我们的 [LCEL 流式处理指南](/docs/how_to/streaming)。
+  - 我们的 [自定义组件指南](/docs/how_to/custom_chat) 也是其中之一。
+- **操作指南**：指导读者解决实际问题的步骤指南。
+  - 最清晰的示例是我们的 [使用场景](/docs/how_to/#use-cases) 页面。
+- **参考文档**：关于系统技术细节及使用方式的技术性描述。
+  - 示例包括我们的 [Runnable 页面](/docs/how_to/#langchain-expression-language-lcel)。
+  - [API 参考文档](https://api.js.langchain.com/) 也是其中之一。
+- **解释说明**：对特定主题进行解释和阐述的内容。
 
-Each category serves a distinct purpose and requires a specific approach to writing and structuring the content.
+每种类型都服务于不同的目的，并要求特定的写作和结构方式。
 
-## Taxonomy
+## 分类
 
-Keeping the above in mind, we have sorted LangChain's docs into categories. It is helpful to think in these terms
-when contributing new documentation:
+基于上述理念，我们将 LangChain 的文档划分为以下类别。在编写新文档时，理解这些分类将有助于内容的组织：
 
-### Getting started
+### 入门
 
-The [getting started section](/docs/introduction) includes a high-level introduction to LangChain, a quickstart that
-tours LangChain's various features, and logistical instructions around installation and project setup.
+[入门章节](/docs/introduction) 包括对 LangChain 的高层次介绍、快速上手指南（展示 LangChain 各种功能），以及安装和项目设置相关的操作说明。
 
-It contains elements of **How-to guides** and **Explanations**.
+该部分包含 **操作指南** 和 **解释说明** 类型的内容。
 
-### Use cases
+### 使用场景
 
-[Use cases](/docs/how_to/#use-cases) are guides that are meant to show how to use LangChain to accomplish a specific task (RAG, information extraction, etc.).
-The quickstarts should be good entrypoints for first-time LangChain developers who prefer to learn by getting something practical prototyped,
-then taking the pieces apart retrospectively. These should mirror what LangChain is good at.
+[使用场景](/docs/how_to/#use-cases) 是指导用户如何使用 LangChain 完成特定任务（如 RAG、信息提取等）的指南。  
+对于首次使用 LangChain 的开发者来说，快速入门指南是一个不错的起点，他们可以通过实际原型来学习，然后回过头来理解各个部分的原理。  
+这些内容应体现 LangChain 的核心优势。
 
-The quickstart pages here should fit the **How-to guide** category, with the other pages intended to be **Explanations** of more
-in-depth concepts and strategies that accompany the main happy paths.
+这里的快速入门页应属于 **操作指南** 类别，而其他页面则用于对更深入的概念和策略进行 **解释说明**。
 
 :::note
-The below sections are listed roughly in order of increasing level of abstraction.
+以下各节大致按抽象程度递增的顺序列出。
 :::
 
-### Expression Language
+### 表达式语言
 
-[LangChain Expression Language (LCEL)](/docs/how_to/#langchain-expression-language-lcel) is the fundamental way that most LangChain components fit together, and this section is designed to teach
-developers how to use it to build with LangChain's primitives effectively.
+[LangChain 表达式语言 (LCEL)](/docs/how_to/#langchain-expression-language-lcel) 是大多数 LangChain 组件组合在一起的基础方式。本节旨在教会开发者如何有效使用 LangChain 的基本组件进行构建。
 
-This section should contains **Tutorials** that teach how to stream and use LCEL primitives for more abstract tasks, **Explanations** of specific behaviors,
-and some **References** for how to use different methods in the Runnable interface.
+该部分应包含教用户如何流式传输和使用 LCEL 基本组件的 **教程**，对特定行为的 **解释说明**，以及 Runnable 接口不同方法的 **参考文档**。
 
-### Components
+### 组件
 
-The [how to section](/docs/how_to) covers concepts one level of abstraction higher than LCEL.
-Abstract base classes like `BaseChatModel` and `BaseRetriever` should be covered here, as well as core implementations of these base classes,
-such as `ChatPromptTemplate` and `RecursiveCharacterTextSplitter`. Customization guides belong here too.
+[如何使用章节](/docs/how_to) 覆盖了比 LCEL 抽象层级更高的概念。  
+诸如 `BaseChatModel` 和 `BaseRetriever` 等抽象基类应在此处介绍，其核心实现如 `ChatPromptTemplate` 和 `RecursiveCharacterTextSplitter` 也应包含在内。自定义指南也属于此部分。
 
-This section should contain mostly conceptual **Tutorials**, **References**, and **Explanations** of the components they cover.
+该部分应主要包含概念性的 **教程**、**参考文档** 和对所涵盖组件的 **解释说明**。
 
 :::note
-As a general rule of thumb, everything covered in the `Expression Language` and `Components` sections (with the exception of the `Composition` section of components) should
-cover only components that exist in `@langchain/core`.
+通常情况下，`表达式语言` 和 `组件` 部分（组件部分的 `组合` 小节除外）中涉及的所有内容，仅限于 `@langchain/core` 中存在的组件。
 :::
 
-### Integrations
+### 集成
 
-The [integrations](/docs/integrations/platforms/) are specific implementations of components. These often involve third-party APIs and services.
-If this is the case, as a general rule, these are maintained by the third-party partner.
+[integrations 页面](/docs/integrations/platforms/) 包含组件的具体实现，通常涉及第三方 API 和服务。  
+在这种情况下，一般由第三方合作伙伴维护这些内容。
 
-This section should contain mostly **Explanations** and **References**, though the actual content here is more flexible than other sections and more at the
-discretion of the third-party provider.
+该部分应主要包含 **解释说明** 和 **参考文档**，不过由于内容由第三方提供，因此在形式上比其他部分更灵活。
 
 :::note
-Concepts covered in `Integrations` should generally exist in `@langchain/community` or specific partner packages.
+`集成` 部分中涉及的概念一般应存在于 `@langchain/community` 或特定合作伙伴的包中。
 :::
 
-### Tutorials and Ecosystem
+### 教程与生态系统
 
-The [Tutorials](/docs/tutorials) and [Ecosystem](https://docs.smith.langchain.com) sections should contain guides that address higher-level problems than the sections above.
-This includes, but is not limited to, considerations around productionization and development workflows.
+[integrations 页面](/docs/integrations/platforms/) 包含组件的具体实现，通常涉及第三方 API 和服务。  
+在这种情况下，一般由第三方合作伙伴维护这些内容。
 
-These should contain mostly **How-to guides**, **Explanations**, and **Tutorials**.
+该部分应主要包含 **解释说明** 和 **参考文档**，不过由于内容由第三方提供，因此在形式上比其他部分更灵活。
 
-### API references
+### API 参考文档
 
-LangChain's API references. Should act as **References** (as the name implies) with some **Explanation**-focused content as well.
+LangChain 的 API 参考文档。顾名思义，这部分主要是 **参考文档**，但也包含一些以 **解释说明** 为主的内容。
 
-## Sample developer journey
+## 新开发者学习路径示例
 
-We have set up our docs to assist a new developer to LangChain. Let's walk through the intended path:
+我们设计文档时，旨在帮助新接触 LangChain 的开发者。以下是预期的学习路径：
 
-- The developer lands on https://js.langchain.com, and reads through the introduction and the diagram.
-- If they are just curious, they may be drawn to the [Quickstart](/docs/tutorials/llm_chain) to get a high-level tour of what LangChain contains.
-- If they have a specific task in mind that they want to accomplish, they will be drawn to the Use-Case section. The use-case should provide a good, concrete hook that shows the value LangChain can provide them and be a good entrypoint to the framework.
-- They can then move to learn more about the fundamentals of LangChain through the Expression Language sections.
-- Next, they can learn about LangChain's various components and integrations.
-- Finally, they can get additional knowledge through the Guides.
+- 开发者访问 https://js.langchain.com，阅读简介和图示。
+- 如果他们只是好奇，可能会前往 [快速入门](/docs/tutorials/llm_chain) 了解 LangChain 的整体功能。
+- 如果他们有明确的任务目标，则会前往使用场景部分。使用场景应提供一个具体切入点，展示 LangChain 可以为他们带来的价值，并作为框架的良好入口。
+- 接着，他们可以学习 LangChain 基础知识，通过表达式语言部分深入了解。
+- 然后，他们可以学习 LangChain 的各种组件和集成方式。
+- 最后，他们可以通过指南部分获取更多高级知识。
 
-This is only an ideal of course - sections will inevitably reference lower or higher-level concepts that are documented in other sections.
+当然，这只是一个理想路径 — 实际上，各章节之间不可避免地会相互引用不同层级的概念。
 
-## Guidelines
+## 编写指南
 
-Here are some other guidelines you should think about when writing and organizing documentation.
+在编写和组织文档时，请注意以下其他建议：
 
-### Linking to other sections
+### 链接到其他章节
 
-Because sections of the docs do not exist in a vacuum, it is important to link to other sections as often as possible
-to allow a developer to learn more about an unfamiliar topic inline.
+由于文档各部分并非独立存在，因此应尽可能链接到其他章节，以帮助开发者在阅读时即时了解不熟悉的概念。
 
-This includes linking to the API references as well as conceptual sections!
+这包括链接到 API 参考文档以及概念性章节！
 
-### Conciseness
+### 简洁性
 
-In general, take a less-is-more approach. If a section with a good explanation of a concept already exists, you should link to it rather than
-re-explain it, unless the concept you are documenting presents some new wrinkle.
+总体上，采用“少即是多”的原则。如果已有某个章节对某个概念进行了良好解释，除非你当前的内容有新的角度，否则应优先链接而非重复解释。
 
-Be concise, including in code samples.
+代码示例也应保持简洁。
 
-### General style
+### 通用写作风格
 
-- Use active voice and present tense whenever possible.
-- Use examples and code snippets to illustrate concepts and usage.
-- Use appropriate header levels (`#`, `##`, `###`, etc.) to organize the content hierarchically.
-- Use bullet points and numbered lists to break down information into easily digestible chunks.
-- Use tables (especially for **Reference** sections) and diagrams often to present information visually.
-- Include the table of contents for longer documentation pages to help readers navigate the content, but hide it for shorter pages.
+- 尽可能使用主动语态和现在时态。
+- 使用示例和代码片段来说明概念和用法。
+- 使用适当的标题层级（`#`、`##`、`###` 等）来组织内容结构。
+- 使用项目符号和编号列表将信息分解为易于消化的小块。
+- 多使用表格（尤其适用于 **参考文档**）和图表来可视化呈现信息。
+- 对较长的文档页面包含目录以帮助导航，对较短页面则隐藏目录。

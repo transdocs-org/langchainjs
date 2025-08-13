@@ -2,33 +2,33 @@ import CodeBlock from "@theme/CodeBlock";
 import InMemoryExample from "@examples/embeddings/cache_backed_in_memory.ts";
 import RedisExample from "@examples/embeddings/cache_backed_redis.ts";
 
-# How to cache embedding results
+# 如何缓存嵌入结果
 
-:::info Prerequisites
+:::info 预备知识
 
-This guide assumes familiarity with the following concepts:
+本指南假设您熟悉以下概念：
 
-- [Embeddings](/docs/concepts/embedding_models)
+- [嵌入](/docs/concepts/embedding_models)
 
 :::
 
-Embeddings can be stored or temporarily cached to avoid needing to recompute them.
+可以存储或临时缓存嵌入结果以避免重复计算它们。
 
-Caching embeddings can be done using a `CacheBackedEmbeddings` instance.
+可以使用 `CacheBackedEmbeddings` 实例来实现嵌入缓存。
 
-The cache backed embedder is a wrapper around an embedder that caches embeddings in a key-value store.
+缓存支持的嵌入器是一个封装了嵌入器的包装器，它将嵌入结果缓存在键值存储中。
 
-The text is hashed and the hash is used as the key in the cache.
+文本会被哈希处理，并且该哈希值将作为缓存中的键使用。
 
-The main supported way to initialized a `CacheBackedEmbeddings` is the `fromBytesStore` static method. This takes in the following parameters:
+初始化 `CacheBackedEmbeddings` 的主要支持方式是使用 `fromBytesStore` 静态方法。它接受以下参数：
 
-- `underlyingEmbeddings`: The embeddings model to use.
-- `documentEmbeddingCache`: The cache to use for storing document embeddings.
-- `namespace`: (optional, defaults to "") The namespace to use for document cache. This namespace is used to avoid collisions with other caches. For example, you could set it to the name of the embedding model used.
+- `underlyingEmbeddings`: 要使用的嵌入模型。
+- `documentEmbeddingCache`: 用于存储文档嵌入的缓存。
+- `namespace`: (可选，默认为 "") 文档缓存使用的命名空间。该命名空间用于避免与其他缓存发生冲突。例如，您可以将其设置为所使用的嵌入模型的名称。
 
-**Attention:** Be sure to set the namespace parameter to avoid collisions of the same text embedded using different embeddings models.
+**注意：** 请务必设置命名空间参数，以避免使用不同嵌入模型对相同文本进行嵌入时发生冲突。
 
-## In-memory
+## 内存缓存
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -38,16 +38,16 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/openai @langchain/community @langchain/core
 ```
 
-Here's a basic test example with an in memory cache. This type of cache is primarily useful for unit tests or prototyping.
-Do not use this cache if you need to actually store the embeddings for an extended period of time:
+以下是一个使用内存缓存的基本测试示例。这种类型的缓存主要用于单元测试或原型设计。
+如果您需要长期存储嵌入结果，请不要使用此缓存：
 
 <CodeBlock language="typescript">{InMemoryExample}</CodeBlock>
 
 ## Redis
 
-Here's an example with a Redis cache.
+以下是一个使用 Redis 缓存的示例。
 
-You'll first need to install `ioredis` as a peer dependency and pass in an initialized client:
+您首先需要安装 `ioredis` 作为对等依赖项，并传入一个已初始化的客户端：
 
 ```bash npm2yarn
 npm install ioredis
@@ -55,8 +55,8 @@ npm install ioredis
 
 <CodeBlock language="typescript">{RedisExample}</CodeBlock>
 
-## Next steps
+## 下一步
 
-You've now learned how to use caching to avoid recomputing embeddings.
+现在您已经学会了如何使用缓存来避免重复计算嵌入结果。
 
-Next, check out the [full tutorial on retrieval-augmented generation](/docs/tutorials/rag).
+接下来，请查看完整的 [检索增强生成教程](/docs/tutorials/rag)。

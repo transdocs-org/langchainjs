@@ -1,10 +1,10 @@
-# ChatGPT files
+# ChatGPT 文件
 
-This example goes over how to load conversations.json from your ChatGPT data export folder. You can get your data export by email by going to: ChatGPT -> (Profile) - Settings -> Export data -> Confirm export -> Check email.
+本示例介绍如何从你的 ChatGPT 数据导出文件夹中加载 conversations.json 文件。你可以通过邮件获取你的数据导出包，方法如下：ChatGPT ->（个人资料）- 设置 -> 导出数据 -> 确认导出 -> 查收邮件。
 
-## Usage, extracting all logs
+## 用法，提取所有日志
 
-Example code:
+示例代码：
 
 ```typescript
 import { ChatGPTLoader } from "@langchain/community/document_loaders/fs/chatgpt";
@@ -16,9 +16,9 @@ const docs = await loader.load();
 console.log(docs);
 ```
 
-## Usage, extracting a single log
+## 用法，提取单条日志
 
-Example code:
+示例代码：
 
 ```typescript
 import { ChatGPTLoader } from "@langchain/community/document_loaders/fs/chatgpt";

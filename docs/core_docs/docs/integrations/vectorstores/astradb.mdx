@@ -6,18 +6,18 @@ import CodeBlock from "@theme/CodeBlock";
 
 # Astra DB
 
-:::tip Compatibility
-Only available on Node.js.
+:::tip 兼容性
+仅适用于 Node.js。
 :::
 
-DataStax [Astra DB](https://astra.datastax.com/register) is a serverless vector-capable database built on [Apache Cassandra](https://cassandra.apache.org/_/index.html) and made conveniently available through an easy-to-use JSON API.
+DataStax [Astra DB](https://astra.datastax.com/register) 是一个基于 [Apache Cassandra](https://cassandra.apache.org/_/index.html) 的无服务器向量数据库，它通过一个易于使用的 JSON API 提供服务。
 
-## Setup
+## 准备工作
 
-1. Create an [Astra DB account](https://astra.datastax.com/register).
-2. Create a [vector enabled database](https://astra.datastax.com/createDatabase).
-3. Grab your `API Endpoint` and `Token` from the Database Details.
-4. Set up the following env vars:
+1. 创建一个 [Astra DB 账户](https://astra.datastax.com/register)。
+2. 创建一个[启用向量功能的数据库](https://astra.datastax.com/createDatabase)。
+3. 从数据库详情页面获取你的 `API 端点（Endpoint）` 和 `Token（令牌）`。
+4. 设置以下环境变量：
 
 ```bash
 export ASTRA_DB_APPLICATION_TOKEN=YOUR_ASTRA_DB_APPLICATION_TOKEN_HERE
@@ -26,9 +26,9 @@ export ASTRA_DB_COLLECTION=YOUR_ASTRA_DB_COLLECTION_HERE
 export OPENAI_API_KEY=YOUR_OPENAI_API_KEY_HERE
 ```
 
-Where `ASTRA_DB_COLLECTION` is the desired name of your collection
+其中 `ASTRA_DB_COLLECTION` 是你希望使用的集合名称。
 
-6. Install the Astra TS Client & the LangChain community package
+6. 安装 Astra TS 客户端和 LangChain 社区包
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -38,16 +38,15 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/openai @datastax/astra-db-ts @langchain/community @langchain/core
 ```
 
-## Indexing docs
+## 文档索引
 
 import Example from "@examples/indexes/vector_stores/astra.ts";
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-## Vector Types
+## 向量类型
 
-Astra DB supports `cosine` (the default), `dot_product`, and `euclidean` similarity search; this is defined when the
-vector store is first created as part of the `CreateCollectionOptions`:
+Astra DB 支持 `cosine`（默认）、`dot_product` 和 `euclidean` 相似度搜索；这在向量存储首次创建时作为 `CreateCollectionOptions` 的一部分进行定义：
 
 ```typescript
   vector: {
@@ -56,7 +55,7 @@ vector store is first created as part of the `CreateCollectionOptions`:
   };
 ```
 
-## Related
+## 相关内容
 
-- Vector store [conceptual guide](/docs/concepts/#vectorstores)
-- Vector store [how-to guides](/docs/how_to/#vectorstores)
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

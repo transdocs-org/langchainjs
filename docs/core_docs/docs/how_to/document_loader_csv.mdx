@@ -1,18 +1,18 @@
-# How to load CSV data
+# 如何加载CSV数据
 
-> A [comma-separated values (CSV)](https://en.wikipedia.org/wiki/Comma-separated_values) file is a delimited text file that uses a comma to separate values. Each line of the file is a data record. Each record consists of one or more fields, separated by commas.
+> [逗号分隔值（CSV）](https://zh.wikipedia.org/wiki/逗号分隔值) 文件是一种以逗号为分隔符的文本文件。文件的每一行是一个数据记录，每个记录包含一个或多个字段，字段之间以逗号分隔。
 
-Load CSV data with a single row per document.
+按每个文档单行的方式加载CSV数据。
 
-## Setup
+## 安装
 
 ```bash npm2yarn
 npm install d3-dsv@2
 ```
 
-## Usage, extracting all columns
+## 使用方法，提取所有列
 
-Example CSV file:
+示例CSV文件：
 
 ```csv
 id,text
@@ -20,7 +20,7 @@ id,text
 2,This is another sentence.
 ```
 
-Example code:
+示例代码：
 
 ```typescript
 import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
@@ -50,9 +50,9 @@ text: This is another sentence.",
 */
 ```
 
-## Usage, extracting a single column
+## 使用方法，提取单个列
 
-Example CSV file:
+示例CSV文件：
 
 ```csv
 id,text
@@ -60,7 +60,7 @@ id,text
 2,This is another sentence.
 ```
 
-Example code:
+示例代码：
 
 ```typescript
 import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";

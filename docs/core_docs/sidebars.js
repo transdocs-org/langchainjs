@@ -1,21 +1,21 @@
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * 版权所有 (c) Meta Platforms, Inc. 及其附属公司。
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * 本源代码根据 MIT 许可证进行授权，该许可证可在
+ * 本源代码树的根目录下的 LICENSE 文件中找到。
  *
  * @format
  */
 
 /**
- * Creating a sidebar enables you to:
- - create an ordered group of docs
- - render a sidebar for each doc of that group
- - provide next/previous navigation
+ * 创建侧边栏可以让你：
+ - 创建有序的文档组
+ - 为该组中的每个文档渲染一个侧边栏
+ - 提供上一篇/下一篇导航
 
- The sidebars can be generated from the filesystem, or explicitly defined here.
+ 侧边栏可以从文件系统生成，也可以在此处显式定义。
 
- Create as many sidebars as you want.
+ 可以创建任意数量的侧边栏。
  */
 
 module.exports = {
@@ -24,7 +24,7 @@ module.exports = {
     {
       type: "category",
       link: { type: "doc", id: "tutorials/index" },
-      label: "Tutorials",
+      label: "教程",
       collapsible: false,
       items: [
         {
@@ -37,7 +37,7 @@ module.exports = {
     {
       type: "category",
       link: { type: "doc", id: "how_to/index" },
-      label: "How-to guides",
+      label: "操作指南",
       collapsible: false,
       items: [
         {
@@ -50,7 +50,7 @@ module.exports = {
     {
       type: "category",
       link: { type: "doc", id: "concepts/index" },
-      label: "Conceptual Guide",
+      label: "概念指南",
       collapsible: false,
       items: [
         {
@@ -62,7 +62,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Ecosystem",
+      label: "生态系统",
       collapsed: false,
       collapsible: false,
       items: [
@@ -80,7 +80,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Versions",
+      label: "版本",
       collapsed: false,
       collapsible: false,
       items: [
@@ -101,7 +101,7 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Migrating from v0.0 memory",
+          label: "从 v0.0 的 memory 迁移",
           link: { type: "doc", id: "versions/migrating_memory/index" },
           collapsible: false,
           collapsed: false,
@@ -121,7 +121,7 @@ module.exports = {
   integrations: [
     {
       type: "category",
-      label: "Providers",
+      label: "提供者",
       collapsible: false,
       items: [
         {
@@ -130,7 +130,7 @@ module.exports = {
         },
         {
           type: "category",
-          label: "More",
+          label: "更多",
           collapsed: true,
           items: [
             {
@@ -151,12 +151,12 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Components",
+      label: "组件",
       collapsible: false,
       items: [
         {
           type: "category",
-          label: "Chat models",
+          label: "聊天模型",
           collapsible: false,
           items: [
             {
@@ -188,7 +188,7 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Embedding models",
+          label: "嵌入模型",
           collapsible: false,
           items: [
             {
@@ -204,12 +204,12 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Document loaders",
+          label: "文档加载器",
           collapsed: true,
           items: [
             {
               type: "category",
-              label: "File loaders",
+              label: "文件加载器",
               collapsible: false,
               items: [
                 {
@@ -225,7 +225,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Web loaders",
+              label: "网页加载器",
               collapsible: false,
               items: [
                 {
@@ -247,7 +247,7 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Vector stores",
+          label: "向量存储",
           collapsible: false,
           items: [
             {
@@ -263,7 +263,7 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Retrievers",
+          label: "检索器",
           collapsible: false,
           items: [
             {
@@ -279,7 +279,7 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Tools/Toolkits",
+          label: "工具/工具包",
           collapsible: false,
           items: [
             {
@@ -295,7 +295,7 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Toolkits",
+          label: "工具包",
           collapsible: false,
           className: "hidden",
           items: [
@@ -312,7 +312,7 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Key-value stores",
+          label: "键值存储",
           collapsible: false,
           items: [
             {
@@ -328,12 +328,12 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Other",
+          label: "其他",
           collapsed: true,
           items: [
             {
               type: "category",
-              label: "Document transformers",
+              label: "文档转换器",
               collapsible: false,
               items: [
                 {
@@ -349,7 +349,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Document rerankers",
+              label: "文档排序器",
               collapsible: false,
               items: [
                 {
@@ -365,7 +365,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Model caches",
+              label: "模型缓存",
               collapsible: false,
               items: [
                 {
@@ -381,7 +381,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Graphs",
+              label: "图结构",
               collapsible: false,
               items: [
                 {
@@ -397,7 +397,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Memory",
+              label: "记忆模块",
               collapsible: false,
               items: [
                 {
@@ -413,7 +413,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Callbacks",
+              label: "回调函数",
               collapsible: false,
               items: [
                 {
@@ -429,7 +429,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Chat loaders",
+              label: "聊天加载器",
               collapsible: false,
               items: [
                 {
@@ -445,7 +445,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Adapters",
+              label: "适配器",
               collapsible: false,
               items: [
                 {
@@ -471,7 +471,7 @@ module.exports = {
   contributing: [
     {
       type: "category",
-      label: "Contributing",
+      label: "贡献指南",
       items: [
         {
           type: "autogenerated",

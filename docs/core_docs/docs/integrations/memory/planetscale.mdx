@@ -4,15 +4,15 @@ hide_table_of_contents: true
 
 import CodeBlock from "@theme/CodeBlock";
 
-# PlanetScale Chat Memory
+# PlanetScale 聊天记忆
 
-Because PlanetScale works via a REST API, you can use this with [Vercel Edge](https://vercel.com/docs/concepts/functions/edge-functions/edge-runtime), [Cloudflare Workers](https://developers.cloudflare.com/workers/) and other Serverless environments.
+由于 PlanetScale 通过 REST API 工作，你可以将它与 [Vercel Edge](https://vercel.com/docs/concepts/functions/edge-functions/edge-runtime)、[Cloudflare Workers](https://developers.cloudflare.com/workers/) 和其他无服务器环境一起使用。
 
-For longer-term persistence across chat sessions, you can swap out the default in-memory `chatHistory` that backs chat memory classes like `BufferMemory` for an PlanetScale [Database](https://planetscale.com/) instance.
+如果你希望在多个聊天会话之间实现更长期的持久化存储，可以用 PlanetScale [Database](https://planetscale.com/) 实例替换默认的内存型 `chatHistory`，例如用于 `BufferMemory` 类等聊天记忆类的数据存储。
 
-## Setup
+## 安装设置
 
-You will need to install [@planetscale/database](https://github.com/planetscale/database-js) in your project:
+你需要在项目中安装 [@planetscale/database](https://github.com/planetscale/database-js)：
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -22,20 +22,20 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/openai @planetscale/database @langchain/community @langchain/core
 ```
 
-You will also need an PlanetScale Account and a database to connect to. See instructions on [PlanetScale Docs](https://planetscale.com/docs) on how to create a HTTP client.
+你还需要一个 PlanetScale 账号以及一个可以连接的数据库。关于如何创建 HTTP 客户端，请参阅 [PlanetScale 文档](https://planetscale.com/docs)。
 
-## Usage
+## 使用方法
 
-Each chat history session stored in PlanetScale database must have a unique id.
-The `config` parameter is passed directly into the `new Client()` constructor of [@planetscale/database](https://planetscale.com/docs/tutorials/planetscale-serverless-driver), and takes all the same arguments.
+每个存储在 PlanetScale 数据库中的聊天会话历史必须具有唯一的 ID。
+`config` 参数会被直接传入 [@planetscale/database](https://planetscale.com/docs/tutorials/planetscale-serverless-driver) 的 `new Client()` 构造函数中，并接受所有相同的参数。
 
 import Example from "@examples/memory/planetscale.ts";
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-## Advanced Usage
+## 高级用法
 
-You can also directly pass in a previously created [@planetscale/database](https://planetscale.com/docs/tutorials/planetscale-serverless-driver) client instance:
+你也可以直接传入一个之前创建好的 [@planetscale/database](https://planetscale.com/docs/tutorials/planetscale-serverless-driver) 客户端实例：
 
 import AdvancedExample from "@examples/memory/planetscale_advanced.ts";
 

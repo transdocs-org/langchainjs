@@ -5,16 +5,15 @@ hide_table_of_contents: true
 import CodeBlock from "@theme/CodeBlock";
 import ToolExample from "@examples/tools/dalle_image_generation.ts";
 
-# Dall-E Tool
+# Dall-E 工具
 
-The Dall-E tool allows your agent to create images using OpenAI's Dall-E image generation tool.
+Dall-E 工具允许你的代理使用 OpenAI 的 Dall-E 图像生成工具来创建图像。
 
-## Setup
+## 准备工作
 
-You will need an OpenAI API Key which you can get from the [OpenAI web site](https://openai.com)
-and then set the OPENAI_API_KEY environment variable to the key you just created.
+你需要从 [OpenAI 网站](https://openai.com) 获取一个 OpenAI API 密钥，并将 `OPENAI_API_KEY` 环境变量设置为你刚刚创建的密钥。
 
-To use the Dall-E Tool you need to install the LangChain OpenAI integration package:
+要使用 Dall-E 工具，你需要安装 LangChain OpenAI 集成包：
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -26,7 +25,7 @@ npm install @langchain/openai @langchain/core
 
 <CodeBlock language="typescript">{ToolExample}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Tool [conceptual guide](/docs/concepts/tools)
-- Tool [how-to guides](/docs/how_to/#tools)
+- 工具 [概念指南](/docs/concepts/tools)
+- 工具 [操作指南](/docs/how_to/#tools)

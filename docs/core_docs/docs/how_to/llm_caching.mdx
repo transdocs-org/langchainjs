@@ -2,12 +2,12 @@
 sidebar_position: 2
 ---
 
-# How to cache model responses
+# 如何缓存模型响应
 
-LangChain provides an optional caching layer for LLMs. This is useful for two reasons:
+LangChain 提供了一个可选的缓存层用于 LLM。这有以下两个好处：
 
-It can save you money by reducing the number of API calls you make to the LLM provider, if you're often requesting the same completion multiple times.
-It can speed up your application by reducing the number of API calls you make to the LLM provider.
+如果你经常多次请求相同的补全内容，它可以通过减少你向 LLM 提供商发出的 API 调用次数来为你节省费用。  
+它可以通过减少你向 LLM 提供商发出的 API 调用次数来加快你的应用程序速度。
 
 import CodeBlock from "@theme/CodeBlock";
 
@@ -28,14 +28,14 @@ const model = new OpenAI({
 });
 ```
 
-## In Memory Cache
+## 内存缓存
 
-The default cache is stored in-memory. This means that if you restart your application, the cache will be cleared.
+默认的缓存是存储在内存中的。这意味着如果你重启你的应用程序，缓存将被清除。
 
 ```typescript
 console.time();
 
-// The first time, it is not yet in cache, so it should take longer
+// 第一次时，尚未缓存，因此应该耗时较长
 const res = await model.invoke("Tell me a long joke");
 
 console.log(res);
@@ -43,30 +43,30 @@ console.log(res);
 console.timeEnd();
 
 /*
-  A man walks into a bar and sees a jar filled with money on the counter. Curious, he asks the bartender about it.
+  一个男人走进一家酒吧，看到柜台上有一个装满钱的罐子。他好奇地问酒保这是怎么回事。
 
-  The bartender explains, "We have a challenge for our customers. If you can complete three tasks, you win all the money in the jar."
+  酒保解释说：“我们为顾客提供了一个挑战。如果你能完成三个任务，你就能赢得罐子里所有的钱。”
 
-  Intrigued, the man asks what the tasks are.
+  这个男人很感兴趣，便问任务是什么。
 
-  The bartender replies, "First, you have to drink a whole bottle of tequila without making a face. Second, there's a pitbull out back with a sore tooth. You have to pull it out. And third, there's an old lady upstairs who has never had an orgasm. You have to give her one."
+  酒保回答说：“首先，你必须不皱眉头地喝下一整瓶龙舌兰酒。其次，后院有一只患有牙痛的比特犬，你必须拔掉它的牙齿。第三，楼上有一位老太太，她从未体验过高潮。你必须让她达到高潮。”
 
-  The man thinks for a moment and then confidently says, "I'll do it."
+  这个男人想了一下，然后自信地说：“我来做。”
 
-  He grabs the bottle of tequila and downs it in one gulp, without flinching. He then heads to the back and after a few minutes of struggling, emerges with the pitbull's tooth in hand.
+  他拿起龙舌兰酒一口喝光，没有皱眉。然后他走到后院，在挣扎了几分钟后，手里拿着比特犬的牙齿出来了。
 
-  The bar erupts in cheers and the bartender leads the man upstairs to the old lady's room. After a few minutes, the man walks out with a big smile on his face and the old lady is giggling with delight.
+  酒吧里爆发出欢呼声，酒保带着这个男人上楼到老太太的房间。几分钟后，这个男人微笑着走出来，老太太则高兴地咯咯笑。
 
-  The bartender hands the man the jar of money and asks, "How
+  酒保把罐子里的钱递给这个男人，并问道：“怎么
 
-  default: 4.187s
+  默认耗时: 4.187s
 */
 ```
 
 ```typescript
 console.time();
 
-// The second time it is, so it goes faster
+// 第二次时，已经缓存了，所以更快
 const res2 = await model.invoke("Tell me a joke");
 
 console.log(res2);
@@ -74,64 +74,64 @@ console.log(res2);
 console.timeEnd();
 
 /*
-  A man walks into a bar and sees a jar filled with money on the counter. Curious, he asks the bartender about it.
+  一个男人走进一家酒吧，看到柜台上有一个装满钱的罐子。他好奇地问酒保这是怎么回事。
 
-  The bartender explains, "We have a challenge for our customers. If you can complete three tasks, you win all the money in the jar."
+  酒保解释说：“我们为顾客提供了一个挑战。如果你能完成三个任务，你就能赢得罐子里所有的钱。”
 
-  Intrigued, the man asks what the tasks are.
+  这个男人很感兴趣，便问任务是什么。
 
-  The bartender replies, "First, you have to drink a whole bottle of tequila without making a face. Second, there's a pitbull out back with a sore tooth. You have to pull it out. And third, there's an old lady upstairs who has never had an orgasm. You have to give her one."
+  酒保回答说：“首先，你必须不皱眉头地喝下一整瓶龙舌兰酒。其次，后院有一只患有牙痛的比特犬，你必须拔掉它的牙齿。第三，楼上有一位老太太，她从未体验过高潮。你必须让她达到高潮。”
 
-  The man thinks for a moment and then confidently says, "I'll do it."
+  这个男人想了一下，然后自信地说：“我来做。”
 
-  He grabs the bottle of tequila and downs it in one gulp, without flinching. He then heads to the back and after a few minutes of struggling, emerges with the pitbull's tooth in hand.
+  他拿起龙舌兰酒一口喝光，没有皱眉。然后他走到后院，在挣扎了几分钟后，手里拿着比特犬的牙齿出来了。
 
-  The bar erupts in cheers and the bartender leads the man upstairs to the old lady's room. After a few minutes, the man walks out with a big smile on his face and the old lady is giggling with delight.
+  酒吧里爆发出欢呼声，酒保带着这个男人上楼到老太太的房间。几分钟后，这个男人微笑着走出来，老太太则高兴地咯咯笑。
 
-  The bartender hands the man the jar of money and asks, "How
+  酒保把罐子里的钱递给这个男人，并问道：“怎么
 
-  default: 175.74ms
+  默认耗时: 175.74ms
 */
 ```
 
-## Caching with Momento
+## 使用 Momento 缓存
 
-LangChain also provides a Momento-based cache. [Momento](https://gomomento.com) is a distributed, serverless cache that requires zero setup or infrastructure maintenance. Given Momento's compatibility with Node.js, browser, and edge environments, ensure you install the relevant package.
+LangChain 还提供了基于 Momento 的缓存。[Momento](https://gomomento.com) 是一个分布式、无服务器的缓存，不需要任何设置或基础设施维护。鉴于 Momento 兼容 Node.js、浏览器和边缘环境，请确保安装相应的包。
 
-To install for **Node.js**:
+对于 **Node.js** 安装：
 
 ```bash npm2yarn
 npm install @gomomento/sdk
 ```
 
-To install for **browser/edge workers**:
+对于 **浏览器/边缘工作者** 安装：
 
 ```bash npm2yarn
 npm install @gomomento/sdk-web
 ```
 
-Next you'll need to sign up and create an API key. Once you've done that, pass a `cache` option when you instantiate the LLM like this:
+接下来你需要注册并创建一个 API 密钥。完成之后，在实例化 LLM 时传递一个 `cache` 选项，如下所示：
 
 import MomentoCacheExample from "@examples/cache/momento.ts";
 
 <CodeBlock language="typescript">{MomentoCacheExample}</CodeBlock>
 
-## Caching with Redis
+## 使用 Redis 缓存
 
-LangChain also provides a Redis-based cache. This is useful if you want to share the cache across multiple processes or servers. To use it, you'll need to install the `redis` package:
+LangChain 还提供基于 Redis 的缓存。如果你希望在多个进程或服务器之间共享缓存，这将非常有用。要使用它，你需要安装 `redis` 包：
 
 ```bash npm2yarn
 npm install ioredis
 ```
 
-Then, you can pass a `cache` option when you instantiate the LLM. For example:
+然后，你可以在实例化 LLM 时传递一个 `cache` 选项。例如：
 
 ```typescript
 import { OpenAI } from "@langchain/openai";
 import { RedisCache } from "@langchain/community/caches/ioredis";
 import { Redis } from "ioredis";
 
-// See https://github.com/redis/ioredis for connection options
+// 有关连接选项，请参见 https://github.com/redis/ioredis
 const client = new Redis({});
 
 const cache = new RedisCache(client);
@@ -139,55 +139,55 @@ const cache = new RedisCache(client);
 const model = new OpenAI({ cache });
 ```
 
-## Caching with Upstash Redis
+## 使用 Upstash Redis 缓存
 
-LangChain provides an Upstash Redis-based cache. Like the Redis-based cache, this cache is useful if you want to share the cache across multiple processes or servers. The Upstash Redis client uses HTTP and supports edge environments. To use it, you'll need to install the `@upstash/redis` package:
+LangChain 提供了基于 Upstash Redis 的缓存。与基于 Redis 的缓存一样，这种缓存适用于希望在多个进程或服务器之间共享缓存的场景。Upstash Redis 客户端使用 HTTP，并支持边缘环境。要使用它，你需要安装 `@upstash/redis` 包：
 
 ```bash npm2yarn
 npm install @upstash/redis
 ```
 
-You'll also need an [Upstash account](https://docs.upstash.com/redis#create-account) and a [Redis database](https://docs.upstash.com/redis#create-a-database) to connect to. Once you've done that, retrieve your REST URL and REST token.
+你还需要一个 [Upstash 账号](https://docs.upstash.com/redis#create-account) 和一个 [Redis 数据库](https://docs.upstash.com/redis#create-a-database) 来连接。完成之后，获取你的 REST URL 和 REST Token。
 
-Then, you can pass a `cache` option when you instantiate the LLM. For example:
+然后，你可以在实例化 LLM 时传递一个 `cache` 选项。例如：
 
 import UpstashRedisCacheExample from "@examples/cache/upstash_redis.ts";
 
 <CodeBlock language="typescript">{UpstashRedisCacheExample}</CodeBlock>
 
-You can also directly pass in a previously created [@upstash/redis](https://docs.upstash.com/redis/sdks/javascriptsdk/overview) client instance:
+你也可以直接传入一个之前创建的 [@upstash/redis](https://docs.upstash.com/redis/sdks/javascriptsdk/overview) 客户端实例：
 
 import AdvancedUpstashRedisCacheExample from "@examples/cache/upstash_redis_advanced.ts";
 
 <CodeBlock language="typescript">{AdvancedUpstashRedisCacheExample}</CodeBlock>
 
-## Caching with Vercel KV
+## 使用 Vercel KV 缓存
 
-LangChain provides an Vercel KV-based cache. Like the Redis-based cache, this cache is useful if you want to share the cache across multiple processes or servers. The Vercel KV client uses HTTP and supports edge environments. To use it, you'll need to install the `@vercel/kv` package:
+LangChain 提供了基于 Vercel KV 的缓存。与基于 Redis 的缓存类似，这种缓存适用于希望在多个进程或服务器之间共享缓存的场景。Vercel KV 客户端使用 HTTP，并支持边缘环境。要使用它，你需要安装 `@vercel/kv` 包：
 
 ```bash npm2yarn
 npm install @vercel/kv
 ```
 
-You'll also need an Vercel account and a [KV database](https://vercel.com/docs/storage/vercel-kv/kv-reference) to connect to. Once you've done that, retrieve your REST URL and REST token.
+你还需要一个 Vercel 账号和一个 [KV 数据库](https://vercel.com/docs/storage/vercel-kv/kv-reference) 来连接。完成后，获取你的 REST URL 和 REST Token。
 
-Then, you can pass a `cache` option when you instantiate the LLM. For example:
+然后，你可以在实例化 LLM 时传递一个 `cache` 选项。例如：
 
 import VercelKVCacheExample from "@examples/cache/vercel_kv.ts";
 
 <CodeBlock language="typescript">{VercelKVCacheExample}</CodeBlock>
 
-## Caching with Cloudflare KV
+## 使用 Cloudflare KV 缓存
 
 :::info
-This integration is only supported in Cloudflare Workers.
+此集成仅在 Cloudflare Workers 中受支持。
 :::
 
-If you're deploying your project as a Cloudflare Worker, you can use LangChain's Cloudflare KV-powered LLM cache.
+如果你将项目部署为 Cloudflare Worker，则可以使用 LangChain 的基于 Cloudflare KV 的 LLM 缓存。
 
-For information on how to set up KV in Cloudflare, see [the official documentation](https://developers.cloudflare.com/kv/).
+有关如何在 Cloudflare 中设置 KV 的信息，请参见 [官方文档](https://developers.cloudflare.com/kv/)。
 
-**Note:** If you are using TypeScript, you may need to install types if they aren't already present:
+**注意：** 如果你使用的是 TypeScript，可能需要安装类型定义（如果尚未安装）：
 
 ```bash npm2yarn
 npm install -S @cloudflare/workers-types
@@ -197,21 +197,21 @@ import CloudflareExample from "@examples/cache/cloudflare_kv.ts";
 
 <CodeBlock language="typescript">{CloudflareExample}</CodeBlock>
 
-## Caching on the File System
+## 使用文件系统缓存
 
 :::warning
-This cache is not recommended for production use. It is only intended for local development.
+此缓存不推荐用于生产环境。它仅用于本地开发。
 :::
 
-LangChain provides a simple file system cache.
-By default the cache is stored a temporary directory, but you can specify a custom directory if you want.
+LangChain 提供了一个简单的文件系统缓存。  
+默认情况下，缓存存储在一个临时目录中，但你也可以指定一个自定义目录。
 
 ```typescript
 const cache = await LocalFileCache.create();
 ```
 
-## Next steps
+## 下一步
 
-You've now learned how to cache model responses to save time and money.
+你现在已了解如何缓存模型响应以节省时间和费用。
 
-Next, check out the other how-to guides on LLMs, like [how to create your own custom LLM class](/docs/how_to/custom_llm).
+接下来，查看其他关于 LLM 的指南，例如 [如何创建自己的自定义 LLM 类](/docs/how_to/custom_llm)。

@@ -1,43 +1,40 @@
-# Zep Open Source
+# Zep 开源项目
 
-> [Zep](https://www.getzep.com) is a long-term memory service for AI Assistant apps.
-> With Zep, you can provide AI assistants with the ability to recall past conversations, no matter how distant,
-> while also reducing hallucinations, latency, and cost.
+> [Zep](https://www.getzep.com) 是一个为 AI 助手应用提供的长期记忆服务。
+> 使用 Zep，你可以让 AI 助手具备回忆过去对话的能力，无论这些对话多么久远，
+> 同时还能减少幻觉、降低延迟和成本。
 
-> Interested in Zep Cloud? See [Zep Cloud Installation Guide](https://help.getzep.com/sdks)
+> 对 Zep Cloud 感兴趣？请参阅 [Zep Cloud 安装指南](https://help.getzep.com/sdks)
 
 import CodeBlock from "@theme/CodeBlock";
 
-**Note:** The `ZepVectorStore` works with `Documents` and is intended to be used as a `Retriever`.
-It offers separate functionality to Zep's `ZepMemory` class, which is designed for persisting, enriching
-and searching your user's chat history.
+**注意：** `ZepVectorStore` 与 `Documents` 一起工作，用于作为 `Retriever` 使用。
+它与 Zep 的 `ZepMemory` 类提供不同的功能，后者用于持久化、丰富和搜索用户的聊天历史。
 
-## Why Zep's VectorStore? 🤖🚀
+## 为什么选择 Zep 的 VectorStore？🤖🚀
 
-Zep automatically embeds documents added to the Zep Vector Store using low-latency models local to the Zep server.
-The Zep TS/JS client can be used in non-Node edge environments. These two together with Zep's chat memory functionality
-make Zep ideal for building conversational LLM apps where latency and performance are important.
+Zep 使用部署在 Zep 服务器本地的低延迟模型，自动对添加到 Zep Vector Store 的文档进行嵌入。
+Zep 的 TypeScript/JavaScript 客户端可以在非 Node 的边缘环境中使用。
+这两者结合 Zep 的聊天记忆功能，使 Zep 成为构建对延迟和性能要求较高的对话式 LLM 应用的理想选择。
 
-### Supported Search Types
+### 支持的搜索类型
 
-Zep supports both similarity search and Maximal Marginal Relevance (MMR) search. MMR search is particularly useful
-for Retrieval Augmented Generation applications as it re-ranks results to ensure diversity in the returned documents.
+Zep 支持相似性搜索和最大边界相关性（MMR）搜索。MMR 搜索在检索增强生成（RAG）应用中特别有用，因为它会对结果重新排序，以确保返回的文档具有多样性。
 
-## Installation
+## 安装
 
-Follow the [Zep Open Source Quickstart Guide](https://help.getzep.com/quickstart) to install and get started with Zep.
+请参考 [Zep 开源快速入门指南](https://help.getzep.com/quickstart)，了解如何安装和开始使用 Zep。
 
-## Usage
+## 使用方法
 
-You'll need your Zep API URL and optionally an API key to use the Zep VectorStore. See the [Zep docs](https://help.getzep.com/welcome) for more information.
+你需要提供 Zep API 的 URL，以及可选的 API 密钥，以使用 Zep VectorStore。更多信息请参见 [Zep 文档](https://help.getzep.com/welcome)。
 
-In the examples below, we're using Zep's auto-embedding feature which automatically embed documents on the Zep server using
-low-latency embedding models. Since LangChain requires passing in a `Embeddings` instance, we pass in `FakeEmbeddings`.
+在下面的示例中，我们使用了 Zep 的自动嵌入功能，它会使用 Zep 服务器上的低延迟嵌入模型自动对文档进行嵌入。由于 LangChain 需要传入一个 `Embeddings` 实例，我们传入了 `FakeEmbeddings`。
 
-**Note:** If you pass in an `Embeddings` instance other than `FakeEmbeddings`, this class will be used to embed documents.
-You must also set your document collection to `isAutoEmbedded === false`. See the `OpenAIEmbeddings` example below.
+**注意：** 如果你传入的 `Embeddings` 实例不是 `FakeEmbeddings`，则该类将用于对文档进行嵌入。
+你还必须将文档集合的 `isAutoEmbedded` 设置为 `false`。请参见下面的 `OpenAIEmbeddings` 示例。
 
-### Example: Creating a ZepVectorStore from Documents & Querying
+### 示例：从文档创建 ZepVectorStore 并进行查询
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -51,19 +48,19 @@ import ExampleDocs from "@examples/indexes/vector_stores/zep/zep_from_docs.ts";
 
 <CodeBlock language="typescript">{ExampleDocs}</CodeBlock>
 
-### Example: Querying a ZepVectorStore using a metadata filter
+### 示例：使用元数据过滤器查询 ZepVectorStore
 
 import ExampleMetadata from "@examples/indexes/vector_stores/zep/zep_with_metadata.ts";
 
 <CodeBlock language="typescript">{ExampleMetadata}</CodeBlock>
 
-### Example: Using a LangChain Embedding Class such as `OpenAIEmbeddings`
+### 示例：使用 LangChain 的嵌入类，例如 `OpenAIEmbeddings`
 
 import ExampleOpenAI from "@examples/indexes/vector_stores/zep/zep_with_openai_embeddings.ts";
 
 <CodeBlock language="typescript">{ExampleOpenAI}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Vector store [conceptual guide](/docs/concepts/#vectorstores)
-- Vector store [how-to guides](/docs/how_to/#vectorstores)
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

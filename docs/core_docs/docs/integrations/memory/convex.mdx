@@ -4,31 +4,31 @@ hide_table_of_contents: true
 
 import CodeBlock from "@theme/CodeBlock";
 
-# Convex Chat Memory
+# Convex 聊天记忆
 
-For longer-term persistence across chat sessions, you can swap out the default in-memory `chatHistory` that backs chat memory classes like `BufferMemory` for [Convex](https://convex.dev/).
+为了在聊天会话间实现更长期的持久化存储，您可以将默认的内存型 `chatHistory` 替换为 [Convex](https://convex.dev/)，后者为 `BufferMemory` 类似的聊天记忆类提供支持。
 
-## Setup
+## 设置
 
-### Create project
+### 创建项目
 
-Get a working [Convex](https://docs.convex.dev/) project set up, for example by using:
+首先创建一个可用的 [Convex](https://docs.convex.dev/) 项目，例如使用如下命令：
 
 ```bash
 npm create convex@latest
 ```
 
-### Add database accessors
+### 添加数据库访问器
 
-Add query and mutation helpers to `convex/langchain/db.ts`:
+在 `convex/langchain/db.ts` 中添加查询和变更辅助函数：
 
 ```ts title="convex/langchain/db.ts"
 export * from "@langchain/community/utils/convex";
 ```
 
-### Configure your schema
+### 配置您的模式
 
-Set up your schema (for indexing):
+设置您的模式（用于索引）：
 
 ```ts title="convex/schema.ts"
 import { defineSchema, defineTable } from "convex/server";
@@ -50,9 +50,9 @@ export default defineSchema({
 });
 ```
 
-## Usage
+## 使用
 
-Each chat history session stored in Convex must have a unique session id.
+存储在 Convex 中的每个聊天历史会话都必须具有唯一的会话 ID。
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 

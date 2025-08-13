@@ -5,23 +5,23 @@ sidebar_class_name: hidden
 
 import { CategoryTable, IndexTable } from "@theme/FeatureTables";
 
-# Retrievers
+# 检索器（Retrievers）
 
-A [retriever](/docs/concepts/retrievers) is an interface that returns documents given an unstructured query.
-It is more general than a vector store.
-A retriever does not need to be able to store documents, only to return (or retrieve) them.
+[检索器](/docs/concepts/retrievers) 是一个接口，它可以根据非结构化查询返回文档。  
+它比向量存储（vector store）更通用。  
+检索器不需要具备存储文档的能力，只需要能够返回（或检索）文档即可。
 
-Retrievers accept a string query as input and return a list of Documents.
+检索器接受字符串查询作为输入，并返回一个 `Document` 列表。
 
-For specifics on how to use retrievers, see the [relevant how-to guides here](/docs/how_to/#retrievers).
+关于如何使用检索器的具体信息，请参阅[此处的相关操作指南](/docs/how_to/#retrievers)。
 
-Note that all [vector stores](/docs/concepts/#vectorstores) can be [cast to retrievers](/docs/how_to/vectorstore_retriever/).
-Refer to the vector store [integration docs](/docs/integrations/vectorstores/) for available vector store retrievers.
+请注意，所有[向量存储](/docs/concepts/#vectorstores)都可以[转换为检索器](/docs/how_to/vectorstore_retriever/)。  
+有关可用的向量存储检索器，请参阅向量存储的[集成文档](/docs/integrations/vectorstores/)。
 
 :::info
-If you'd like to write your own retriever, see [this how-to](/docs/how_to/custom_retriever/). If you'd like to contribute an integration, see [Contributing integrations](/docs/contributing).
+如果你想编写自己的检索器，请参阅[此操作指南](/docs/how_to/custom_retriever/)。如果你想贡献一个集成实现，请参阅[集成贡献指南](/docs/contributing)。
 :::
 
-## All retrievers
+## 所有检索器
 
 <IndexTable />

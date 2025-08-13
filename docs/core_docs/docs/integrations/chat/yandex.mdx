@@ -4,20 +4,20 @@ sidebar_label: YandexGPT
 
 # ChatYandexGPT
 
-LangChain.js supports calling [YandexGPT](https://cloud.yandex.com/en/services/yandexgpt) chat models.
+LangChain.js 支持调用 [YandexGPT](https://cloud.yandex.com/zh/services/yandexgpt) 聊天模型。
 
-## Setup
+## 准备工作
 
-First, you should [create a service account](https://cloud.yandex.com/en/docs/iam/operations/sa/create) with the `ai.languageModels.user` role.
+首先，您需要创建一个具有 `ai.languageModels.user` 角色的服务账号：[创建服务账号](https://cloud.yandex.com/zh/docs/iam/operations/sa/create)。
 
-Next, you have two authentication options:
+接下来，您有两种身份验证选项：
 
-- [IAM token](https://cloud.yandex.com/en/docs/iam/operations/iam-token/create-for-sa).
-  You can specify the token in a constructor parameter as `iam_token` or in an environment variable `YC_IAM_TOKEN`.
-- [API key](https://cloud.yandex.com/en/docs/iam/operations/api-key/create)
-  You can specify the key in a constructor parameter as `api_key` or in an environment variable `YC_API_KEY`.
+- [IAM 令牌](https://cloud.yandex.com/zh/docs/iam/operations/iam-token/create-for-sa)。
+  您可以在构造函数参数中使用 `iam_token` 指定该令牌，或者在环境变量 `YC_IAM_TOKEN` 中指定。
+- [API 密钥](https://cloud.yandex.com/zh/docs/iam/operations/api-key/create)。
+  您可以在构造函数参数中使用 `api_key` 指定该密钥，或者在环境变量 `YC_API_KEY` 中指定。
 
-## Usage
+## 使用方法
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -32,7 +32,7 @@ import YandexGPTChatExample from "@examples/models/chat/integration_yandex.ts";
 
 <CodeBlock language="typescript">{YandexGPTChatExample}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Chat model [conceptual guide](/docs/concepts/chat_models)
-- Chat model [how-to guides](/docs/how_to/#chat-models)
+- 聊天模型 [概念指南](/docs/concepts/chat_models)
+- 聊天模型 [操作指南](/docs/how_to/#chat-models)

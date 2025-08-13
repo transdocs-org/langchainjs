@@ -2,50 +2,48 @@
 sidebar_position: 0.5
 ---
 
-# Repository Structure
+# 仓库结构
 
-If you plan on contributing to LangChain code or documentation, it can be useful
-to understand the high level structure of the repository.
+如果你计划为 LangChain 的代码或文档做贡献，了解仓库的高层结构会很有帮助。
 
-LangChain is organized as a [monorepo](https://en.wikipedia.org/wiki/Monorepo) that contains multiple packages.
+LangChain 被组织成一个 [单体仓库](https://zh.wikipedia.org/wiki/单体仓库)，其中包含多个包。
 
-Here's the structure visualized as a tree:
+以下是仓库结构的树状表示：
 
 ```text
 .
 ├── docs
-│   ├── core_docs # Contains content for the documentation here: https://js.langchain.com/
-│   ├── api_refs # Contains content for the API refs here: https://api.js.langchain.com/
-├── langchain # Main package
-│   ├── src/**/tests/*.test.ts/ # Unit tests (present in each package not shown for brevity)
-│   ├── src/**/tests/*.int.test.ts/ # Integration tests (present in each package not shown for brevity)
-├── langchain # Base interfaces for key abstractions
-├── libs # Community packages
-│   ├── langchain-community # Third-party integrations
+│   ├── core_docs # 包含此处文档的内容：https://js.langchain.com/
+│   ├── api_refs # 包含此处 API 参考文档的内容：https://api.js.langchain.com/
+├── langchain # 主要包
+│   ├── src/**/tests/*.test.ts/ # 单元测试（每个包中都存在，但为简洁起见未显示）
+│   ├── src/**/tests/*.int.test.ts/ # 集成测试（每个包中都存在，但为简洁起见未显示）
+├── langchain # 关键抽象的基础接口
+├── libs # 社区包
+│   ├── langchain-community # 第三方集成
 │   ├── langchain-partner-1
 │   ├── langchain-partner-2
 │   ├── ...
 ```
 
-The root directory also contains the following files:
+根目录还包含以下文件：
 
-- `package.json`: Dependencies for building docs and linting docs.
+- `package.json`: 构建文档和检查文档格式所需的依赖项。
 
-There are other files in the root directory level, but their presence should be self-explanatory. Feel free to browse around!
+根目录中还有其他文件，它们的用途应该是一目了然的。欢迎自由浏览！
 
-## Documentation
+## 文档
 
-The `/docs` directory contains the content for the documentation that is shown
-at https://js.langchain.com/ and the associated API Reference https://api.js.langchain.com/
+`/docs` 目录包含文档内容，这些内容在 https://js.langchain.com/ 及其关联的 API 参考文档 https://api.js.langchain.com/ 中展示。
 
-See the [documentation](/docs/contributing/documentation/style_guide) guidelines to learn how to contribute to the documentation.
+有关如何为文档做贡献，请参阅[文档](/docs/contributing/documentation/style_guide)指南。
 
-## Code
+## 代码
 
-The `/libs` directory contains the code for the LangChain packages.
+`/libs` 目录包含 LangChain 包的代码。
 
-To learn more about how to contribute code see the following guidelines:
+要了解如何贡献代码，请参阅以下指南：
 
-- [Code](./code.mdx) Learn how to develop in the LangChain codebase.
-- [Integrations](./integrations.mdx) to learn how to contribute to third-party integrations to langchain-community or to start a new partner package.
-- [Testing](./testing.mdx) guidelines to learn how to write tests for the packages.
+- [代码](./code.mdx) 了解如何在 LangChain 代码库中进行开发。
+- [集成](./integrations.mdx) 了解如何为 langchain-community 贡献第三方集成，或如何开始一个新的合作伙伴包。
+- [测试](./testing.mdx) 指南，了解如何为包编写测试。

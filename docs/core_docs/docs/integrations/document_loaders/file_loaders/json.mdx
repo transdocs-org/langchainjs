@@ -1,13 +1,12 @@
-# JSON files
+# JSON 文件
 
-The JSON loader use [JSON pointer](https://github.com/janl/node-jsonpointer) to target keys in your JSON files you want to target.
+JSON 加载器使用 [JSON 指针](https://github.com/janl/node-jsonpointer) 来定位你想要提取内容的 JSON 文件中的键。
 
-### No JSON pointer example
+### 无需 JSON 指针的示例
 
-The most simple way of using it, is to specify no JSON pointer.
-The loader will load all strings it finds in the JSON object.
+使用它的最简单方法是不指定任何 JSON 指针。加载器将加载 JSON 对象中找到的所有字符串。
 
-Example JSON file:
+示例 JSON 文件：
 
 ```json
 {
@@ -15,7 +14,7 @@ Example JSON file:
 }
 ```
 
-Example code:
+示例代码：
 
 ```typescript
 import { JSONLoader } from "langchain/document_loaders/fs/json";
@@ -45,11 +44,11 @@ const docs = await loader.load();
 */
 ```
 
-### Using JSON pointer example
+### 使用 JSON 指针的示例
 
-You can do a more advanced scenario by choosing which keys in your JSON object you want to extract string from.
+你可以通过选择要从 JSON 对象中的哪些键提取字符串来实现更复杂的场景。
 
-In this example, we want to only extract information from "from" and "surname" entries.
+在此示例中，我们只想从 "from" 和 "surname" 条目中提取信息。
 
 ```json
 {
@@ -70,7 +69,7 @@ In this example, we want to only extract information from "from" and "surname" e
 }
 ```
 
-Example code:
+示例代码：
 
 ```typescript
 import { JSONLoader } from "langchain/document_loaders/fs/json";
@@ -101,4 +100,5 @@ const docs = await loader.load();
   },
   ...
 ]
+*/
 ```

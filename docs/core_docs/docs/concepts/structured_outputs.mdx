@@ -1,53 +1,47 @@
-# Structured outputs
+# 结构化输出
 
-## Overview
+## 概述
 
-For many applications, such as chatbots, models need to respond to users directly in natural language.
-However, there are scenarios where we need models to output in a _structured format_.
-For example, we might want to store the model output in a database and ensure that the output conforms to the database schema.
-This need motivates the concept of structured output, where models can be instructed to respond with a particular output structure.
+对于许多应用（例如聊天机器人），模型需要直接以自然语言回复用户。然而，在某些场景下我们需要模型以**结构化格式**输出。例如，我们可能希望将模型输出存储在数据库中，并确保输出符合数据库的模式。这种需求催生了结构化输出的概念，即可以指示模型以特定的输出结构进行响应。
 
-![Structured output](/img/structured_output.png)
+![结构化输出](/img/structured_output.png)
 
-## Key concepts
+## 关键概念
 
-**(1) Schema definition:** The output structure is represented as a schema, which can be defined in several ways.
-**(2) Returning structured output:** The model is given this schema, and is instructed to return output that conforms to it.
+**(1) 模式定义：** 输出结构表示为一个模式，可以通过多种方式定义。  
+**(2) 返回结构化输出：** 将该模式提供给模型，并指示其返回符合该模式的输出。
 
-## Recommended usage
+## 推荐用法
 
-This pseudo-code illustrates the recommended workflow when using structured output.
-LangChain provides a method, [`withStructuredOutput()`](/docs/how_to/structured_output/#the-.withstructuredoutput-method), that automates the process of binding the schema to the [model](/docs/concepts/chat_models/) and parsing the output.
-This helper function is available for all model providers that support structured output.
+以下伪代码展示了使用结构化输出时推荐的工作流程。LangChain 提供了一个方法 [`withStructuredOutput()`](/docs/how_to/structured_output/#the-.withstructuredoutput-method)，它可以自动完成将模式绑定到[模型](/docs/concepts/chat_models/)并解析输出的过程。此辅助函数对所有支持结构化输出的模型提供者都可用。
 
 ```typescript
-// Define schema
+// 定义模式
 const schema = { foo: "bar" };
-// Bind schema to model
+// 将模式绑定到模型
 const modelWithStructure = model.withStructuredOutput(schema);
-// Invoke the model to produce structured output that matches the schema
+// 调用模型以生成符合模式的结构化输出
 const structuredOutput = await modelWithStructure.invoke(userInput);
 ```
 
-## Schema definition
+## 模式定义
 
-The central concept is that the output structure of model responses needs to be represented in some way.
-While types of objects you can use depend on the model you're working with, there are common types of objects that are typically allowed or recommended for structured output in TypeScript.
+核心概念是，模型响应的输出结构需要以某种方式表示。虽然可以使用的对象类型取决于你正在使用的模型，但在 TypeScript 中，通常允许或推荐使用一些常见的对象类型用于结构化输出。
 
-The simplest and most common format for structured output is a Zod schema definition:
+结构化输出最简单且常见的格式是 Zod 模式定义：
 
 ```typescript
 import { z } from "zod";
 
 const ResponseFormatter = z.object({
-  answer: z.string().describe("The answer to the user's question"),
+  answer: z.string().describe("对用户问题的回答"),
   followup_question: z
     .string()
-    .describe("A followup question the user could ask"),
+    .describe("用户可能提出的后续问题"),
 });
 ```
 
-You can also define a JSONSchema object, which is what Zod schemas are converted to internally before being sent to the model provider:
+你也可以定义一个 JSONSchema 对象，这是 Zod 模式在发送给模型提供者之前内部转换为的格式：
 
 ```json
 {
@@ -57,11 +51,11 @@ You can also define a JSONSchema object, which is what Zod schemas are converted
   "type": "object",
   "properties": {
     "answer": {
-      "description": "The answer to the user's question",
+      "description": "对用户问题的回答",
       "type": "string"
     },
     "followup_question": {
-      "description": "A followup question the user could ask",
+      "description": "用户可能提出的后续问题",
       "type": "string"
     }
   },
@@ -69,18 +63,13 @@ You can also define a JSONSchema object, which is what Zod schemas are converted
 }
 ```
 
-## Returning structured output
+## 返回结构化输出
 
-With a schema defined, we need a way to instruct the model to use it.
-While one approach is to include this schema in the prompt and _ask nicely_ for the model to use it, this is not recommended.
-Several more powerful methods that utilizes native features in the model provider's API are available.
+在定义了模式之后，我们需要一种方法来指示模型使用它。虽然一种方法是将该模式包含在提示词中并“礼貌地请求”模型使用它，但不推荐这样做。我们有几种更强大的方法，利用模型提供者 API 中的原生功能。
 
-### Using tool calling
+### 使用工具调用
 
-Many [model providers support](/docs/integrations/chat/) tool calling, a concept discussed in more detail in our [tool calling guide](/docs/concepts/tool_calling/).
-In short, tool calling involves binding a tool to a model and, when appropriate, the model can _decide_ to call this tool and ensure its response conforms to the tool's schema.
-With this in mind, the central concept is straightforward: _create a tool with our schema and bind it to the model!_
-Here is an example using the `ResponseFormatter` schema defined above:
+许多[模型提供者支持](/docs/integrations/chat/)工具调用，这一概念在我们的[工具调用指南](/docs/concepts/tool_calling/)中有更详细的讨论。简而言之，工具调用涉及将一个工具绑定到模型上，当合适时，模型可以“决定”调用此工具并确保其响应符合该工具的模式。基于此，核心概念非常直接：**创建一个以我们的模式为结构的工具并将其绑定到模型！** 以下是一个使用上面定义的 `ResponseFormatter` 模式的示例：
 
 ```typescript
 import { ChatOpenAI } from "@langchain/openai";
@@ -90,27 +79,24 @@ const model = new ChatOpenAI({
   temperature: 0,
 });
 
-// Create a tool with ResponseFormatter as its schema.
+// 使用 ResponseFormatter 作为模式创建一个工具
 const responseFormatterTool = tool(async () => {}, {
   name: "responseFormatter",
   schema: ResponseFormatter,
 });
 
-// Bind the created tool to the model
+// 将创建的工具绑定到模型
 const modelWithTools = model.bindTools([responseFormatterTool]);
 
-// Invoke the model
+// 调用模型
 const aiMsg = await modelWithTools.invoke(
-  "What is the powerhouse of the cell?"
+  "细胞的动力工厂是什么？"
 );
 ```
 
-### JSON mode
+### JSON 模式
 
-In addition to tool calling, some model providers support a feature called `JSON mode`.
-This supports JSON schema definition as input and enforces the model to produce a conforming JSON output.
-You can find a table of model providers that support JSON mode [here](/docs/integrations/chat/).
-Here is an example of how to use JSON mode with OpenAI:
+除了工具调用之外，某些模型提供者还支持一个名为 `JSON 模式` 的功能。它支持将 JSON 模式定义作为输入，并强制模型生成符合该模式的 JSON 输出。你可以在[此处](/docs/integrations/chat/)找到支持 JSON 模式的模型提供者列表。以下是一个使用 OpenAI 的 JSON 模式功能的示例：
 
 ```typescript
 import { ChatOpenAI } from "@langchain/openai";
@@ -122,17 +108,15 @@ const model = new ChatOpenAI({
 });
 
 const aiMsg = await model.invoke(
-  "Return a JSON object with key 'random_nums' and a value of 10 random numbers in [0-99]"
+  "返回一个 JSON 对象，键为 'random_nums'，值为 [0-99] 范围内的 10 个随机数"
 );
 console.log(aiMsg.content);
-// Output: {
+// 输出: {
 //   "random_nums": [23, 47, 89, 15, 34, 76, 58, 3, 62, 91]
 // }
 ```
 
-One important point to flag: the model _still_ returns a string, which needs to be parsed into a JSON object.
-This can, of course, simply use the `json` library or a JSON output parser if you need more advanced functionality.
-See this [how-to guide on the JSON output parser](/docs/how_to/output_parser_json) for more details.
+一个重要的注意事项：模型**仍然**返回的是字符串，需要将其解析为 JSON 对象。当然，如果你需要更高级的功能，可以使用 `json` 库或 JSON 输出解析器。更多细节请参见此[关于 JSON 输出解析器的指南](/docs/how_to/output_parser_json)。
 
 ```typescript
 import json
@@ -140,36 +124,34 @@ const jsonObject = JSON.parse(aiMsg.content)
 // {'random_ints': [23, 47, 89, 15, 34, 76, 58, 3, 62, 91]}
 ```
 
-## Structured output method
+## 结构化输出方法
 
-There are a few challenges when producing structured output with the above methods:
+使用上述方法生成结构化输出时会遇到一些挑战：
 
-(1) If using tool calling, tool call arguments needs to be parsed from an object back to the original schema.
+(1) 如果使用工具调用，则需要将工具调用的参数从对象解析回原始模式。  
+(2) 此外，当我们要强制模型始终使用工具时，需要对其进行指示，这是一个特定于提供者的设置。  
+(3) 如果使用 JSON 模式，则需要将输出解析为 JSON 对象。
 
-(2) In addition, the model needs to be instructed to _always_ use the tool when we want to enforce structured output, which is a provider specific setting.
+考虑到这些挑战，LangChain 提供了一个辅助函数 (`withStructuredOutput()`) 来简化整个过程。
 
-(3) If using JSON mode, the output needs to be parsed into a JSON object.
+![withStructuredOutput 方法图示](/img/with_structured_output.png)
 
-With these challenges in mind, LangChain provides a helper function (`withStructuredOutput()`) to streamline the process.
-
-![Diagram of with structured output](/img/with_structured_output.png)
-
-This both binds the schema to the model as a tool and parses the output to the specified output schema.
+该方法既可以将模式作为工具绑定到模型，又可以将输出解析为指定的输出模式。
 
 ```typescript
-// Bind the schema to the model
+// 将模式绑定到模型
 const modelWithStructure = model.withStructuredOutput(ResponseFormatter);
-// Invoke the model
+// 调用模型
 const structuredOutput = await modelWithStructure.invoke(
-  "What is the powerhouse of the cell?"
+  "细胞的动力工厂是什么？"
 );
-// Get back the object
+// 获取返回的对象
 console.log(structuredOutput);
-// { answer: "The powerhouse of the cell is the mitochondrion. Mitochondria are organelles that generate most of the cell's supply of adenosine triphosphate (ATP), which is used as a source of chemical energy.", followup_question: "What is the function of ATP in the cell?" }
+// { answer: "细胞的动力工厂是线粒体。线粒体是一种细胞器，负责生成细胞大部分三磷酸腺苷 (ATP)，ATP 是化学能的来源。", followup_question: "ATP 在细胞中的作用是什么？" }
 ```
 
-:::info[Further reading]
+:::info[进一步阅读]
 
-For more details on usage, see our [how-to guide](/docs/how_to/structured_output/#the-.withstructuredoutput-method).
+如需了解更多使用细节，请参见我们的[使用指南](/docs/how_to/structured_output/#the-.withstructuredoutput-method)。
 
 :::

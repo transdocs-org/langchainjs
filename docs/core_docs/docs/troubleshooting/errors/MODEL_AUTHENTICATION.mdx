@@ -1,15 +1,15 @@
-# MODEL_AUTHENTICATION
+# 模型认证失败
 
-Your model provider is denying you access to their service.
+你的模型提供商拒绝了你访问其服务的权限。
 
-## Troubleshooting
+## 故障排查
 
-The following may help resolve this error:
+以下方法可能有助于解决此错误：
 
-- Confirm that your API key or other credentials are correct.
-- If you are relying on an environment variable to authenticate, confirm that the variable name is correct and that it has a value set.
-  - Note that some environments, like Cloudflare Workers, do not support environment variables.
-  - For some models, you can try explicitly passing an `apiKey` parameter to rule out any environment variable issues like this:
+- 确认你的 API 密钥或其他凭据是正确的。
+- 如果你依赖环境变量进行身份验证，请确认变量名称正确且已设置值。
+  - 注意某些环境（如 Cloudflare Workers）不支持环境变量。
+  - 对于某些模型，你可以尝试显式传递 `apiKey` 参数，以排除此类环境变量问题：
 
 ```ts
 const model = new ChatOpenAI({
@@ -18,4 +18,4 @@ const model = new ChatOpenAI({
 });
 ```
 
-- If you are using a proxy or other custom endpoint, make sure that your custom provider does not expect an alternative authentication scheme.
+- 如果你使用了代理或其它自定义端点，请确保你的自定义提供商不期望使用其他的身份验证方案。

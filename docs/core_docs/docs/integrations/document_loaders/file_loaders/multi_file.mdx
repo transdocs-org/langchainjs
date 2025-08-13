@@ -3,11 +3,11 @@ sidebar_position: 2
 hide_table_of_contents: true
 ---
 
-# Multiple individual files
+# 多个单独文件
 
-This example goes over how to load data from multiple file paths. The second argument is a map of file extensions to loader factories. Each file will be passed to the matching loader, and the resulting documents will be concatenated together.
+本示例介绍了如何从多个文件路径加载数据。第二个参数是一个文件扩展名到加载器工厂的映射。每个文件都会被传递给对应的加载器，生成的文档将被合并在一起。
 
-Example files:
+示例文件：
 
 ```text
 src/document_loaders/example_data/example/
@@ -19,7 +19,7 @@ src/document_loaders/example_data/example2/
 └── example.jsonl
 ```
 
-Example code:
+示例代码：
 
 ```typescript
 import { MultiFileLoader } from "langchain/document_loaders/fs/multi_file";

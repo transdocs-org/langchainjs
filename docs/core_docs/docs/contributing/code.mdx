@@ -2,118 +2,110 @@
 sidebar_position: 1
 ---
 
-# Contribute Code
+# 贡献代码
 
-To contribute to this project, please follow the ["fork and pull request"](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) workflow.
-Please do not try to push directly to this repo unless you are a maintainer.
+如要为本项目贡献代码，请遵循 ["fork 并提交 PR"](https://docs.github.com/zh-cn/get-started/quickstart/contributing-to-projects) 的工作流。  
+除非你是项目维护者，否则请不要尝试直接向本仓库提交代码。
 
-Please follow the checked-in pull request template when opening pull requests. Note related issues and tag relevant
-maintainers.
+提交 Pull Request 时，请使用项目提供的 PR 模板。请注明相关的 Issue 并 @ 相关的维护者。
 
-Pull requests cannot land without passing the formatting, linting, and testing checks first. See [Testing](#testing) and
-[Formatting and Linting](#formatting-and-linting) for how to run these checks locally.
+Pull Request 必须通过格式化、代码检查和测试后才能被合并。如何在本地运行这些检查，请参见 [测试](#测试) 和 [格式化与代码检查](#格式化与代码检查)。
 
-It's essential that we maintain great documentation and testing. If you:
+维护高质量的文档和测试是非常重要的。如果你：
 
-- Fix a bug
-  - Add a relevant unit or integration test when possible. These live in `**/tests/*.test.ts` and `**/tests/*.int.test.ts/`.
-- Make an improvement
-  - Update any affected example notebooks and documentation. These live in `docs`.
-  - Update unit and integration tests when relevant.
-- Add a feature
-  - Add a demo notebook/MDX file in `docs/core_docs/docs`.
-  - Add unit and integration tests.
+- 修复了一个 bug
+  - 在可能的情况下添加相应的单元测试或集成测试。这些测试文件位于 `**/tests/*.test.ts` 和 `**/tests/*.int.test.ts` 中。
+- 做了改进
+  - 更新受影响的示例笔记本和文档。这些内容位于 `docs` 文件夹中。
+  - 在需要时更新单元测试和集成测试。
+- 添加了新功能
+  - 在 `docs/core_docs/docs` 中添加演示用的笔记本或 MDX 文件。
+  - 添加单元测试和集成测试。
 
-We are a small, progress-oriented team. If there's something you'd like to add or change, opening a pull request is the
-best way to get our attention.
+我们是一个小而注重进展的团队。如果你想添加或修改某些内容，最有效的方式就是提交一个 Pull Request 来引起我们的注意。
 
-## 🚀 Quick Start
+## 🚀 快速开始
 
-This quick start guide explains how to run the repository locally.
-For a [development container](https://containers.dev/), see the [.devcontainer folder](https://github.com/langchain-ai/langchainjs/tree/main/.devcontainer).
+本快速入门指南解释了如何在本地运行本仓库。  
+关于 [开发容器](https://containers.dev/)，请参见 [.devcontainer 文件夹](https://github.com/langchain-ai/langchainjs/tree/main/.devcontainer)。
 
-### 🏭 Release process
+### 🏭 发布流程
 
-As of now, LangChain has an ad hoc release process: releases are cut with high frequency by
-a developer and published to [npm](https://www.npmjs.com/package/langchain).
+目前，LangChain 使用的是临时的发布流程：由开发人员高频次地进行版本发布，并发布到 [npm](https://www.npmjs.com/package/langchain)。
 
-LangChain follows the [semver](https://semver.org/) versioning standard. However, as pre-1.0 software,
-even patch releases may contain [non-backwards-compatible changes](https://semver.org/#spec-item-4).
+LangChain 遵循 [语义化版本号](https://semver.org/) 的标准。但因为是 1.0 之前的版本，即使是补丁版本也可能包含[不兼容的变更](https://semver.org/#spec-item-4)。
 
-If your contribution has made its way into a release, we will want to give you credit on Twitter (only if you want though)!
-If you have a Twitter account you would like us to mention, please let us know in the PR or in another manner.
+如果你的贡献已被包含在某个发布版本中，我们希望在 Twitter 上给予你致谢（当然仅在你同意的情况下）！  
+如果你有希望我们提及的 Twitter 账号，请在 PR 中或通过其他方式告知我们。
 
-#### Integration releases
+#### 集成发布
 
-The release script can be executed only while on a fresh `main` branch, with no un-committed changes, from the package root. If working from a fork of the repository, make sure to sync the forked `main` branch with the upstream `main` branch first.
+发布脚本只能在干净的 `main` 分支上执行，且不能有任何未提交的更改，需从包根目录调用。如果使用的是仓库的 fork，请确保先将 fork 的 `main` 分支与上游的 `main` 分支同步。
 
-You can invoke the script by calling `yarn release`. If new dependencies have been added to the integration package, install them first (i.e. run `yarn`, then `yarn release`).
+你可以通过调用 `yarn release` 来执行该脚本。如果集成包中新增了依赖项，请先安装它们（即运行 `yarn`，然后再运行 `yarn release`）。
 
-There are three parameters which can be passed to this script, one required and two optional.
+该脚本可以接受三个参数，其中一个是必填的，两个是可选的。
 
-- **Required**: `<workspace name>`. eg: `@langchain/core` The name of the package to release. Can be found in the `name` value of the package's `package.json`
-- **Optional**: `--bump-deps` eg `--bump-deps` Will find all packages in the repo which depend on this workspace and checkout a new branch, update the dep version, run yarn install, commit & push to new branch. Generally, this is not necessary.
-- **Optional**: `--tag <tag>` eg `--tag beta` Add a tag to the NPM release. Useful if you want to push a release candidate.
+- **必填**：`<workspace name>`。例如：`@langchain/core`。这是要发布的包的名称，可以在该包的 `package.json` 文件中的 `name` 字段找到。
+- **可选**：`--bump-deps`。例如：`--bump-deps`。该参数会查找仓库中依赖该工作区的所有包，创建一个新分支、更新依赖版本、运行 `yarn install`、提交并推送到新分支。通常情况下不需要使用该参数。
+- **可选**：`--tag <tag>`。例如：`--tag beta`。为 NPM 发布添加一个标签。当你希望发布一个候选版本时很有用。
 
-This script automatically bumps the package version, creates a new release branch with the changes, pushes the branch to GitHub, uses `release-it` to automatically release to NPM, and more depending on the flags passed.
+该脚本会自动增加包版本号，创建一个新的发布分支，将更改推送到 GitHub，使用 `release-it` 自动发布到 NPM，具体行为取决于传入的标志。
 
-Halfway through this script, you'll be prompted to enter an NPM OTP (typically from an authenticator app). This value is not stored anywhere and is only used to authenticate the NPM release.
+在执行该脚本的过程中，你将被提示输入一个 NPM OTP（通常来自身份验证应用）。该值不会存储在任何地方，仅用于认证 NPM 发布。
 
-> **Note** Unless releasing `langchain`, `no` should be answered to all prompts following `Publish @langchain/<package> to npm?`. Then, the change should be manually committed with the following commit message: `<package>[patch]: Release <new version>`. E.g.: `groq[patch]: Release 0.0.1`.
+> **注意**：除非发布的是 `langchain`，否则在出现 `Publish @langchain/<package> to npm?` 提示时应回答 `no`。然后应手动提交更改，并使用以下提交信息：`<package>[patch]: Release <new version>`。例如：`groq[patch]: Release 0.0.1`。
 
-Docker must be running if releasing one of `langchain`, `@langchain/core` or `@langchain/community`. These packages run LangChain's export tests, which run inside docker containers.
+如果发布的是 `langchain`、`@langchain/core` 或 `@langchain/community`，则必须运行 Docker。这些包运行 LangChain 的导出测试，这些测试在 Docker 容器中运行。
 
-Full example: `yarn release @langchain/core`.
+完整示例：`yarn release @langchain/core`。
 
-### 🛠️ Tooling
+### 🛠️ 工具
 
-This project uses the following tools, which are worth getting familiar
-with if you plan to contribute:
+本项目使用了以下工具，如果你计划贡献代码，建议熟悉它们：
 
-- **[yarn](https://yarnpkg.com/) (v3.4.1)** - dependency management
-- **[eslint](https://eslint.org/)** - enforcing standard lint rules
-- **[prettier](https://prettier.io/)** - enforcing standard code formatting
-- **[jest](https://jestjs.io/)** - testing code
-- **[TypeDoc](https://typedoc.org/)** - reference doc generation from
-  comments
-- **[Docusaurus](https://docusaurus.io/)** - static site generation for documentation
+- **[yarn](https://yarnpkg.com/) (v3.4.1)** - 依赖管理
+- **[eslint](https://eslint.org/)** - 执行标准的代码检查规则
+- **[prettier](https://prettier.io/)** - 执行标准的代码格式化
+- **[jest](https://jestjs.io/)** - 测试代码
+- **[TypeDoc](https://typedoc.org/)** - 从注释生成参考文档
+- **[Docusaurus](https://docusaurus.io/)** - 用于文档的静态站点生成
 
-## 🚀 Quick Start
+## 🚀 快速开始
 
-Clone this repo, then cd into it:
+克隆本仓库，然后进入目录：
 
 ```bash
 cd langchainjs
 ```
 
-Next, try running the following common tasks:
+接下来，尝试运行以下常见任务：
 
-## ✅ Common Tasks
+## ✅ 常见任务
 
-Our goal is to make it as easy as possible for you to contribute to this project.
-All of the below commands should be run from within a workspace directory (e.g. `langchain`, `libs/langchain-community`) unless otherwise noted.
+我们的目标是让你尽可能轻松地为本项目做贡献。除非另有说明，所有以下命令都应在工作区目录中运行（例如 `langchain`、`libs/langchain-community`）。
 
 ```bash
 cd langchain
 ```
 
-Or, if you are working on a community integration:
+或者，如果你正在处理社区集成：
 
 ```bash
 cd libs/langchain-community
 ```
 
-### Setup
+### 安装依赖
 
-**Prerequisite**: Node version 18+ is required. Please check node version `node -v` and update it if required.
+**前提条件**：需要 Node 版本 18+。请检查你的 Node 版本 `node -v`，必要时更新版本。
 
-To get started, you will need to install the dependencies for the project. To do so, run:
+要开始工作，你需要先安装项目的依赖项。运行：
 
 ```bash
 yarn
 ```
 
-Then, you will need to switch directories into `langchain-core` and build core by running:
+然后，进入 `langchain-core` 目录并构建核心模块：
 
 ```bash
 cd ../langchain-core
@@ -121,92 +113,87 @@ yarn
 yarn build
 ```
 
-### Linting
+### 代码检查
 
-We use [eslint](https://eslint.org/) to enforce standard lint rules.
-To run the linter, run:
+我们使用 [eslint](https://eslint.org/) 来执行标准的代码检查规则。  
+要运行代码检查器，运行：
 
 ```bash
 yarn lint
 ```
 
-### Formatting
+### 格式化
 
-We use [prettier](https://prettier.io) to enforce code formatting style.
-To run the formatter, run:
+我们使用 [prettier](https://prettier.io) 来执行代码格式化规则。  
+要运行格式化工具，运行：
 
 ```bash
 yarn format
 ```
 
-To just check for formatting differences, without fixing them, run:
+仅检查格式差异而不自动修复它们：
 
 ```bash
 yarn format:check
 ```
 
-### Testing
+### 测试
 
-In general, tests should be added within a `tests/` folder alongside the modules they
-are testing.
+一般来说，测试应该放在与被测试模块同级的 `tests/` 文件夹中。
 
-**Unit tests** cover modular logic that does not require calls to outside APIs.
+**单元测试** 覆盖不依赖外部 API 调用的模块化逻辑。
 
-If you add new logic, please add a unit test.
-Unit tests should be called `*.test.ts`.
+如果你添加了新的逻辑，请添加一个单元测试。  
+单元测试文件应命名为 `*.test.ts`。
 
-To run only unit tests, run:
+要仅运行单元测试，运行：
 
 ```bash
 yarn test
 ```
 
-#### Running a single test
+#### 运行单个测试
 
-To run a single test, run the following from within a workspace:
+要运行单个测试，在工作区目录中运行以下命令：
 
 ```bash
 yarn test:single /path/to/yourtest.test.ts
 ```
 
-This is useful for developing individual features.
+这对于开发单个功能非常有用。
 
-**Integration tests** cover logic that requires making calls to outside APIs (often integration with other services).
+**集成测试** 覆盖需要调用外部 API 的逻辑（通常是与其他服务的集成）。
 
-If you add support for a new external API, please add a new integration test.
-Integration tests should be called `*.int.test.ts`.
+如果你添加了对新外部 API 的支持，请添加新的集成测试。  
+集成测试文件应命名为 `*.int.test.ts`。
 
-Note that most integration tests require credentials or other setup. You will likely need to set up a `langchain/.env` or `libs/langchain-community/.env` file
-like the example [here](https://github.com/langchain-ai/langchainjs/blob/main/langchain/.env.example).
+注意：大多数集成测试需要凭据或其他配置。你可能需要创建一个 `langchain/.env` 或 `libs/langchain-community/.env` 文件，参考示例 [这里](https://github.com/langchain-ai/langchainjs/blob/main/langchain/.env.example)。
 
-We generally recommend only running integration tests with `yarn test:single`, but if you want to run all integration tests, run:
+我们建议你只使用 `yarn test:single` 来运行集成测试。如果你想运行所有集成测试，运行：
 
 ```bash
 yarn test:integration
 ```
 
-### Building
+### 构建
 
-To build the project, run:
+要构建项目，运行：
 
 ```bash
 yarn build
 ```
 
-### Adding an Entrypoint
+### 添加入口点
 
-LangChain exposes multiple subpaths the user can import from, e.g.
+LangChain 暴露了多个子路径供用户导入，例如：
 
 ```typescript
 import { OpenAI } from "langchain/llms/openai";
 ```
 
-We call these subpaths "entrypoints". In general, you should create a new entrypoint if you are adding a new integration with a 3rd party library. If you're adding self-contained functionality without any external dependencies, you can add it to an existing entrypoint.
+我们将这些子路径称为 "入口点"。一般来说，如果你添加了一个与第三方库集成的新功能，你应该创建一个新的入口点。如果你添加的功能是自包含的且没有外部依赖，可以将其添加到已有的入口点中。
 
-In order to declare a new entrypoint that users can import from, you
-should edit the `langchain/langchain.config.js` or `libs/langchain-community/langchain.config.js` file. To add an
-entrypoint `tools` that imports from `tools/index.ts` you'd add
-the following to the `entrypoints` key inside the `config` variable:
+为了声明一个用户可以导入的新入口点，你应该编辑 `langchain/langchain.config.js` 或 `libs/langchain-community/langchain.config.js` 文件。假设你要添加一个名为 `tools` 的入口点，它从 `tools/index.ts` 导入，你可以在 `config` 变量中的 `entrypoints` 键中添加如下内容：
 
 ```typescript
 // ...
@@ -217,7 +204,7 @@ entrypoints: {
 // ...
 ```
 
-If you're adding a new integration which requires installing a third party dependency, you must add the entrypoint to the `requiresOptionalDependency` array, also located inside `langchain/langchain.config.js` or `libs/langchain-community/langchain.config.js`.
+如果你添加的新集成需要安装第三方依赖，你必须将该入口点添加到 `requiresOptionalDependency` 数组中，该数组同样位于 `langchain/langchain.config.js` 或 `libs/langchain-community/langchain.config.js` 文件中。
 
 ```typescript
 // ...
@@ -228,81 +215,75 @@ requiresOptionalDependency: [
 // ...
 ```
 
-This will make sure the entrypoint is included in the published package,
-and in generated documentation.
+这将确保该入口点会被包含在发布的包中，并出现在生成的文档中。
 
-## Documentation
+## 文档
 
-### Contribute Documentation
+### 贡献文档
 
-#### Install dependencies
+#### 安装依赖
 
-##### Note: you only need to follow these steps if you are building the docs site locally.
+##### 注意：你仅在需要本地构建文档站点时才需要执行以下步骤。
 
-1. [Quarto](https://quarto.org/) - package that converts Jupyter notebooks (`.ipynb` files) into `.mdx` files for serving in Docusaurus.
-2. `yarn build --filter=core_docs` - It's as simple as that! (or you can simply run `yarn build` from `docs/core_docs/`)
+1. [Quarto](https://quarto.org/) - 用于将 Jupyter 笔记本（`.ipynb` 文件）转换为 `.mdx` 文件以在 Docusaurus 中展示。
+2. `yarn build --filter=core_docs` - 就是这么简单！（或者你可以直接在 `docs/core_docs/` 中运行 `yarn build`）
 
-All notebooks are converted to `.md` files and automatically gitignored. If you would like to create a non notebook doc, it must be a `.mdx` file.
+所有笔记本都会被转换为 `.md` 文件，并被自动添加到 `.gitignore` 中。如果你想创建一个非笔记本的文档，必须使用 `.mdx` 文件。
 
-### Writing Notebooks
+### 编写笔记本
 
-When adding new dependencies inside the notebook you must update the import map inside `deno.json` in the root of the LangChain repo.
+当你在笔记本中添加新依赖时，你必须更新位于 LangChain 仓库根目录下的 `deno.json` 文件中的 import map。
 
-This is required because the notebooks use the Deno runtime, and Deno formats imports differently than Node.js.
+这是因为笔记本使用的是 Deno 运行时，而 Deno 的导入格式与 Node.js 不同。
 
-Example:
+示例：
 
 ```typescript
-// Import in Node:
+// Node 中的导入：
 import { z } from "zod";
-// Import in Deno:
+// Deno 中的导入：
 import { z } from "npm:/zod";
 ```
 
-See examples inside `deno.json` for more details.
+更多示例请参见 `deno.json` 文件。
 
-Docs are largely autogenerated by [TypeDoc](https://typedoc.org/) from the code.
+文档主要通过 [TypeDoc](https://typedoc.org/) 从代码注释中自动生成。
 
-For that reason, we ask that you add good documentation to all classes and methods.
+因此，我们要求你为所有类和方法添加良好的文档注释。
 
-Similar to linting, we recognize documentation can be annoying. If you do not want to do it, please contact a project maintainer, and they can help you with it. We do not want this to be a blocker for good code getting contributed.
+与代码检查类似，我们理解文档编写可能令人厌烦。如果你不想编写文档，请联系项目维护者，他们可以协助你完成。我们不希望文档成为高质量代码贡献的障碍。
 
-Documentation and the skeleton lives under the `docs/` folder. Example code is imported from under the `examples/` folder.
+文档和骨架文件位于 `docs/` 文件夹下。示例代码从 `examples/` 文件夹中导入。
 
-### Running examples
+### 运行示例
 
-If you add a new major piece of functionality, it is helpful to add an
-example to showcase how to use it. Most of our users find examples to be the
-most helpful kind of documentation.
+如果你添加了一个重要的新功能，添加一个示例来展示其使用方法是非常有帮助的。我们的大多数用户发现示例是最有用的文档形式。
 
-Examples can be added in the `examples/src` directory, e.g.
-`examples/src/path/to/example`. This
-example can then be invoked with `yarn example path/to/example` at the top
-level of the repo.
+你可以在 `examples/src` 目录下添加示例，例如 `examples/src/path/to/example`。  
+然后你可以在仓库顶层通过 `yarn example path/to/example` 来运行该示例。
 
-To run examples that require an environment variable, you'll need to add a `.env` file under `examples/.env`.
+要运行需要环境变量的示例，你需要在 `examples/.env` 下添加一个 `.env` 文件。
 
-### Build Documentation Locally
+### 本地构建文档
 
-To generate and view the documentation locally, change to the project root and run `yarn` to ensure dependencies get installed
-in both the `docs/` and `examples/` workspaces:
+要在本地生成并查看文档，请进入项目根目录并运行 `yarn` 以确保在 `docs/` 和 `examples/` 工作区中安装了依赖项：
 
 ```bash
 cd ..
 yarn
 ```
 
-Then run:
+然后运行：
 
 ```bash
 yarn docs
 ```
 
-## Advanced
+## 高级主题
 
-**Environment tests** test whether LangChain works across different JS environments, including Node.js (both ESM and CJS), Edge environments (eg. Cloudflare Workers), and browsers (using Webpack).
+**环境测试** 用于测试 LangChain 在不同 JS 环境下的运行情况，包括 Node.js（ESM 和 CJS）、Edge 环境（例如 Cloudflare Workers）和浏览器（使用 Webpack）。
 
-To run the environment tests with Docker, run the following command from the project root:
+要使用 Docker 运行环境测试，请在项目根目录下运行以下命令：
 
 ```bash
 yarn test:exports:docker

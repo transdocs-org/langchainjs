@@ -4,36 +4,35 @@ hide_table_of_contents: true
 
 import CodeBlock from "@theme/CodeBlock";
 
-# AssemblyAI Audio Transcript
+# AssemblyAI 音频转录文本
 
-This covers how to load audio (and video) transcripts as document objects from a file using the [AssemblyAI API](https://www.assemblyai.com/docs/api-reference/transcripts/submit?utm_source=langchainjs).
+本文介绍如何使用 [AssemblyAI API](https://www.assemblyai.com/docs/api-reference/transcripts/submit?utm_source=langchainjs) 从文件中加载音频（和视频）转录文本作为文档对象。
 
-## Usage
+## 使用方法
 
-First, you'll need to install the official AssemblyAI package:
+首先，你需要安装官方的 AssemblyAI 包：
 
 ```bash npm2yarn
 npm install @langchain/community @langchain/core assemblyai
 ```
 
-To use the loaders you need an [AssemblyAI account](https://www.assemblyai.com/dashboard/signup?utm_source=langchainjs) and
-[get your AssemblyAI API key from the dashboard](https://www.assemblyai.com/app/account?utm_source=langchainjs).
+要使用加载器，你需要一个 [AssemblyAI 账户](https://www.assemblyai.com/dashboard/signup?utm_source=langchainjs)，并[从仪表板获取你的 AssemblyAI API 密钥](https://www.assemblyai.com/app/account?utm_source=langchainjs)。
 
-Then, configure the API key as the `ASSEMBLYAI_API_KEY` environment variable or the `apiKey` options parameter.
+然后，将 API 密钥配置为 `ASSEMBLYAI_API_KEY` 环境变量，或者通过 `apiKey` 选项参数传入。
 
 import TranscriptExample from "@examples/document_loaders/assemblyai_audio_transcription.ts";
 
 <CodeBlock language="typescript">{TranscriptExample}</CodeBlock>
 
-> ** info **
+> **提示**
 >
-> - You can use the `AudioTranscriptParagraphsLoader` or `AudioTranscriptSentencesLoader` to split the transcript into paragraphs or sentences.
-> - The `audio` parameter can be a URL, a local file path, a buffer, or a stream.
-> - The `audio` can also be a video file. See the [list of supported file types in the FAQ doc](https://www.assemblyai.com/docs/concepts/faq?utm_source=langchainjs#:~:text=file%20types%20are%20supported).
-> - If you don't pass in the `apiKey` option, the loader will use the `ASSEMBLYAI_API_KEY` environment variable.
-> - You can add more properties in addition to `audio`. Find the full list of request parameters in the [AssemblyAI API docs](https://www.assemblyai.com/docs/api-reference/transcripts/submit?utm_source=langchainjs#create-a-transcript).
+> - 你可以使用 `AudioTranscriptParagraphsLoader` 或 `AudioTranscriptSentencesLoader` 将转录文本按段落或句子拆分。
+> - `audio` 参数可以是 URL、本地文件路径、buffer 或流。
+> - `audio` 也可以是视频文件。支持的文件类型请参阅[常见问题文档](https://www.assemblyai.com/docs/concepts/faq?utm_source=langchainjs#:~:text=file%20types%20are%20supported)。
+> - 如果没有传入 `apiKey` 选项，加载器将使用 `ASSEMBLYAI_API_KEY` 环境变量。
+> - 你可以添加除 `audio` 外的更多属性。完整的请求参数列表请参阅 [AssemblyAI API 文档](https://www.assemblyai.com/docs/api-reference/transcripts/submit?utm_source=langchainjs#create-a-transcript)。
 
-You can also use the `AudioSubtitleLoader` to get `srt` or `vtt` subtitles as a document.
+你还可以使用 `AudioSubtitleLoader` 来获取 `srt` 或 `vtt` 格式的字幕作为文档。
 
 import SubtitleExample from "@examples/document_loaders/assemblyai_subtitles.ts";
 

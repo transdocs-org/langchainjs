@@ -1,21 +1,21 @@
-# Time-Weighted Retriever
+# 时间加权检索器
 
-A Time-Weighted Retriever is a retriever that takes into account recency in addition to similarity. The scoring algorithm is:
+时间加权检索器是一种在考虑相似性的同时还考虑时间新旧程度的检索器。其评分算法如下：
 
 ```typescript
 let score = (1.0 - this.decayRate) ** hoursPassed + vectorRelevance;
 ```
 
-Notably, `hoursPassed` above refers to the time since the object in the retriever was last accessed, not since it was created. This means that frequently accessed objects remain "fresh" and score higher.
+值得注意的是，上面的 `hoursPassed` 指的是自检索器中的对象上次被访问以来的时间，而不是自其创建以来的时间。这意味着频繁访问的对象会保持“新鲜”，并获得更高的评分。
 
-`this.decayRate` is a configurable decimal number between 0 and 1. A lower number means that documents will be "remembered" for longer, while a higher number strongly weights more recently accessed documents.
+`this.decayRate` 是一个介于 0 和 1 之间的可配置小数。数值越低表示文档会被“记住”更长时间，而数值越高则会显著提升最近访问文档的权重。
 
-Note that setting a decay rate of exactly 0 or 1 makes `hoursPassed` irrelevant and makes this retriever equivalent to a standard vector lookup.
+请注意，如果将衰减率设置为恰好 0 或 1，则 `hoursPassed` 将变得无关紧要，此时该检索器等效于标准的向量检索器。
 
-## Usage
+## 使用方法
 
-This example shows how to intialize a `TimeWeightedVectorStoreRetriever` with a vector store.
-It is important to note that due to required metadata, all documents must be added to the backing vector store using the `addDocuments` method on the **retriever**, not the vector store itself.
+以下示例展示了如何使用向量存储初始化一个 `TimeWeightedVectorStoreRetriever`。
+需要注意的是，由于需要元数据，所有文档都必须使用**检索器**上的 `addDocuments` 方法添加到背后的向量存储中，而不是直接使用向量存储本身的方法。
 
 import CodeBlock from "@theme/CodeBlock";
 import Example from "@examples/retrievers/time-weighted-retriever.ts";
@@ -30,7 +30,7 @@ npm install @langchain/openai @langchain/core
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Retriever [conceptual guide](/docs/concepts/retrievers)
-- Retriever [how-to guides](/docs/how_to/#retrievers)
+- 检索器 [概念指南](/docs/concepts/retrievers)
+- 检索器 [操作指南](/docs/how_to/#retrievers)

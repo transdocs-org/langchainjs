@@ -1,33 +1,33 @@
-# How to invoke runnables in parallel
+# 如何并行调用可运行对象
 
-:::info Prerequisites
+:::info 前提条件
 
-This guide assumes familiarity with the following concepts:
+本指南假定你熟悉以下概念：
 
-- [LangChain Expression Language (LCEL)](/docs/concepts/lcel)
-- [Chaining runnables](/docs/how_to/sequence/)
+- [LangChain 表达式语言 (LCEL)](/docs/concepts/lcel)
+- [链式调用可运行对象](/docs/how_to/sequence/)
 
 :::
 
-The [`RunnableParallel`](https://api.js.langchain.com/classes/langchain_core.runnables.RunnableParallel.html) (also known as a `RunnableMap`) primitive is an object whose values are runnables (or things that can be coerced to runnables, like functions).
-It runs all of its values in parallel, and each value is called with the initial input to the `RunnableParallel`. The final return value is an object with the results of each value under its appropriate key.
+[`RunnableParallel`](https://api.js.langchain.com/classes/langchain_core.runnables.RunnableParallel.html)（也称为 `RunnableMap`）是一种原始对象，其值是可运行对象（或可以被强制转换为可运行对象的对象，比如函数）。  
+它会并行运行其所有值，每个值都会使用传给 `RunnableParallel` 的初始输入进行调用。最终的返回值是一个对象，其键对应各个值的结果。
 
-## Formatting with `RunnableParallels`
+## 使用 `RunnableParallels` 格式化数据
 
-`RunnableParallels` are useful for parallelizing operations, but can also be useful for manipulating the output of one Runnable to match the input format of the next Runnable in a sequence. You can use them to split or fork the chain so that multiple components can process the input in parallel. Later, other components can join or merge the results to synthesize a final response. This type of chain creates a computation graph that looks like the following:
+`RunnableParallels` 适用于并行化操作，但也可以用于将一个可运行对象的输出格式转换为下一个可运行对象所需的输入格式。你可以使用它们来拆分或分支链，使得多个组件可以并行处理输入。之后，其他组件可以合并或整合这些结果，以生成最终响应。这种类型的链会创建一个如下所示的计算图：
 
 ```text
-     Input
+     输入
       / \
      /   \
- Branch1 Branch2
+ 分支1 分支2
      \   /
       \ /
-      Combine
+     合并
 ```
 
-Below, the input to each chain in the `RunnableParallel` is expected to be an object with a key for `"topic"`.
-We can satisfy that requirement by invoking our chain with an object matching that structure.
+在下面的示例中，`RunnableParallel` 中每个链的输入都应是一个包含 `"topic"` 键的对象。  
+我们可以通过传递一个符合该结构的对象来满足这一要求。
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -42,22 +42,21 @@ import BasicExample from "@examples/guides/expression_language/runnable_maps_bas
 
 <CodeBlock language="typescript">{BasicExample}</CodeBlock>
 
-## Manipulating outputs/inputs
+## 操作输入/输出
 
-Maps can be useful for manipulating the output of one Runnable to match the input format of the next Runnable in a sequence.
+Maps 可以用于将一个可运行对象的输出转换为下一个可运行对象所需的输入格式。
 
-Note below that the object within the `RunnableSequence.from()` call is automatically coerced into a runnable map. All keys of the object must
-have values that are runnables or can be themselves coerced to runnables (functions to `RunnableLambda`s or objects to `RunnableMap`s).
-This coercion will also occur when composing chains via the `.pipe()` method.
+请注意，下面 `RunnableSequence.from()` 调用中的对象会被自动转换为一个 runnable map。对象的所有键的值必须是可运行对象，或者本身可以被强制转换为可运行对象（函数转换为 `RunnableLambda`，对象转换为 `RunnableMap`）。  
+当你通过 `.pipe()` 方法组合链时，也会发生类似的强制转换。
 
 import SequenceExample from "@examples/guides/expression_language/runnable_maps_sequence.ts";
 
 <CodeBlock language="typescript">{SequenceExample}</CodeBlock>
 
-Here the input to prompt is expected to be a map with keys "context" and "question". The user input is just the question. So we need to get the context using our retriever and passthrough the user input under the "question" key.
+在此示例中，prompt 的输入期望是一个包含 "context" 和 "question" 键的对象。用户的输入只是问题。因此我们需要使用检索器获取上下文，并将用户输入作为 "question" 键的值透传过去。
 
-## Next steps
+## 下一步
 
-You now know some ways to format and parallelize chain steps with `RunnableParallel`.
+你现在了解了一些使用 `RunnableParallel` 来格式化和并行化链式步骤的方法。
 
-Next, you might be interested in [using custom logic](/docs/how_to/functions/) in your chains.
+接下来，你可能会对在链中[使用自定义逻辑](/docs/how_to/functions/)感兴趣。

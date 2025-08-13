@@ -1,12 +1,12 @@
-# Mixedbread AI reranking
+# Mixedbread AI 重排序
 
-## Overview
+## 概述
 
-This guide will help you integrate and use the [Mixedbread AI](https://mixedbread.ai/) reranking API. The reranking API allows you to reorder a list of documents based on a given query, improving the relevance of search results or any ranked list.
+本指南将帮助你集成并使用 [Mixedbread AI](https://mixedbread.ai/) 的重排序 API。重排序 API 允许你根据给定的查询对文档列表进行重新排序，从而提升搜索结果或任意排序列表的相关性。
 
-## Installation
+## 安装
 
-To get started, install the `@langchain/mixedbread-ai` package:
+要开始使用，请安装 `@langchain/mixedbread-ai` 包：
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -16,39 +16,39 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/mixedbread-ai
 ```
 
-## Authentication
+## 身份验证
 
-Obtain your API key by signing up at [Mixedbread AI](https://mixedbread.ai/). You can then set the `MXBAI_API_KEY` environment variable to your Mixedbread AI API key or pass it directly as the `apiKey` option when constructing the class.
+通过在 [Mixedbread AI](https://mixedbread.ai/) 注册获取你的 API 密钥。你可以将 `MXBAI_API_KEY` 环境变量设置为你的 Mixedbread AI API 密钥，或者在构造类时直接将密钥作为 `apiKey` 参数传入。
 
-## Using Reranking
+## 使用重排序功能
 
-The `MixedbreadAIReranker` class provides access to the reranking API. Here’s how to use it:
+`MixedbreadAIReranker` 类提供了访问重排序 API 的功能。使用方法如下：
 
-1. **Import the Class**: First, import the `MixedbreadAIReranker` class from the package.
+1. **导入类**：首先从包中导入 `MixedbreadAIReranker` 类。
 
 ```typescript
 import { MixedbreadAIReranker } from "@langchain/mixedbread-ai";
 ```
 
-2. **Instantiate the Class**: Create an instance of `MixedbreadAIReranker` with your API key.
+2. **实例化类**：使用你的 API 密钥创建 `MixedbreadAIReranker` 的实例。
 
 ```typescript
 const reranker = new MixedbreadAIReranker({ apiKey: "your-api-key" });
 ```
 
-3. **Rerank Documents**: Use the `rerankDocuments` method to reorder documents based on a query.
+3. **重排序文档**：使用 `rerankDocuments` 方法根据查询对文档进行重新排序。
 
 ```typescript
 const documents = [
-  { pageContent: "To bake bread you need flour" },
-  { pageContent: "To bake bread you need yeast" },
-  { pageContent: "To eat bread you need nothing but good taste" },
+  { pageContent: "要制作面包，你需要面粉" },
+  { pageContent: "要制作面包，你需要酵母" },
+  { pageContent: "要吃面包，你只需要好品味" },
 ];
-const query = "What do you need to bake bread?";
+const query = "制作面包需要什么？";
 const result = await reranker.compressDocuments(documents, query);
 console.log(result);
 ```
 
-## Additional Resources
+## 其他资源
 
-For more information, refer to the [Reranking API documentation](https://www.mixedbread.ai/docs/reranking/overview).
+更多信息，请参阅 [Reranking API 文档](https://www.mixedbread.ai/docs/reranking/overview)。

@@ -1,6 +1,6 @@
 # HuggingFaceInference
 
-Here's an example of calling a HugggingFaceInference model as an LLM:
+以下是如何将 HuggingFaceInference 模型用作 LLM 的示例：
 
 ```bash npm2yarn
 npm install @langchain/community @langchain/core @huggingface/inference@4
@@ -15,13 +15,13 @@ import { HuggingFaceInference } from "@langchain/community/llms/hf";
 
 const model = new HuggingFaceInference({
   model: "gpt2",
-  apiKey: "YOUR-API-KEY", // In Node.js defaults to process.env.HUGGINGFACEHUB_API_KEY
+  apiKey: "YOUR-API-KEY", // 在 Node.js 中默认使用 process.env.HUGGINGFACEHUB_API_KEY
 });
 const res = await model.invoke("1 + 1 =");
 console.log({ res });
 ```
 
-## Related
+## 相关内容
 
-- LLM [conceptual guide](/docs/concepts/text_llms)
-- LLM [how-to guides](/docs/how_to/#llms)
+- LLM [概念指南](/docs/concepts/text_llms)
+- LLM [操作指南](/docs/how_to/#llms)

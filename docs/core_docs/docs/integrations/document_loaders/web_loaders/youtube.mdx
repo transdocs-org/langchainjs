@@ -2,21 +2,21 @@
 hide_table_of_contents: true
 ---
 
-# YouTube transcripts
+# YouTube 字幕
 
-This covers how to load YouTube transcripts into LangChain documents.
+本文介绍了如何将 YouTube 字幕加载到 LangChain 文档中。
 
-## Setup
+## 准备工作
 
-You'll need to install the [youtubei.js](https://www.npmjs.com/package/youtubei.js) to extract metadata:
+你需要安装 [youtubei.js](https://www.npmjs.com/package/youtubei.js) 以提取元数据：
 
 ```bash npm2yarn
 npm install @langchain/community @langchain/core youtubei.js
 ```
 
-## Usage
+## 使用方法
 
-You need to specify a link to the video in the `url`. You can also specify `language` in [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) and `addVideoInfo` flag.
+你需要在 `url` 中指定视频链接。还可以指定 [ISO 639-1](https://zh.wikipedia.org/wiki/ISO_639-1) 中的 `language` 和 `addVideoInfo` 标志。
 
 import CodeBlock from "@theme/CodeBlock";
 import Example from "@examples/document_loaders/youtube.ts";

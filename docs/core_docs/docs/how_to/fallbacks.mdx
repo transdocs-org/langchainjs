@@ -1,30 +1,29 @@
 import CodeBlock from "@theme/CodeBlock";
 
-# Fallbacks
+# 回退机制（Fallbacks）
 
-:::info Prerequisites
+:::info 前提条件
 
-This guide assumes familiarity with the following concepts:
+本指南假设您已熟悉以下概念：
 
-- [LangChain Expression Language (LCEL)](/docs/concepts/lcel)
-- [Chaining runnables](/docs/how_to/sequence/)
+- [LangChain 表达式语言 (LCEL)](/docs/concepts/lcel)
+- [链式调用可运行对象（Chaining runnables）](/docs/how_to/sequence/)
 
 :::
 
-When working with language models, you may encounter issues from the underlying APIs, e.g. rate limits or downtime.
-As you move your LLM applications into production it becomes more and more important to have contingencies for errors.
-That's why we've introduced the concept of fallbacks.
+在使用语言模型时，您可能会遇到由底层 API 引发的问题，例如速率限制或服务停机。
+当您将 LLM 应用程序投入生产环境时，为错误准备应急方案变得越来越重要。
+这就是为什么我们引入了“回退机制（fallbacks）”的概念。
 
-Crucially, fallbacks can be applied not only on the LLM level but on the whole runnable level.
-This is important because often times different models require different prompts. So if your call to OpenAI fails, you don't just want to send the same prompt to Anthropic - you probably want want to use e.g. a different prompt template.
+关键在于，回退机制不仅可以应用于 LLM 层面，还可以应用在整个“可运行对象（runnable）”层面。
+这很重要，因为不同的模型往往需要不同的提示（prompt）。因此，当您调用 OpenAI 失败时，您不仅仅想把同样的提示发送给 Anthropic —— 您可能更希望使用一个不同的提示模板。
 
-## Handling LLM API errors
+## 处理 LLM API 错误
 
-This is maybe the most common use case for fallbacks. A request to an LLM API can fail for a variety of reasons - the API could be down,
-you could have hit a rate limit, or any number of things.
+这可能是回退机制最常见的使用场景之一。调用 LLM API 时可能由于多种原因失败 —— API 可能宕机、您可能达到了速率限制，或者出现其他各种问题。
 
-**IMPORTANT:** By default, many of LangChain's LLM wrappers catch errors and retry.
-You will most likely want to turn those off when working with fallbacks. Otherwise the first wrapper will keep on retrying rather than failing.
+**重要提示：** 默认情况下，LangChain 的许多 LLM 封装器会捕获错误并自动重试。
+在使用回退机制时，您很可能希望关闭这些自动重试功能。否则第一个封装器会不断尝试重试，而不是直接失败。
 
 import ModelExample from "@examples/guides/fallbacks/model.ts";
 
@@ -38,30 +37,30 @@ npm install @langchain/anthropic @langchain/openai @langchain/core
 
 <CodeBlock language="typescript">{ModelExample}</CodeBlock>
 
-## Fallbacks for RunnableSequences
+## 为 RunnableSequences 设置回退机制
 
-We can also create fallbacks for sequences, that are sequences themselves.
-Here we do that with two different models: ChatOpenAI and then normal OpenAI (which does not use a chat model).
-Because OpenAI is NOT a chat model, you likely want a different prompt.
+我们还可以为可运行序列（RunnableSequences）创建回退机制，这些回退机制本身也是序列。
+在这里，我们使用两个不同的模型来实现：ChatOpenAI，然后是普通 OpenAI（非聊天模型）。
+由于 OpenAI 并非聊天模型，您可能需要使用不同的提示。
 
 import ChainExample from "@examples/guides/fallbacks/chain.ts";
 
 <CodeBlock language="typescript">{ChainExample}</CodeBlock>
 
-## Handling long inputs
+## 处理长输入
 
-One of the big limiting factors of LLMs in their context window.
-Sometimes you can count and track the length of prompts before sending them to an LLM,
-but in situations where that is hard/complicated you can fallback to a model with longer context length.
+LLM 的一大限制因素是它们的上下文窗口长度。
+有时您可以提前计算并跟踪发送给 LLM 的提示长度，
+但在某些难以或复杂的情况下，您可以回退到具有更长上下文长度的模型。
 
 import LongInputExample from "@examples/guides/fallbacks/long_inputs.ts";
 
 <CodeBlock language="typescript">{LongInputExample}</CodeBlock>
 
-## Fallback to a better model
+## 回退到更强大的模型
 
-Often times we ask models to output format in a specific format (like JSON). Models like GPT-3.5 can do this okay, but sometimes struggle.
-This naturally points to fallbacks - we can try with a faster and cheaper model, but then if parsing fails we can use GPT-4.
+很多时候我们要求模型以特定格式输出（如 JSON）。GPT-3.5 类模型可以做到这一点，但有时会失败。
+这自然引出了回退机制 —— 我们可以先使用一个更快更便宜的模型，如果解析失败，则回退到 GPT-4。
 
 import BetterModelExample from "@examples/guides/fallbacks/better_model.ts";
 

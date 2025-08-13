@@ -1,34 +1,33 @@
-# How to generate multiple embeddings per document
+# 如何为每个文档生成多个嵌入
 
-:::info Prerequisites
+:::info 预备知识
 
-This guide assumes familiarity with the following concepts:
+本指南假定您熟悉以下概念：
 
-- [Retrievers](/docs/concepts/retrievers)
-- [Text splitters](/docs/concepts/text_splitters)
-- [Retrieval-augmented generation (RAG)](/docs/tutorials/rag)
+- [检索器 (Retrievers)](/docs/concepts/retrievers)
+- [文本分割器 (Text splitters)](/docs/concepts/text_splitters)
+- [检索增强生成 (RAG)](/docs/tutorials/rag)
 
 :::
 
-Embedding different representations of an original document, then returning the original document when any of the representations result in a search hit, can allow you to
-tune and improve your retrieval performance. LangChain has a base [`MultiVectorRetriever`](https://api.js.langchain.com/classes/langchain.retrievers_multi_vector.MultiVectorRetriever.html) designed to do just this!
+通过对原始文档的不同表示形式进行嵌入，然后在任何表示形式产生搜索结果时返回原始文档，您可以调整和优化检索性能。LangChain 提供了一个基础的 [`MultiVectorRetriever`](https://api.js.langchain.com/classes/langchain.retrievers_multi_vector.MultiVectorRetriever.html)，专门用于实现这一目的！
 
-A lot of the complexity lies in how to create the multiple vectors per document.
-This guide covers some of the common ways to create those vectors and use the `MultiVectorRetriever`.
+其中大部分复杂性在于如何为每个文档创建多个向量。  
+本指南介绍了一些常见的方式来创建这些向量并使用 `MultiVectorRetriever`。
 
-Some methods to create multiple vectors per document include:
+为每个文档创建多个向量的方法包括：
 
-- smaller chunks: split a document into smaller chunks, and embed those (e.g. the [`ParentDocumentRetriever`](/docs/how_to/parent_document_retriever))
-- summary: create a summary for each document, embed that along with (or instead of) the document
-- hypothetical questions: create hypothetical questions that each document would be appropriate to answer, embed those along with (or instead of) the document
+- 更小的块：将文档拆分为更小的块，并对这些块进行嵌入（例如 [`ParentDocumentRetriever`](/docs/how_to/parent_document_retriever)）
+- 摘要：为每个文档创建摘要，将摘要与文档一起（或代替文档）进行嵌入
+- 假设性问题：生成适合用该文档回答的假设性问题，将这些问题与文档一起（或代替文档）进行嵌入
 
-Note that this also enables another method of adding embeddings - manually. This is great because you can explicitly add questions or queries that should lead to a document being recovered, giving you more control.
+请注意，这也支持另一种添加嵌入的方法——手动添加。这种方法很好，因为您可以显式地添加应导致检索到文档的问题或查询，从而获得更多的控制权。
 
-## Smaller chunks
+## 更小的块
 
-Often times it can be useful to retrieve larger chunks of information, but embed smaller chunks.
-This allows for embeddings to capture the semantic meaning as closely as possible, but for as much context as possible to be passed downstream.
-NOTE: this is what the ParentDocumentRetriever does. Here we show what is going on under the hood.
+通常，检索较大的信息块是有用的，但嵌入较小的块。  
+这样可以让嵌入尽可能准确地捕捉语义含义，同时传递尽可能多的上下文。  
+注意：这就是 `ParentDocumentRetriever` 所做的事情。在这里，我们展示其底层的工作原理。
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -43,27 +42,27 @@ import SmallChunksExample from "@examples/retrievers/multi_vector_small_chunks.t
 
 <CodeBlock language="typescript">{SmallChunksExample}</CodeBlock>
 
-## Summary
+## 摘要
 
-Oftentimes a summary may be able to distill more accurately what a chunk is about, leading to better retrieval.
-Here we show how to create summaries, and then embed those.
+有时，摘要可能更准确地概括一个块的内容，从而带来更好的检索效果。  
+以下展示如何创建摘要，并对摘要进行嵌入。
 
 import SummaryExample from "@examples/retrievers/multi_vector_summary.ts";
 
 <CodeBlock language="typescript">{SummaryExample}</CodeBlock>
 
-## Hypothetical queries
+## 假设性查询
 
-An LLM can also be used to generate a list of hypothetical questions that could be asked of a particular document.
-These questions can then be embedded and used to retrieve the original document:
+LLM 还可用于生成针对特定文档可能提出的问题列表。  
+这些问题可以被嵌入，并用于检索原始文档：
 
 import HypotheticalExample from "@examples/retrievers/multi_vector_hypothetical.ts";
 
 <CodeBlock language="typescript">{HypotheticalExample}</CodeBlock>
 
-## Next steps
+## 下一步
 
-You've now learned a few ways to generate multiple embeddings per document.
+您现在已经了解了几种为每个文档生成多个嵌入的方法。
 
-Next, check out the individual sections for deeper dives on specific retrievers, the [broader tutorial on RAG](/docs/tutorials/rag), or this section to learn how to
-[create your own custom retriever over any data source](/docs/how_to/custom_retriever/).
+接下来，您可以深入了解特定检索器的详细内容，或者查看 RAG 的完整教程 [(RAG 教程)](/docs/tutorials/rag)，或者继续阅读本节以学习如何  
+[为任意数据源创建自定义检索器](/docs/how_to/custom_retriever/)。

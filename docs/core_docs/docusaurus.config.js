@@ -1,7 +1,7 @@
 /* eslint-disable global-require,import/no-extraneous-dependencies */
 
 // @ts-check
-// Note: type annotations allow type checking and IDEs autocompletion
+// 注意：类型注解允许类型检查和IDE自动补全
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { ProvidePlugin } = require("webpack");
 const path = require("path");
@@ -17,13 +17,14 @@ const baseUrl = "/";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "🦜️🔗 Langchain",
-  tagline: "LangChain.js Docs",
+
+  title: '🦜️🔗 Langchain | Langchainjs 中文文档',
+  tagline: "LangChain.js 中文文档",
   favicon: "img/brand/favicon.png",
-  // Set the production url of your site here
-  url: "https://js.langchain.com",
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
+  // 设置站点的生产环境URL
+  url: "https://langchainjs.transdocs.org",
+  // 设置站点提供的 /<baseUrl>/ 路径
+  // 对于GitHub Pages部署，通常是 '/<projectName>/'
   baseUrl,
 
   onBrokenLinks: "throw",
@@ -93,8 +94,7 @@ const config = {
           }) {
             const sidebarItems = await defaultSidebarItemsGenerator(args);
             sidebarItems.forEach((subItem) => {
-              // This allows breaking long sidebar labels into multiple lines
-              // by inserting a zero-width space after each slash.
+              // 这允许通过在每个斜杠后插入一个零宽度空格，将长的侧边栏标签分成多行。
               if (
                 "label" in subItem &&
                 subItem.label &&
@@ -141,13 +141,17 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      metadata: [
+        { name: 'description', content: 'langchainjs 中文文档，每天定时同步官网更新。' },
+        { name: 'keywords', content: 'langchain,langchainjs,中文文档' },
+      ],
       colorMode: {
         disableSwitch: false,
         respectPrefersColorScheme: true,
       },
       announcementBar: {
         content:
-          '<strong>Our <a href="https://academy.langchain.com/courses/ambient-agents/?utm_medium=internal&utm_source=docs&utm_campaign=q2-2025_ambient-agents_co" target="_blank">Building Ambient Agents with LangGraph</a> course is now available on LangChain Academy!</strong>',
+          '<strong>我们的 <a href="https://academy.langchain.com/courses/ambient-agents/?utm_medium=internal&utm_source=docs&utm_campaign=q2-2025_ambient-agents_co" target="_blank">使用LangGraph构建环境代理</a> 课程现已在LangChain学院上线！</strong>',
         backgroundColor: "#d0c9fe",
       },
       prism: {
@@ -177,37 +181,37 @@ const config = {
             type: "docSidebar",
             position: "left",
             sidebarId: "integrations",
-            label: "Integrations",
+            label: "集成",
           },
           {
             href: "https://v03.api.js.langchain.com",
-            label: "API Reference",
+            label: "API 参考",
             position: "left",
           },
           {
             type: "dropdown",
-            label: "More",
+            label: "更多",
             position: "left",
             items: [
               {
                 to: "/docs/people/",
-                label: "People",
+                label: "人员",
               },
               {
                 to: "/docs/community",
-                label: "Community",
+                label: "社区",
               },
               {
                 to: "/docs/troubleshooting/errors",
-                label: "Error reference",
+                label: "错误参考",
               },
               {
                 to: "/docs/additional_resources/tutorials",
-                label: "External guides",
+                label: "外部指南",
               },
               {
                 to: "/docs/contributing",
-                label: "Contributing",
+                label: "贡献",
               },
             ],
           },
@@ -241,7 +245,7 @@ const config = {
               },
               {
                 href: "https://docs.smith.langchain.com",
-                label: "LangSmith Docs",
+                label: "LangSmith 文档",
               },
               {
                 href: "https://smith.langchain.com/hub",
@@ -253,21 +257,21 @@ const config = {
               },
               {
                 href: "https://python.langchain.com/",
-                label: "Python Docs",
+                label: "Python 文档",
               },
             ],
           },
           {
             href: "https://chatjs.langchain.com",
-            label: "Chat",
+            label: "聊天",
             position: "right",
           },
-          // Please keep GitHub link to the right for consistency.
+          // 请将GitHub链接保留在右侧以保持一致性。
           {
             href: "https://github.com/langchain-ai/langchainjs",
             className: "header-github-link",
             position: "right",
-            "aria-label": "GitHub repository",
+            "aria-label": "GitHub 仓库",
           },
         ],
       },
@@ -275,10 +279,10 @@ const config = {
         style: "light",
         links: [
           {
-            title: "Community",
+            title: "社区",
             items: [
               {
-                label: "LangChain Forum",
+                label: "LangChain 论坛",
                 href: "https://forum.langchain.com/",
               },
               {
@@ -301,27 +305,27 @@ const config = {
             ],
           },
           {
-            title: "More",
+            title: "更多",
             items: [
               {
-                label: "Homepage",
+                label: "首页",
                 href: "https://langchain.com",
               },
               {
-                label: "Blog",
+                label: "博客",
                 href: "https://blog.langchain.dev",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} LangChain, Inc.`,
+        copyright: `版权所有 © ${new Date().getFullYear()} LangChain, Inc.`,
       },
       algolia: {
-        // The application ID provided by Algolia
+        // Algolia提供的应用程序ID
         appId: "3EZV6U1TYC",
 
-        // Public API key: it is safe to commit it
-        // this is linked to erick@langchain.dev currently
+        // 公共API密钥：提交是安全的
+        // 当前关联到 erick@langchain.dev
         apiKey: "180851bbb9ba0ef6be9214849d6efeaf",
 
         indexName: "js-langchain-latest",
@@ -330,7 +334,17 @@ const config = {
       },
     }),
 
-  scripts: [baseUrl + "js/job_link.js"],
+  scripts: [
+    baseUrl + "js/job_link.js",
+    {
+      src: 'https://cdn.jsdmirror.com/gh/transdocs-org/cdn/transdocs-info-modal.js',
+      defer: true
+    },
+    {
+      src: 'https://hm.baidu.com/hm.js?2fe1095387fd2f2c25892a4fde2f0cc2',
+      async: true
+    },
+  ],
 
   customFields: {
     supabasePublicKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY,

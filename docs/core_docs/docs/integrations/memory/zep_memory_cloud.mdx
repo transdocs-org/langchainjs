@@ -2,44 +2,44 @@
 hide_table_of_contents: true
 ---
 
-# Zep Cloud Memory
+# Zep 云存储记忆
 
-> Recall, understand, and extract data from chat histories. Power personalized AI experiences.
+> 回忆、理解并从聊天历史中提取数据，打造个性化的 AI 体验。
 
-> [Zep](https://www.getzep.com) is a long-term memory service for AI Assistant apps.
-> With Zep, you can provide AI assistants with the ability to recall past conversations, no matter how distant,
-> while also reducing hallucinations, latency, and cost.
+> [Zep](https://www.getzep.com) 是为 AI 助手应用提供的长期记忆服务。
+> 使用 Zep，你可以让 AI 助手回忆过去的对话，无论这些对话多久以前发生，
+> 同时还能减少幻觉、延迟和成本。
 
-## How Zep Cloud works
+## Zep 云存储的工作原理
 
-Zep persists and recalls chat histories, and automatically generates summaries and other artifacts from these chat histories.
-It also embeds messages and summaries, enabling you to search Zep for relevant context from past conversations.
-Zep does all of this asynchronously, ensuring these operations don't impact your user's chat experience.
-Data is persisted to database, allowing you to scale out when growth demands.
+Zep 持久化存储并回忆聊天历史，并从这些聊天历史中自动生成摘要和其他相关数据。
+它还会对消息和摘要进行嵌入处理，使你能够搜索 Zep，从而获取过去对话中的相关上下文。
+Zep 的所有这些操作都是异步执行的，以确保这些操作不会影响用户的聊天体验。
+数据会持久化保存到数据库中，让你能够根据增长需求进行扩展。
 
-Zep also provides a simple, easy to use abstraction for document vector search called Document Collections.
-This is designed to complement Zep's core memory features, but is not designed to be a general purpose vector database.
+Zep 还提供了一个简单易用的文档向量搜索抽象接口，称为文档集合（Document Collections）。
+该功能旨在补充 Zep 核心的记忆功能，而不是作为通用的向量数据库。
 
-Zep allows you to be more intentional about constructing your prompt:
+Zep 让你在构建提示词时更加有目的性：
 
-- automatically adding a few recent messages, with the number customized for your app;
-- a summary of recent conversations prior to the messages above;
-- and/or contextually relevant summaries or messages surfaced from the entire chat session.
-- and/or relevant Business data from Zep Document Collections.
+- 自动添加最近的几条消息，消息数量可根据你的应用需求自定义；
+- 在上述消息之前，添加最近对话的摘要；
+- 从整个聊天会话中提取相关的上下文摘要或消息；
+- 或者从 Zep 文档集合中获取相关的业务数据。
 
-Zep Cloud offers:
+Zep 云存储提供以下功能：
 
-- **Fact Extraction**: Automatically build fact tables from conversations, without having to define a data schema upfront.
-- **Dialog Classification**: Instantly and accurately classify chat dialog. Understand user intent and emotion, segment users, and more. Route chains based on semantic context, and trigger events.
-- **Structured Data Extraction**: Quickly extract business data from chat conversations using a schema you define. Understand what your Assistant should ask for next in order to complete its task.
+- **事实提取**：无需预先定义数据模式，即可从对话中自动构建事实表。
+- **对话分类**：即时准确地对聊天对话进行分类。理解用户意图和情绪，对用户进行分组等。基于语义上下文进行链路路由，并触发事件。
+- **结构化数据提取**：使用你定义的模式，快速从聊天对话中提取业务数据。了解你的助手下一步应该询问什么才能完成任务。
 
-## Installation
+## 安装
 
-Sign up for [Zep Cloud](https://app.getzep.com/) and create a project.
+注册 [Zep 云存储](https://app.getzep.com/) 并创建一个项目。
 
-Follow the [Zep Cloud Typescript SDK Installation Guide](https://help.getzep.com/sdks) to install and get started with Zep.
+按照 [Zep 云存储 Typescript SDK 安装指南](https://help.getzep.com/sdks) 安装并开始使用 Zep。
 
-You'll need your Zep Cloud Project API Key to use the Zep Cloud Memory. See the [Zep Cloud docs](https://help.getzep.com/projects) for more information.
+要使用 Zep 云存储记忆功能，你需要获取 Zep 云存储项目的 API 密钥。更多信息请参阅 [Zep 云存储文档](https://help.getzep.com/projects)。
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -49,14 +49,14 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @getzep/zep-cloud @langchain/openai @langchain/community @langchain/core
 ```
 
-### ZepCloudChatMessageHistory + RunnableWithMessageHistory usage
+### ZepCloudChatMessageHistory + RunnableWithMessageHistory 的使用方式
 
 import CodeBlock from "@theme/CodeBlock";
 import ZepCloudMessageHistoryExample from "@examples/guides/expression_language/zep/zep_cloud_message_history.ts";
 
 <CodeBlock language="typescript">{ZepCloudMessageHistoryExample}</CodeBlock>
 
-### ZepCloudChatMessageHistory + RunnableWithMessageHistory + ZepVectorStore (as retriever) usage
+### ZepCloudChatMessageHistory + RunnableWithMessageHistory + ZepVectorStore（作为检索器）的使用方式
 
 import ZepCloudMessageHistoryWithVectorStoreExample from "@examples/guides/expression_language/zep/zep_cloud_message_history_vector_store.ts";
 
@@ -64,7 +64,7 @@ import ZepCloudMessageHistoryWithVectorStoreExample from "@examples/guides/expre
   {ZepCloudMessageHistoryWithVectorStoreExample}
 </CodeBlock>
 
-### Memory Usage
+### Memory 使用方式
 
 import ZepCloudMemoryExample from "@examples/memory/zep_cloud.ts";
 

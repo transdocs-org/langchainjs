@@ -1,12 +1,12 @@
 # Friendli
 
-> [Friendli](https://friendli.ai/) enhances AI application performance and optimizes cost savings with scalable, efficient deployment options, tailored for high-demand AI workloads.
+> [Friendli](https://friendli.ai/) 通过可扩展、高效的部署选项提升 AI 应用性能并优化成本节省，专为高需求的 AI 工作负载量身打造。
 
-This tutorial guides you through integrating `ChatFriendli` for chat applications using LangChain. `ChatFriendli` offers a flexible approach to generating conversational AI responses, supporting both synchronous and asynchronous calls.
+本教程将指导你使用 LangChain 通过 `ChatFriendli` 集成聊天应用。`ChatFriendli` 提供了生成对话式 AI 响应的灵活方法，支持同步和异步调用。
 
-## Setup
+## 安装配置
 
-Ensure the `@langchain/community` is installed.
+请确保已安装 `@langchain/community`。
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -16,19 +16,19 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/community @langchain/core
 ```
 
-Sign in to [Friendli Suite](https://suite.friendli.ai/) to create a Personal Access Token, and set it as the `FRIENDLI_TOKEN` environment.
-You can set team id as `FRIENDLI_TEAM` environment.
+登录 [Friendli Suite](https://suite.friendli.ai/) 创建一个个人访问令牌，并将其设置为 `FRIENDLI_TOKEN` 环境变量。
+你也可以将团队 ID 设置为 `FRIENDLI_TEAM` 环境变量。
 
-You can initialize a Friendli chat model with selecting the model you want to use. The default model is `meta-llama-3-8b-instruct`. You can check the available models at [docs.friendli.ai](https://docs.friendli.ai/guides/serverless_endpoints/pricing#text-generation-models).
+你可以通过选择要使用的模型来初始化 Friendli 的聊天模型。默认模型是 `meta-llama-3-8b-instruct`。你可以在 [docs.friendli.ai](https://docs.friendli.ai/guides/serverless_endpoints/pricing#text-generation-models) 查看可用模型。
 
-## Usage
+## 使用方法
 
 import CodeBlock from "@theme/CodeBlock";
 import Example from "@examples/models/chat/friendli.ts";
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Chat model [conceptual guide](/docs/concepts/chat_models)
-- Chat model [how-to guides](/docs/how_to/#chat-models)
+- 聊天模型 [概念指南](/docs/concepts/chat_models)
+- 聊天模型 [操作指南](/docs/how_to/#chat-models)

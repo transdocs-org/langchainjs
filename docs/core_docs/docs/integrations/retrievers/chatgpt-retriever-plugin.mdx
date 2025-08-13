@@ -3,17 +3,17 @@ hide_table_of_contents: true
 sidebar_class_name: hidden
 ---
 
-# ChatGPT Plugin Retriever
+# ChatGPT 插件检索器
 
 :::warning
-This module has been deprecated and is no longer supported. The documentation below will not work in versions 0.2.0 or later.
+此模块已弃用，不再受支持。以下文档在 0.2.0 或更高版本中将无法使用。
 :::
 
-This example shows how to use the ChatGPT Retriever Plugin within LangChain.
+本示例展示了如何在 LangChain 中使用 ChatGPT 检索插件。
 
-To set up the ChatGPT Retriever Plugin, please follow instructions [here](https://github.com/openai/chatgpt-retrieval-plugin).
+要设置 ChatGPT 检索插件，请按照[此处](https://github.com/openai/chatgpt-retrieval-plugin)的说明进行操作。
 
-## Usage
+## 使用方法
 
 ```typescript
 import { ChatGPTPluginRetriever } from "langchain/retrievers/remote";
@@ -30,7 +30,7 @@ const docs = await retriever.invoke("hello world");
 console.log(docs);
 ```
 
-## Related
+## 相关内容
 
-- Retriever [conceptual guide](/docs/concepts/retrievers)
-- Retriever [how-to guides](/docs/how_to/#retrievers)
+- 检索器 [概念指南](/docs/concepts/retrievers)
+- 检索器 [操作指南](/docs/how_to/#retrievers)

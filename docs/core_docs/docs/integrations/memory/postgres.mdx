@@ -5,13 +5,13 @@ sidebar_class_name: node-only
 
 import CodeBlock from "@theme/CodeBlock";
 
-# Postgres Chat Memory
+# Postgres 聊天记忆
 
-For longer-term persistence across chat sessions, you can swap out the default in-memory `chatHistory` for a [Postgres](https://www.postgresql.org/) Database.
+如果你需要在聊天会话之间实现更长期的数据持久化，可以将默认的内存型 `chatHistory` 替换为 [Postgres](https://www.postgresql.org/) 数据库。
 
-## Setup
+## 安装配置
 
-First install the [node-postgres](https://node-postgres.com/) package:
+首先安装 [node-postgres](https://node-postgres.com/) 包：
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -21,12 +21,11 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/openai @langchain/community @langchain/core pg
 ```
 
-## Usage
+## 使用方法
 
-Each chat history session is stored in a Postgres database and requires a session id.
+每次聊天历史记录会话都存储在 Postgres 数据库中，并且需要一个会话 ID。
 
-The connection to postgres is handled through a pool. You can either pass an instance of a pool via the `pool` parameter or pass a pool config via the `poolConfig` parameter. See [pg-node docs on pools](https://node-postgres.com/apis/pool)
-for more information. A provided pool takes precedence, thus if both a pool instance and a pool config are passed, only the pool will be used.
+Postgres 的连接是通过连接池（pool）进行管理的。你可以通过 `pool` 参数传入一个已有的连接池实例，或者通过 `poolConfig` 参数传入连接池的配置。更多信息请参考 [pg-node 的连接池文档](https://node-postgres.com/apis/pool)。如果同时提供了连接池实例和配置，将以连接池实例为准。
 
 import Example from "@examples/memory/postgres.ts";
 

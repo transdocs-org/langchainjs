@@ -1,40 +1,38 @@
-# How to stream agent data to the client
+# 如何将代理数据流式传输到客户端
 
-This guide will walk you through how we stream agent data to the client using [React Server Components](https://react.dev/reference/rsc/server-components) inside this directory.
-The code in this doc is taken from the `page.tsx` and `action.ts` files in this directory. To view the full, uninterrupted code, click [here for the actions file](https://github.com/langchain-ai/langchain-nextjs-template/blob/main/app/ai_sdk/agent/action.ts)
-and [here for the client file](https://github.com/langchain-ai/langchain-nextjs-template/blob/main/app/ai_sdk/agent/page.tsx).
+本指南将逐步介绍我们在此目录中如何使用 [React Server Components](https://react.dev/reference-rsc/server-components) 将代理数据流式传输到客户端。  
+本文档中的代码取自该目录下的 `page.tsx` 和 `action.ts` 文件。要查看完整且未中断的代码，请点击 [此处查看 actions 文件](https://github.com/langchain-ai/langchain-nextjs-template/blob/main/app/ai_sdk/agent/action.ts) 和 [此处查看客户端文件](https://github.com/langchain-ai/langchain-nextjs-template/blob/main/app/ai_sdk/agent/page.tsx)。
 
-:::info Prerequisites
+:::info 前提条件
 
-This guide assumes familiarity with the following concepts:
+本指南假设您已熟悉以下概念：
 
-- [LangChain Expression Language](/docs/concepts/lcel)
-- [Chat models](/docs/concepts/chat_models)
-- [Tool calling](/docs/concepts/tool_calling)
-- [Agents](/docs/concepts/agents)
+- [LangChain 表达式语言 (LCEL)](/docs/concepts/lcel)
+- [聊天模型](/docs/concepts/chat_models)
+- [工具调用](/docs/concepts/tool_calling)
+- [代理](/docs/concepts/agents)
 
 :::
 
-## Setup
+## 环境准备
 
-First, install the necessary LangChain & AI SDK packages:
+首先，安装必要的 LangChain 和 AI SDK 包：
 
 ```bash npm2yarn
 npm install langchain @langchain/core @langchain/community ai
 ```
 
-In this demo we'll be using the `TavilySearchResults` tool, which requires an API key. You can get one [here](https://app.tavily.com/), or you can swap it out for another tool of your choice, like
-[`WikipediaQueryRun`](/docs/integrations/tools/wikipedia) which doesn't require an API key.
+在本演示中，我们将使用 `TavilySearchResults` 工具，它需要一个 API 密钥。您可以 [在此处](https://app.tavily.com/) 获取，或者您可以选择其他不需要 API 密钥的工具，例如 [`WikipediaQueryRun`](/docs/integrations/tools/wikipedia)。
 
-If you choose to use `TavilySearchResults`, set your API key like so:
+如果您选择使用 `TavilySearchResults`，请按如下方式设置您的 API 密钥：
 
 ```bash
 export TAVILY_API_KEY=your_api_key
 ```
 
-## Get started
+## 开始使用
 
-The first step is to create a new RSC file, and add the imports which we'll use for running our agent. In this demo, we'll name it `action.ts`:
+第一步是创建一个新的 RSC 文件，并添加运行代理所需的导入语句。在本演示中，我们将它命名为 `action.ts`：
 
 ```typescript action.ts
 "use server";
@@ -47,7 +45,7 @@ import { pull } from "langchain/hub";
 import { createStreamableValue } from "ai/rsc";
 ```
 
-Next, we'll define a `runAgent` function. This function takes in a single input of `string`, and contains all the logic for our agent and streaming data back to the client:
+接下来，我们将定义一个 `runAgent` 函数。该函数接受一个字符串输入，并包含我们代理的所有逻辑以及将数据流式传输回客户端的功能：
 
 ```typescript action.ts
 export async function runAgent(input: string) {
@@ -55,7 +53,7 @@ export async function runAgent(input: string) {
 }
 ```
 
-Next, inside our function we'll define our chat model of choice:
+然后，在函数内部，我们将定义我们选择的聊天模型：
 
 ```typescript action.ts
 const llm = new ChatOpenAI({
@@ -64,15 +62,15 @@ const llm = new ChatOpenAI({
 });
 ```
 
-Next, we'll use the `createStreamableValue` helper function provided by the `ai` package to create a streamable value:
+接下来，我们将使用 `ai` 包提供的 `createStreamableValue` 辅助函数来创建一个可流式传输的值：
 
 ```typescript action.ts
 const stream = createStreamableValue();
 ```
 
-This will be very important later on when we start streaming data back to the client.
+这在我们开始将数据流式传输回客户端时会非常关键。
 
-Next, lets define our async function inside which contains the agent logic:
+接着，在我们的函数中定义异步函数，其中包含代理的逻辑：
 
 ```typescript action.ts
   (async () => {
@@ -95,17 +93,18 @@ Next, lets define our async function inside which contains the agent logic:
 ```
 
 :::tip
-As of `langchain` version `0.2.8`, the `createToolCallingAgent` function now supports [OpenAI-formatted tools](https://api.js.langchain.com/interfaces/langchain_core.language_models_base.ToolDefinition.html).
+从 `langchain` 版本 `0.2.8` 开始，`createToolCallingAgent` 函数现在支持 [OpenAI 格式的工具](https://api.js.langchain.com/interfaces/langchain_core.language_models_base.ToolDefinition.html)。
 :::
 
-Here you can see we're doing a few things:
+在上面的代码中可以看到我们做了几件事：
 
-The first is we're defining our list of tools (in this case we're only using a single tool) and pulling in our prompt from the LangChain prompt hub.
+首先，我们定义了工具列表（本例中只使用了一个工具），并从 LangChain 的提示词中心拉取了提示词。
 
-After that, we're passing our LLM, tools and prompt to the `createToolCallingAgent` function, which will construct and return a runnable agent.
-This is then passed into the `AgentExecutor` class, which will handle the execution & streaming of our agent.
+之后，我们将 LLM、工具和提示词传给 `createToolCallingAgent` 函数，它将构建并返回一个可运行的代理。
 
-Finally, we'll call `.streamEvents` and pass our streamed data back to the `stream` variable we defined above,
+然后，将其传入 `AgentExecutor` 类，由它来处理代理的执行与流式传输。
+
+最后，我们将调用 `.streamEvents` 并将流式数据返回到我们之前定义的 `stream` 变量中，
 
 ```typescript action.ts
     const streamingEvents = agentExecutor.streamEvents(
@@ -121,18 +120,17 @@ Finally, we'll call `.streamEvents` and pass our streamed data back to the `stre
   })();
 ```
 
-As you can see above, we're doing something a little wacky by stringifying and parsing our data. This is due to a bug in the RSC streaming code,
-however if you stringify and parse like we are above, you shouldn't experience this.
+如上所示，我们通过对数据进行字符串化和解析，做了一些特殊的处理。这是由于 RSC 流式传输代码中的一个 bug，但如果您像我们上面那样进行字符串化和解析，就不会遇到这个问题。
 
-Finally, at the bottom of the function return the stream value:
+最后，在函数底部返回流式值：
 
 ```typescript action.ts
 return { streamData: stream.value };
 ```
 
-Once we've implemented our server action, we can add a couple lines of code in our client function to request and stream this data:
+一旦我们实现了服务器端操作，就可以在客户端函数中添加几行代码来请求并流式传输这些数据：
 
-First, add the necessary imports:
+首先，添加必要的导入：
 
 ```typescript page.tsx
 "use client";
@@ -142,7 +140,7 @@ import { readStreamableValue } from "ai/rsc";
 import { runAgent } from "./action";
 ```
 
-Then inside our `Page` function, calling the `runAgent` function is straightforward:
+然后在我们的 `Page` 函数中，调用 `runAgent` 函数非常简单：
 
 ```typescript page.tsx
 export default function Page() {
@@ -160,4 +158,4 @@ export default function Page() {
 }
 ```
 
-That's it! You've successfully built an agent that streams data back to the client. You can now run your application and see the data streaming in real-time.
+就这样！您已成功构建了一个能将数据流式传输回客户端的代理。现在可以运行您的应用程序，并实时查看数据的流式传输。

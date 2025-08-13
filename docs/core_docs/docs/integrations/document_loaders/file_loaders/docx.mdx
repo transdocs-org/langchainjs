@@ -2,38 +2,38 @@
 hide_table_of_contents: true
 ---
 
-# Docx files
+# Docx 文件
 
-The `DocxLoader` allows you to extract text data from Microsoft Word documents. It supports both the modern `.docx` format and the legacy `.doc` format. Depending on the file type, additional dependencies are required.
+`DocxLoader` 允许你从 Microsoft Word 文档中提取文本数据。它支持现代的 `.docx` 格式和旧版的 `.doc` 格式。根据文件类型，还需要额外的依赖项。
 
 ---
 
-## Setup
+## 安装配置
 
-To use `DocxLoader`, you'll need the `@langchain/community` integration along with either `mammoth` or `word-extractor` package:
+要使用 `DocxLoader`，你需要安装 `@langchain/community` 包以及 `mammoth` 或 `word-extractor` 包之一：
 
-- **`mammoth`**: For processing `.docx` files.
-- **`word-extractor`**: For handling `.doc` files.
+- **`mammoth`**：用于处理 `.docx` 文件。
+- **`word-extractor`**：用于处理 `.doc` 文件。
 
-### Installation
+### 安装步骤
 
-#### For `.docx` Files
+#### 对于 `.docx` 文件
 
 ```bash npm2yarn
 npm install @langchain/community @langchain/core mammoth
 ```
 
-#### For `.doc` Files
+#### 对于 `.doc` 文件
 
 ```bash npm2yarn
 npm install @langchain/community @langchain/core word-extractor
 ```
 
-## Usage
+## 使用方法
 
-### Loading `.docx` Files
+### 加载 `.docx` 文件
 
-For `.docx` files, there is no need to explicitly specify any parameters when initializing the loader:
+对于 `.docx` 文件，在初始化加载器时无需显式指定任何参数：
 
 ```javascript
 import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
@@ -45,9 +45,9 @@ const loader = new DocxLoader(
 const docs = await loader.load();
 ```
 
-### Loading `.doc` Files
+### 加载 `.doc` 文件
 
-For `.doc` files, you must explicitly specify the `type` as `doc` when initializing the loader:
+对于 `.doc` 文件，在初始化加载器时必须显式指定 `type` 为 `doc`：
 
 ```javascript
 import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";

@@ -7,60 +7,59 @@ import CodeBlock from "@theme/CodeBlock";
 # ChromeAI
 
 :::info
-This feature is **experimental** and is subject to change.
+此功能为**实验性**功能，可能会发生变化。
 :::
 
 :::note
-The `Built-in AI Early Preview Program` by Google is currently in beta. To apply for access or find more information, please visit [this link](https://developer.chrome.com/docs/ai/built-in).
+Google 的 `内置 AI 早期预览计划` 目前处于 Beta 阶段。如需申请访问权限或获取更多信息，请访问[此链接](https://developer.chrome.com/docs/ai/built-in)。
 :::
 
-ChromeAI leverages Gemini Nano to run LLMs directly in the browser or in a [worker](https://developer.mozilla.org/en-US/docs/Web/API/Worker),
-without the need for an internet connection. This allows for running faster and private models without ever having data leave the consumers device.
+ChromeAI 利用 Gemini Nano 在浏览器中或 [worker](https://developer.mozilla.org/en-US/docs/Web/API/Worker) 中直接运行大语言模型（LLM），而无需连接互联网。这使得模型运行更快且更私密，数据也无需离开用户的设备。
 
-## Getting started
+## 开始使用
 
-Once you've been granted access to the program, follow Google's provided instructions to download the model.
+在您获得该计划的访问权限后，请按照 Google 提供的说明下载模型。
 
-Once downloaded, you can start using `ChromeAI` in the browser as follows:
+下载完成后，您可以按照以下方式在浏览器中开始使用 `ChromeAI`：
 
 ```typescript
 import { ChromeAI } from "@langchain/community/experimental/llms/chrome_ai";
 
 const model = new ChromeAI({
-  temperature: 0.5, // Optional, defaults to 0.5
-  topK: 40, // Optional, defaults to 40
+  temperature: 0.5, // 可选，默认为 0.5
+  topK: 40, // 可选，默认为 40
 });
 
-const response = await model.invoke("Write me a short poem please");
+const response = await model.invoke("请为我写一首简短的诗歌");
 
 /*
-  In the realm where moonlight weaves its hue,
-  Where dreams and secrets gently intertwine,
-  There's a place of tranquility and grace,
-  Where whispers of the night find their place.
+  在月光编织色彩的领域，
+  梦想与秘密轻柔交织的地方，
+  有一片宁静与优雅之地，
+  夜晚的低语找到了归属。
 
-  Beneath the canopy of starlit skies,
-  Where dreams take flight and worries cease,
-  A haven of tranquility, pure and true,
-  Where the heart finds solace, finding dew.
+  在繁星点点的天幕之下，
+  梦想腾飞，烦恼止息，
+  一个宁静、真实而纯净的避风港，
+  心灵在此找到慰藉，如露珠般清新。
 
-  In this realm where dreams find their release,
-  Where the soul finds peace, at every peace,
-  Let us wander, lost in its embrace,
-  Finding solace in this tranquil space.
+  在这个梦想得以释放的领域，
+  灵魂在此找到安宁，
+  让我们漫步其中，沉浸于它的怀抱，
+  在这片宁静之地找到慰藉。
 */
 ```
 
-### Streaming
+### 流式输出
 
-`ChromeAI` also supports streaming outputs:
+`ChromeAI` 同样支持流式输出：
 
 ```typescript
 import { ChromeAI } from "@langchain/community/experimental/llms/chrome_ai";
 
 const model = new ChromeAI({
-  temperature: 0.5, // Optional, defaults to 0.5
-  topK: 40, // Optional, defaults to 40
+  temperature: 0.5, // 可选，默认为 0.5
+  topK: 40, // 可选，默认为 40
 });
 
 for await (const chunk of await model.stream("How are you?")) {
@@ -114,7 +113,7 @@ for await (const chunk of await model.stream("How are you?")) {
 */
 ```
 
-## Related
+## 相关内容
 
-- LLM [conceptual guide](/docs/concepts/text_llms)
-- LLM [how-to guides](/docs/how_to/#llms)
+- LLM [概念指南](/docs/concepts/text_llms)
+- LLM [操作指南](/docs/how_to/#llms)

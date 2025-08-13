@@ -1,17 +1,17 @@
 # @mozilla/readability
 
-When ingesting HTML documents for later retrieval, we are often interested only in the actual content of the webpage rather than semantics.
-Stripping HTML tags from documents with the MozillaReadabilityTransformer can result in more content-rich chunks, making retrieval more effective.
+在摄入 HTML 文档以供后续检索时，我们通常只关注网页的实际内容，而非语义结构。  
+使用 MozillaReadabilityTransformer 从文档中剥离 HTML 标签可以生成内容更丰富的片段，从而提升检索效果。
 
-## Setup
+## 安装配置
 
-You'll need to install the [`@mozilla/readability`](https://www.npmjs.com/package/@mozilla/readability) and the [`jsdom`](https://www.npmjs.com/package/jsdom) npm package:
+你需要安装 [`@mozilla/readability`](https://www.npmjs.com/package/@mozilla/readability) 和 [`jsdom`](https://www.npmjs.com/package/jsdom) 这两个 npm 包：
 
 ```bash npm2yarn
 npm install @mozilla/readability jsdom
 ```
 
-Though not required for the transformer by itself, the below usage examples require [`cheerio`](https://www.npmjs.com/package/cheerio) for scraping:
+虽然对于该转换器本身而言不是必须的，但以下使用示例中需要用到 [`cheerio`](https://www.npmjs.com/package/cheerio) 进行网页抓取：
 
 ```bash npm2yarn
 npm install cheerio
@@ -25,16 +25,16 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/community @langchain/core
 ```
 
-## Usage
+## 使用方法
 
-The below example scrapes a Hacker News thread, splits it based on HTML tags to group chunks based on the semantic information from the tags,
-then extracts content from the individual chunks:
+以下示例抓取了一个 Hacker News 主题页面，根据 HTML 标签对内容进行分割，从而基于标签的语义信息将内容分组为多个片段，然后从每个片段中提取内容：
 
 import CodeBlock from "@theme/CodeBlock";
 import Example from "@examples/document_transformers/mozilla_readability.ts";
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-## Customization
+## 自定义配置
 
-You can pass the transformer any [arguments accepted by the `@mozilla/readability` package](https://www.npmjs.com/package/@mozilla/readability) to customize how it works.
+你可以向该转换器传入任何 `@mozilla/readability` 包所支持的参数，以自定义其行为：  
+[参考 `@mozilla/readability` 的参数文档](https://www.npmjs.com/package/@mozilla/readability)。

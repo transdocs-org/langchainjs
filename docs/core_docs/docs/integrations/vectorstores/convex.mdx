@@ -4,29 +4,29 @@ sidebar_class_name: node-only
 
 # Convex
 
-LangChain.js supports [Convex](https://convex.dev/) as a [vector store](https://docs.convex.dev/vector-search), and supports the standard similarity search.
+LangChain.js 支持 [Convex](https://convex.dev/) 作为 [向量存储](https://docs.convex.dev/vector-search)，并支持标准的相似性搜索。
 
-## Setup
+## 安装设置
 
-### Create project
+### 创建项目
 
-Get a working [Convex](https://docs.convex.dev/) project set up, for example by using:
+首先创建一个可用的 [Convex](https://docs.convex.dev/) 项目，例如使用以下命令：
 
 ```bash
 npm create convex@latest
 ```
 
-### Add database accessors
+### 添加数据库访问器
 
-Add query and mutation helpers to `convex/langchain/db.ts`:
+将查询和变更的辅助工具添加到 `convex/langchain/db.ts` 文件中：
 
 ```ts title="convex/langchain/db.ts"
 export * from "@langchain/community/utils/convex";
 ```
 
-### Configure your schema
+### 配置你的数据库模式
 
-Set up your schema (for vector indexing):
+配置你的模式（用于向量索引）：
 
 ```ts title="convex/schema.ts"
 import { defineSchema, defineTable } from "convex/server";
@@ -44,7 +44,7 @@ export default defineSchema({
 });
 ```
 
-## Usage
+## 使用
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -54,7 +54,7 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/openai @langchain/community @langchain/core
 ```
 
-### Ingestion
+### 数据导入
 
 import CodeBlock from "@theme/CodeBlock";
 import Ingestion from "@examples/indexes/vector_stores/convex/fromTexts.ts";
@@ -63,7 +63,7 @@ import Ingestion from "@examples/indexes/vector_stores/convex/fromTexts.ts";
   {Ingestion}
 </CodeBlock>
 
-### Search
+### 搜索
 
 import Search from "@examples/indexes/vector_stores/convex/search.ts";
 
@@ -71,7 +71,7 @@ import Search from "@examples/indexes/vector_stores/convex/search.ts";
   {Search}
 </CodeBlock>
 
-## Related
+## 相关内容
 
-- Vector store [conceptual guide](/docs/concepts/#vectorstores)
-- Vector store [how-to guides](/docs/how_to/#vectorstores)
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

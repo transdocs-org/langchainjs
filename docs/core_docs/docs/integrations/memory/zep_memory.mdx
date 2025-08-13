@@ -2,36 +2,36 @@
 hide_table_of_contents: true
 ---
 
-# Zep Open Source Memory
+# Zep 开源记忆系统
 
-> Recall, understand, and extract data from chat histories. Power personalized AI experiences.
+> 回忆、理解并从聊天历史中提取数据，打造个性化的 AI 体验。
 
-> [Zep](https://www.getzep.com) is a long-term memory service for AI Assistant apps.
-> With Zep, you can provide AI assistants with the ability to recall past conversations, no matter how distant,
-> while also reducing hallucinations, latency, and cost.
+> [Zep](https://www.getzep.com) 是一个面向 AI 助手应用的长期记忆服务。
+> 通过 Zep，您可以赋予 AI 助手回忆过去对话的能力，无论这些对话多久以前发生过，
+> 同时还能减少幻觉、延迟和成本。
 
-## How Zep works
+## Zep 的工作原理
 
-Zep persists and recalls chat histories, and automatically generates summaries and other artifacts from these chat histories.
-It also embeds messages and summaries, enabling you to search Zep for relevant context from past conversations.
-Zep does all of this asynchronously, ensuring these operations don't impact your user's chat experience.
-Data is persisted to database, allowing you to scale out when growth demands.
+Zep 持久化并回忆聊天历史，并自动从这些历史记录中生成摘要和其他相关数据。
+它还会对消息和摘要进行嵌入处理，使您能够搜索 Zep 以获取过去对话中的相关上下文信息。
+Zep 以异步方式完成所有这些操作，确保这些操作不会影响用户的聊天体验。
+数据会被持久化存储到数据库中，当业务增长时，您可以轻松进行扩展。
 
-Zep also provides a simple, easy to use abstraction for document vector search called Document Collections.
-This is designed to complement Zep's core memory features, but is not designed to be a general purpose vector database.
+Zep 还提供了一个简单易用的文档向量搜索抽象接口，称为文档集合（Document Collections）。
+它旨在补充 Zep 的核心记忆功能，但并不是通用的向量数据库。
 
-Zep allows you to be more intentional about constructing your prompt:
+Zep 让您能够更有目的地构建提示词（prompt）：
 
-- automatically adding a few recent messages, with the number customized for your app;
-- a summary of recent conversations prior to the messages above;
-- and/or contextually relevant summaries or messages surfaced from the entire chat session.
-- and/or relevant Business data from Zep Document Collections.
+- 自动添加若干最近的消息，数量可根据您的应用进行自定义；
+- 在上述消息之前，添加最近对话的摘要；
+- 和/或从整个会话中提取相关的上下文摘要或消息；
+- 和/或从 Zep 文档集合中获取相关的业务数据。
 
-> Interested in Zep Cloud? See [Zep Cloud Installation Guide](https://help.getzep.com/sdks)
+> 对 Zep Cloud 感兴趣？请参阅 [Zep Cloud 安装指南](https://help.getzep.com/sdks)
 
-## Setup
+## 安装配置
 
-See the instructions from [Zep Open Source](https://github.com/getzep/zep) for running the server locally or through an automated hosting provider.
+有关在本地或通过自动化托管提供商运行服务器的说明，请参阅 [Zep 开源项目](https://github.com/getzep/zep)。
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -41,7 +41,7 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/openai @langchain/community @langchain/core
 ```
 
-## Usage
+## 使用方法
 
 import CodeBlock from "@theme/CodeBlock";
 import Example from "@examples/memory/zep.ts";
