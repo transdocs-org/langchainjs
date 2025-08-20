@@ -6,38 +6,38 @@ import CodeBlock from "@theme/CodeBlock";
 
 # SingleStore
 
-[SingleStoreDB](https://singlestore.com/) is a robust, high-performance distributed SQL database solution designed to excel in both [cloud](https://www.singlestore.com/cloud/) and on-premises environments. Boasting a versatile feature set, it offers seamless deployment options while delivering unparalleled performance.
+[SingleStoreDB](https://singlestore.com/) 是一个强大且高性能的分布式 SQL 数据库解决方案，专为在 [云环境](https://www.singlestore.com/cloud/) 和本地环境中均表现出色而设计。它具备多样化的功能，提供无缝的部署选项，同时实现无与伦比的性能。
 
-A standout feature of SingleStoreDB is its advanced support for vector storage and operations, making it an ideal choice for applications requiring intricate AI capabilities such as text similarity matching. With built-in vector functions like [dot_product](https://docs.singlestore.com/managed-service/en/reference/sql-reference/vector-functions/dot_product.html) and [euclidean_distance](https://docs.singlestore.com/managed-service/en/reference/sql-reference/vector-functions/euclidean_distance.html), SingleStoreDB empowers developers to implement sophisticated algorithms efficiently.
+SingleStoreDB 的一个突出特性是其对向量存储和操作的高级支持，使其成为需要复杂 AI 功能（如文本相似性匹配）的应用程序的理想选择。通过内置的向量函数如 [dot_product](https://docs.singlestore.com/managed-service/en/reference/sql-reference/vector-functions/dot_product.html) 和 [euclidean_distance](https://docs.singlestore.com/managed-service/en/reference/sql-reference/vector-functions/euclidean_distance.html)，SingleStoreDB 使开发人员能够高效地实现复杂的算法。
 
-For developers keen on leveraging vector data within SingleStoreDB, a comprehensive tutorial is available, guiding them through the intricacies of [working with vector data](https://docs.singlestore.com/managed-service/en/developer-resources/functional-extensions/working-with-vector-data.html). This tutorial delves into the Vector Store within SingleStoreDB, showcasing its ability to facilitate searches based on vector similarity. Leveraging vector indexes, queries can be executed with remarkable speed, enabling swift retrieval of relevant data.
+对于希望在 SingleStoreDB 中使用向量数据的开发人员，有一个全面的教程可供参考，指导他们了解 [使用向量数据](https://docs.singlestore.com/managed-service/en/developer-resources/functional-extensions/working-with-vector-data.html) 的细节。该教程深入介绍了 SingleStoreDB 中的向量存储（Vector Store），展示了其基于向量相似性的搜索能力。利用向量索引，可以以惊人的速度执行查询，从而快速检索相关数据。
 
-Moreover, SingleStoreDB's Vector Store seamlessly integrates with [full-text indexing based on Lucene](https://docs.singlestore.com/cloud/developer-resources/functional-extensions/working-with-full-text-search/), enabling powerful text similarity searches. Users can filter search results based on selected fields of document metadata objects, enhancing query precision.
+此外，SingleStoreDB 的向量存储还无缝集成了基于 Lucene 的 [全文索引](https://docs.singlestore.com/cloud/developer-resources/functional-extensions/working-with-full-text-search/)，支持强大的文本相似性搜索。用户可以根据文档元数据对象的选定字段过滤搜索结果，从而提高查询的精确度。
 
-What sets SingleStoreDB apart is its ability to combine vector and full-text searches in various ways, offering flexibility and versatility. Whether prefiltering by text or vector similarity and selecting the most relevant data, or employing a weighted sum approach to compute a final similarity score, developers have multiple options at their disposal.
+使 SingleStoreDB 独树一帜的是它能够以多种方式结合向量和全文搜索，提供灵活性和多功能性。无论是通过文本或向量相似性进行预过滤并选择最相关数据，还是采用加权和方法计算最终相似性得分，开发人员都有多种选择。
 
-In essence, SingleStoreDB provides a comprehensive solution for managing and querying vector data, offering unparalleled performance and flexibility for AI-driven applications.
+总之，SingleStoreDB 为管理和查询向量数据提供了一个全面的解决方案，为 AI 驱动的应用程序提供了无与伦比的性能和灵活性。
 
-:::tip Compatibility
-Only available on Node.js.
+:::tip 兼容性
+该功能仅适用于 Node.js。
 :::
 
-LangChain.js requires the `mysql2` library to create a connection to a SingleStoreDB instance.
+LangChain.js 需要使用 `mysql2` 库来创建与 SingleStoreDB 实例的连接。
 
-## Setup
+## 安装配置
 
-1. Establish a SingleStoreDB environment. You have the flexibility to choose between [Cloud-based](https://docs.singlestore.com/managed-service/en/getting-started-with-singlestoredb-cloud.html) or [On-Premise](https://docs.singlestore.com/db/v8.1/en/developer-resources/get-started-using-singlestoredb-for-free.html) editions.
-2. Install the mysql2 JS client
+1. 建立一个 SingleStoreDB 环境。您可以选择 [基于云的版本](https://docs.singlestore.com/managed-service/en/getting-started-with-singlestoredb-cloud.html) 或 [本地部署版本](https://docs.singlestore.com/db/v8.1/en/developer-resources/get-started-using-singlestoredb-for-free.html)。
+2. 安装 mysql2 JS 客户端
 
 ```bash npm2yarn
 npm install -S mysql2
 ```
 
-## Usage
+## 使用方法
 
-`SingleStoreVectorStore` manages a connection pool. It is recommended to call `await store.end();` before terminating your application to assure all connections are appropriately closed and prevent any possible resource leaks.
+`SingleStoreVectorStore` 会管理一个连接池。建议在应用程序终止前调用 `await store.end();`，以确保所有连接正确关闭，防止可能出现的资源泄漏。
 
-### Standard usage
+### 标准用法
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -49,38 +49,38 @@ npm install @langchain/openai @langchain/community @langchain/core
 
 import UsageExample from "@examples/indexes/vector_stores/singlestore.ts";
 
-Below is a straightforward example showcasing how to import the relevant module and perform a base similarity search using the `SingleStoreVectorStore`:
+以下是一个简单的示例，展示如何导入相关模块，并使用 `SingleStoreVectorStore` 执行基础的相似性搜索：
 
 <CodeBlock language="typescript">{UsageExample}</CodeBlock>
 
-### Metadata Filtering
+### 元数据过滤
 
 import UsageExampleWithMetadata from "@examples/indexes/vector_stores/singlestore_with_metadata_filter.ts";
 
-If it is needed to filter results based on specific metadata fields, you can pass a filter parameter to narrow down your search to the documents that match all specified fields in the filter object:
+如果需要根据特定的元数据字段过滤结果，可以在搜索时传入一个过滤参数，以缩小搜索范围，仅返回匹配过滤对象中所有指定字段的文档：
 
 <CodeBlock language="typescript">{UsageExampleWithMetadata}</CodeBlock>
 
-### Vector indexes
+### 向量索引
 
-Enhance your search efficiency with SingleStore DB version 8.5 or above by leveraging [ANN vector indexes](https://docs.singlestore.com/cloud/reference/sql-reference/vector-functions/vector-indexing/).
-By setting `useVectorIndex: true` during vector store object creation, you can activate this feature.
-Additionally, if your vectors differ in dimensionality from the default OpenAI embedding size of 1536, ensure to specify the `vectorSize` parameter accordingly.
+通过使用 SingleStore DB 8.5 或更高版本提供的 [ANN 向量索引](https://docs.singlestore.com/cloud/reference/sql-reference/vector-functions/vector-indexing/)，可以显著提升搜索效率。
+在创建向量存储对象时，设置 `useVectorIndex: true` 即可启用此功能。
+此外，如果您的向量维度与默认的 OpenAI 嵌入大小 1536 不同，请确保相应地指定 `vectorSize` 参数。
 
-### Hybrid search
+### 混合搜索
 
 import HybridSearchUsageExample from "@examples/indexes/vector_stores/singlestore_hybrid_search.ts";
 
-SingleStoreDB presents a diverse range of search strategies, each meticulously crafted to cater to specific use cases and user preferences.
-The default `VECTOR_ONLY` strategy utilizes vector operations such as `DOT_PRODUCT` or `EUCLIDEAN_DISTANCE` to calculate similarity scores directly between vectors, while `TEXT_ONLY` employs Lucene-based full-text search, particularly advantageous for text-centric applications.
-For users seeking a balanced approach, `FILTER_BY_TEXT` first refines results based on text similarity before conducting vector comparisons, whereas `FILTER_BY_VECTOR` prioritizes vector similarity, filtering results before assessing text similarity for optimal matches.
-Notably, both `FILTER_BY_TEXT` and `FILTER_BY_VECTOR` necessitate a full-text index for operation. Additionally, `WEIGHTED_SUM` emerges as a sophisticated strategy, calculating the final similarity score by weighing vector and text similarities, albeit exclusively utilizing dot_product distance calculations and also requiring a full-text index.
-These versatile strategies empower users to fine-tune searches according to their unique needs, facilitating efficient and precise data retrieval and analysis.
-Moreover, SingleStoreDB's hybrid approaches, exemplified by `FILTER_BY_TEXT`, `FILTER_BY_VECTOR`, and `WEIGHTED_SUM` strategies, seamlessly blend vector and text-based searches to maximize efficiency and accuracy, ensuring users can fully leverage the platform's capabilities for a wide range of applications.
+SingleStoreDB 提供了多样化的搜索策略，每种策略都经过精心设计，以满足特定的用例和用户偏好。
+默认的 `VECTOR_ONLY` 策略使用 `DOT_PRODUCT` 或 `EUCLIDEAN_DISTANCE` 等向量操作直接计算向量之间的相似性得分，而 `TEXT_ONLY` 则使用基于 Lucene 的全文搜索，特别适合以文本为中心的应用。
+对于希望采用平衡方法的用户，`FILTER_BY_TEXT` 会首先基于文本相似性对结果进行筛选，然后再进行向量比较；而 `FILTER_BY_VECTOR` 则优先考虑向量相似性，在评估文本相似性之前对结果进行过滤，以获得最佳匹配。
+值得注意的是，`FILTER_BY_TEXT` 和 `FILTER_BY_VECTOR` 都需要全文索引才能运行。此外，`WEIGHTED_SUM` 是一种高级策略，通过加权向量和文本相似性来计算最终的相似性得分，但仅支持点积距离计算，同时也需要全文索引。
+这些灵活的策略使用户能够根据自身需求精细调整搜索，实现高效且精确的数据检索和分析。
+此外，SingleStoreDB 的混合方法（如 `FILTER_BY_TEXT`、`FILTER_BY_VECTOR` 和 `WEIGHTED_SUM` 策略）无缝融合了向量和文本搜索，以最大化效率和准确性，确保用户能够充分利用平台的能力来满足各种应用场景。
 
 <CodeBlock language="typescript">{HybridSearchUsageExample}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Vector store [conceptual guide](/docs/concepts/#vectorstores)
-- Vector store [how-to guides](/docs/how_to/#vectorstores)
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

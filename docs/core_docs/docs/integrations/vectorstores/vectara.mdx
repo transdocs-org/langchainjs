@@ -6,35 +6,35 @@ import CodeBlock from "@theme/CodeBlock";
 
 # Vectara
 
-Vectara is a platform for building GenAI applications. It provides an easy-to-use API for document indexing and querying that is managed by Vectara and is optimized for performance and accuracy.
+Vectara 是一个用于构建生成式人工智能（GenAI）应用的平台。它提供了一个易于使用的 API，用于文档索引和查询，该 API 由 Vectara 管理，并针对性能和准确性进行了优化。
 
-You can use Vectara as a vector store with LangChain.js.
+你可以将 Vectara 与 LangChain.js 一起用作向量存储。
 
-## 👉 Embeddings Included
+## 👉 内置嵌入支持
 
-Vectara uses its own embeddings under the hood, so you don't have to provide any yourself or call another service to obtain embeddings.
+Vectara 在底层使用自己的嵌入模型，因此你无需自行提供嵌入，也不需要调用其他服务来获取嵌入。
 
-This also means that if you provide your own embeddings, they'll be a no-op.
+这也意味着如果你提供了自己的嵌入模型，将不会产生任何效果。
 
 ```typescript
 const store = await VectaraStore.fromTexts(
   ["hello world", "hi there"],
   [{ foo: "bar" }, { foo: "baz" }],
-  // This won't have an effect. Provide a FakeEmbeddings instance instead for clarity.
+  // 这里不会产生任何效果。为了清晰起见，可以改用提供 FakeEmbeddings 实例。
   new OpenAIEmbeddings(),
   args
 );
 ```
 
-## Setup
+## 安装配置
 
-You'll need to:
+你需要：
 
-- Create a [free Vectara account](https://vectara.com/integrations/langchain).
-- Create a [corpus](https://docs.vectara.com/docs/console-ui/creating-a-corpus) to store your data
-- Create an [API key](https://docs.vectara.com/docs/common-use-cases/app-authn-authz/api-keys) with QueryService and IndexService access so you can access this corpus
+- 创建一个 [免费 Vectara 账户](https://vectara.com/integrations/langchain)。
+- 创建一个 [语料库（corpus）](https://docs.vectara.com/docs/console-ui/creating-a-corpus) 来存储你的数据。
+- 创建一个拥有 QueryService 和 IndexService 权限的 [API 密钥](https://docs.vectara.com/docs/common-use-cases/app-authn-authz/api-keys)，以便你可以访问此语料库。
 
-Configure your `.env` file or provide args to connect LangChain to your Vectara corpus:
+配置你的 `.env` 文件或提供参数，以将 LangChain 连接到你的 Vectara 语料库：
 
 ```
 VECTARA_CUSTOMER_ID=your_customer_id
@@ -42,25 +42,25 @@ VECTARA_CORPUS_ID=your_corpus_id
 VECTARA_API_KEY=your-vectara-api-key
 ```
 
-Note that you can provide multiple corpus IDs separated by commas for querying multiple corpora at once. For example: `VECTARA_CORPUS_ID=3,8,9,43`.
-For indexing multiple corpora, you'll need to create a separate VectaraStore instance for each corpus.
+注意：你可以通过逗号分隔的方式提供多个语料库 ID，以实现一次查询多个语料库。例如：`VECTARA_CORPUS_ID=3,8,9,43`。
+对于多个语料库的索引，你需要为每个语料库分别创建一个 VectaraStore 实例。
 
-## Usage
+## 使用方法
 
 import Example from "@examples/indexes/vector_stores/vectara.ts";
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-Note that `lambda` is a parameter related to Vectara's hybrid search capbility, providing a tradeoff between neural search and boolean/exact match as described [here](https://docs.vectara.com/docs/api-reference/search-apis/lexical-matching). We recommend the value of 0.025 as a default, while providing a way for advanced users to customize this value if needed.
+请注意，`lambda` 是一个与 Vectara 混合搜索功能相关的参数，它在神经搜索与布尔/精确匹配之间提供了一个权衡，详见 [此处](https://docs.vectara.com/docs/api-reference/search-apis/lexical-matching)。我们建议默认值为 0.025，同时为高级用户提供了一种自定义该值的方式（如需要）。
 
-## APIs
+## API 接口
 
-Vectara's LangChain vector store consumes Vectara's core APIs:
+Vectara 的 LangChain 向量存储使用了 Vectara 的核心 API：
 
-- [Indexing API](https://docs.vectara.com/docs/indexing-apis/indexing) for storing documents in a Vectara corpus.
-- [Search API](https://docs.vectara.com/docs/search-apis/search) for querying this data. This API supports hybrid search.
+- [索引 API（Indexing API）](https://docs.vectara.com/docs/indexing-apis/indexing)，用于将文档存储在 Vectara 语料库中。
+- [搜索 API（Search API）](https://docs.vectara.com/docs/search-apis/search)，用于查询这些数据。该 API 支持混合搜索。
 
-## Related
+## 相关内容
 
-- Vector store [conceptual guide](/docs/concepts/#vectorstores)
-- Vector store [how-to guides](/docs/how_to/#vectorstores)
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南（How-to）](/docs/how_to/#vectorstores)

@@ -15,11 +15,11 @@ export const quartoRawHtml = [
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;">Retriever</th>
+<th style="text-align: left;">检索器</th>
 <th style="text-align: center;">Self-host</th>
-<th style="text-align: center;">Cloud offering</th>
-<th style="text-align: center;">Package</th>
-<th style="text-align: center;">[Py support]</th>
+<th style="text-align: center;">云服务</th>
+<th style="text-align: center;">包</th>
+<th style="text-align: center;">[Python支持]</th>
 </tr>
 </thead>
 <tbody>
@@ -27,7 +27,7 @@ export const quartoRawHtml = [
 <td style="text-align: left;"><a href="https://api.js.langchain.com/classes/_langchain_community.retrievers_azion_edgesql.AzionRetriever.html">AzionRetriever</a></td>
 <td style="text-align: center;">❌</td>
 <td style="text-align: center;">❌</td>
-<td style="text-align: center;"><span class="citation" data-cites="langchain/community">@langchain/community</span></td>
+<td style="text-align: center;"><span class="citation" data-cites="@langchain/community">@langchain/community</span></td>
 <td style="text-align: center;">❌</td>
 </tr>
 </tbody>
@@ -35,47 +35,38 @@ export const quartoRawHtml = [
 `,
 ];
 
-## Overview
+## 概览
 
-This will help you getting started with the
-[AzionRetriever](../../../docs/concepts/#retrievers). For detailed
-documentation of all AzionRetriever features and configurations head to
-the [API
-reference](https://api.js.langchain.com/classes/_langchain_community.retrievers_azion_edgesql.AzionRetriever.html).
+这将帮助你快速上手使用 [AzionRetriever](../../../docs/concepts/#retrievers)。如需了解 AzionRetriever 所有功能和配置的详细文档，请前往 [API 参考](https://api.js.langchain.com/classes/_langchain_community.retrievers_azion_edgesql.AzionRetriever.html)。
 
-### Integration details
+### 集成详情
 
 <div dangerouslySetInnerHTML={{ __html: quartoRawHtml[0] }} />
 
-## Setup
+## 配置
 
-To use the AzionRetriever, you need to set the AZION_TOKEN environment
-variable.
+要使用 AzionRetriever，你需要设置 AZION_TOKEN 环境变量。
 
 ```typescript
 process.env.AZION_TOKEN = "your-api-key";
 ```
 
-If you are using OpenAI embeddings for this guide, you’ll need to set
-your OpenAI key as well:
+如果你在此指南中使用 OpenAI 嵌入模型，你还需要设置你的 OpenAI 密钥：
 
 ```typescript
 process.env.OPENAI_API_KEY = "YOUR_API_KEY";
 ```
 
-If you want to get automated tracing from individual queries, you can
-also set your [LangSmith](https://docs.smith.langchain.com/) API key by
-uncommenting below:
+如果你想从单个查询中获取自动追踪信息，你还可以取消注释以下代码并设置你的 [LangSmith](https://docs.smith.langchain.com/) API 密钥：
 
 ```typescript
 // process.env.LANGSMITH_API_KEY = "<YOUR API KEY HERE>";
 // process.env.LANGSMITH_TRACING = "true";
 ```
 
-### Installation
+### 安装
 
-This retriever lives in the
-`@langchain/community/retrievers/azion_edgesql` package:
+该检索器位于 `@langchain/community/retrievers/azion_edgesql` 包中：
 
 ```mdx-code-block
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
@@ -88,9 +79,9 @@ import Npm2Yarn from "@theme/Npm2Yarn";
 </Npm2Yarn>
 ```
 
-## Instantiation
+## 实例化
 
-Now we can instantiate our retriever:
+现在我们可以实例化我们的检索器：
 
 ```typescript
 import { AzionRetriever } from "@langchain/community/retrievers/azion_edgesql";
@@ -108,18 +99,18 @@ const chatModel = new ChatOpenAI({
 
 const retriever = new AzionRetriever(embeddingModel, {
   dbName: "langchain",
-  vectorTable: "documents", // table where the vector embeddings are stored
-  ftsTable: "documents_fts", // table where the fts index is stored
-  searchType: "hybrid", // search type to use for the retriever
-  ftsK: 2, // number of results to return from the fts index
-  similarityK: 2, // number of results to return from the vector index
+  vectorTable: "documents", // 存储向量嵌入的表
+  ftsTable: "documents_fts", // 存储全文搜索索引的表
+  searchType: "hybrid", // 检索器使用的搜索类型
+  ftsK: 2, // 从全文搜索索引返回的结果数
+  similarityK: 2, // 从向量索引返回的结果数
   metadataItems: ["language", "topic"],
   filters: [{ operator: "=", column: "language", value: "en" }],
   entityExtractor: chatModel,
-}); // number of results to return from the vector index
+}); // 从向量索引返回的结果数
 ```
 
-## Usage
+## 使用
 
 ```typescript
 const query = "Australia";
@@ -130,29 +121,28 @@ await retriever.invoke(query);
 ```text
 [
   Document {
-    pageContent: 'Australia s indigenous people have inhabited the continent for over 65,000 years',
+    pageContent: '澳大利亚的原住民在该大陆已居住超过65,000年',
     metadata: { language: 'en', topic: 'history', searchtype: 'similarity' },
     id: '3'
   },
   Document {
-    pageContent: 'Australia is a leader in solar energy adoption and renewable technology',
+    pageContent: '澳大利亚是太阳能利用和可再生能源技术领域的领导者',
     metadata: { language: 'en', topic: 'technology', searchtype: 'similarity' },
     id: '5'
   },
   Document {
-    pageContent: 'Australia s tech sector is rapidly growing with innovation hubs in major cities',
+    pageContent: '澳大利亚的科技行业正在迅速增长，主要城市拥有创新中心',
     metadata: { language: 'en', topic: 'technology', searchtype: 'fts' },
     id: '7'
   }
 ]
 ```
 
-## Use within a chain
+## 在链中使用
 
-Like other retrievers, AzionRetriever can be incorporated into LLM
-applications via [chains](../../../docs/how_to/sequence/).
+像其他检索器一样，AzionRetriever 可以通过 [链](../../../docs/how_to/sequence/) 整合到 LLM 应用程序中。
 
-We will need a LLM or chat model:
+我们需要一个 LLM 或聊天模型：
 
 ```mdx-code-block
 import ChatModelTabs from "@theme/ChatModelTabs";
@@ -171,17 +161,17 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import type { Document } from "@langchain/core/documents";
 
 const prompt = ChatPromptTemplate.fromTemplate(`
-Answer the question based only on the context provided.
+仅根据提供的上下文回答问题。
 
-Context: {context}
+上下文: {context}
 
-Question: {question}`);
+问题: {question}`);
 
 const formatDocs = (docs: Document[]) => {
   return docs.map((doc) => doc.pageContent).join("\n\n");
 };
 
-// See https://js.langchain.com/docs/tutorials/rag
+// 参见 https://js.langchain.com/docs/tutorials/rag
 const ragChain = RunnableSequence.from([
   {
     context: retriever.pipe(formatDocs),
@@ -198,11 +188,9 @@ await ragChain.invoke("Paris");
 ```
 
 ```text
-The context mentions that the 2024 Olympics are in Paris.
+上下文提到2024年奥运会将在巴黎举行。
 ```
 
-## API reference
+## API 参考
 
-For detailed documentation of all AzionRetriever features and
-configurations head to the [API
-reference](https://api.js.langchain.com/classes/_langchain_community.retrievers_azion_edgesql.AzionRetriever.html).
+如需了解 AzionRetriever 所有功能和配置的详细文档，请前往 [API 参考](https://api.js.langchain.com/classes/_langchain_community.retrievers_azion_edgesql.AzionRetriever.html)。

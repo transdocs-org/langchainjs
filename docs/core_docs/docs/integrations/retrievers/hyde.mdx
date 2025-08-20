@@ -2,15 +2,15 @@
 hide_table_of_contents: true
 ---
 
-# HyDE Retriever
+# HyDE 检索器
 
-This example shows how to use the HyDE Retriever, which implements Hypothetical Document Embeddings (HyDE) as described in [this paper](https://arxiv.org/abs/2212.10496).
+此示例展示如何使用 HyDE 检索器，它实现了论文 [this paper](https://arxiv.org/abs/2212.10496) 中描述的假设文档嵌入（HyDE）。
 
-At a high level, HyDE is an embedding technique that takes queries, generates a hypothetical answer, and then embeds that generated document and uses that as the final example.
+从高层次来看，HyDE 是一种嵌入技术，它接收查询，生成一个假设性的答案，然后嵌入该生成的文档，并将其作为最终的嵌入结果。
 
-In order to use HyDE, we therefore need to provide a base embedding model, as well as an LLM that can be used to generate those documents. By default, the HyDE class comes with some default prompts to use (see the paper for more details on them), but we can also create our own, which should have a single input variable `{question}`.
+因此，为了使用 HyDE，我们需要提供一个基础的嵌入模型以及一个可用于生成这些文档的 LLM。默认情况下，HyDE 类自带了一些可使用的默认提示（详见论文中的详细说明），但我们也可以自定义提示，其应包含一个单独的输入变量 `{question}`。
 
-## Usage
+## 使用方法
 
 import CodeBlock from "@theme/CodeBlock";
 import Example from "@examples/retrievers/hyde.ts";
@@ -25,7 +25,7 @@ npm install @langchain/openai @langchain/core
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Retriever [conceptual guide](/docs/concepts/retrievers)
-- Retriever [how-to guides](/docs/how_to/#retrievers)
+- 检索器 [概念指南](/docs/concepts/retrievers)
+- 检索器 [操作指南](/docs/how_to/#retrievers)

@@ -1,22 +1,22 @@
 # Anthropic
 
-All functionality related to Anthropic models.
+与Anthropic模型相关的所有功能。
 
-[Anthropic](https://www.anthropic.com/) is an AI safety and research company, and is the creator of Claude.
-This page covers all integrations between Anthropic models and LangChain.
+[Anthropic](https://www.anthropic.com/) 是一家人工智能安全与研究公司，也是Claude的创建者。  
+本页面涵盖了Anthropic模型与LangChain之间的所有集成。
 
-## Prompting Best Practices
+## 提示最佳实践
 
-Anthropic models have several prompting best practices compared to OpenAI models.
+与OpenAI模型相比，Anthropic模型有一些不同的提示最佳实践。
 
-**System Messages may only be the first message**
+**系统消息只能是第一条消息**
 
-Anthropic models require any system messages to be the first one in your prompts.
+Anthropic模型要求任何系统消息必须是提示中的第一条消息。
 
 ## `ChatAnthropic`
 
-`ChatAnthropic` is a subclass of LangChain's `ChatModel`, meaning it works best with `ChatPromptTemplate`.
-You can import this wrapper with the following code:
+`ChatAnthropic` 是LangChain的 `ChatModel` 的子类，这意味着它最适合与 `ChatPromptTemplate` 一起使用。  
+你可以使用以下代码导入此包装器：
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -31,8 +31,8 @@ import { ChatAnthropic } from "@langchain/anthropic";
 const model = new ChatAnthropic({});
 ```
 
-When working with ChatModels, it is preferred that you design your prompts as `ChatPromptTemplate`s.
-Here is an example below of doing that:
+在使用ChatModels时，建议将提示设计为 `ChatPromptTemplate` 格式。  
+以下是一个示例：
 
 ```typescript
 import { ChatPromptTemplate } from "langchain/prompts";
@@ -43,11 +43,11 @@ const prompt = ChatPromptTemplate.fromMessages([
 ]);
 ```
 
-You can then use this in a chain as follows:
+然后你可以如下在链中使用它：
 
 ```typescript
 const chain = prompt.pipe(model);
 await chain.invoke({ topic: "bears" });
 ```
 
-See the [chat model integration page](/docs/integrations/chat/anthropic/) for more examples, including multimodal inputs.
+有关更多示例（包括多模态输入），请参阅 [聊天模型集成页面](/docs/integrations/chat/anthropic/)。

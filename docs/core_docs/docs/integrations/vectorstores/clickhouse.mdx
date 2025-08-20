@@ -6,19 +6,19 @@ import CodeBlock from "@theme/CodeBlock";
 
 # ClickHouse
 
-:::tip Compatibility
-Only available on Node.js.
+:::tip 兼容性
+仅适用于 Node.js。
 :::
 
-[ClickHouse](https://clickhouse.com/) is a robust and open-source columnar database that is used for handling analytical queries and efficient storage, ClickHouse is designed to provide a powerful combination of vector search and analytics.
+[ClickHouse](https://clickhouse.com/) 是一个强大且开源的列式数据库，用于处理分析查询和高效存储。ClickHouse 的设计旨在将向量搜索和分析功能结合在一起，提供强大的性能支持。
 
-## Setup
+## 配置步骤
 
-1. Launch a ClickHouse cluster. Refer to the [ClickHouse Installation Guide](https://clickhouse.com/docs/en/getting-started/install/) for details.
-2. After launching a ClickHouse cluster, retrieve the `Connection Details` from the cluster's `Actions` menu. You will need the host, port, username, and password.
-3. Install the required Node.js peer dependency for ClickHouse in your workspace.
+1. 启动一个 ClickHouse 集群。详细信息请参考 [ClickHouse 安装指南](https://clickhouse.com/docs/en/getting-started/install/)。
+2. 在启动 ClickHouse 集群后，从集群的 `操作（Actions）` 菜单中获取 `连接详情（Connection Details）`。您需要获取主机地址、端口、用户名和密码。
+3. 在您的工作区中安装 ClickHouse 所需的 Node.js 对等依赖项。
 
-You will need to install the following peer dependencies:
+您需要安装以下对等依赖项：
 
 ```bash npm2yarn
 npm install -S @clickhouse/client mysql2
@@ -32,19 +32,19 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/openai @langchain/community @langchain/core
 ```
 
-## Index and Query Docs
+## 索引和查询文档
 
 import InsertExample from "@examples/indexes/vector_stores/clickhouse_fromTexts.ts";
 
 <CodeBlock language="typescript">{InsertExample}</CodeBlock>
 
-## Query Docs From an Existing Collection
+## 从现有集合中查询文档
 
 import SearchExample from "@examples/indexes/vector_stores/clickhouse_search.ts";
 
 <CodeBlock language="typescript">{SearchExample}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Vector store [conceptual guide](/docs/concepts/#vectorstores)
-- Vector store [how-to guides](/docs/how_to/#vectorstores)
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

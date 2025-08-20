@@ -1,16 +1,15 @@
-# How to build an LLM generated UI
+# 如何构建一个由大语言模型生成的 UI
 
-This guide will walk through some high level concepts and code snippets for building generative UI's using LangChain.js. To see the full code for generative UI, [click here to visit our official LangChain Next.js template](https://github.com/langchain-ai/langchain-nextjs-template/blob/7f764d558682214d50b064f4293667123a31e6fe/app/generative_ui/README.md).
+本指南将介绍一些高层次的概念以及代码片段，用于使用 LangChain.js 构建生成式 UI。要查看生成式 UI 的完整代码，[请点击此处访问我们官方的 LangChain Next.js 模板](https://github.com/langchain-ai/langchain-nextjs-template/blob/7f764d558682214d50b064f4293667123a31e6fe/app/generative_ui/README.md)。
 
-The sample implements a tool calling agent, which outputs an interactive UI element when streaming intermediate outputs of tool calls to the client.
+该示例实现了一个工具调用代理，它在将工具调用的中间输出流式传输到客户端时，输出一个交互式 UI 元素。
 
-We introduce two utilities which wraps the AI SDK to make it easier to yield React elements inside runnables and tool calls: [`createRunnableUI`](https://github.com/langchain-ai/langchain-nextjs-template/blob/7f764d558682214d50b064f4293667123a31e6fe/app/generative_ui/utils/server.tsx#L89)
-and [`streamRunnableUI`](https://github.com/langchain-ai/langchain-nextjs-template/blob/7f764d558682214d50b064f4293667123a31e6fe/app/generative_ui/utils/server.tsx#L126).
+我们引入了两个工具，用于封装 AI SDK，以便在可运行对象和工具调用中更轻松地生成 React 元素：[`createRunnableUI`](https://github.com/langchain-ai/langchain-nextjs-template/blob/7f764d558682214d50b064f4293667123a31e6fe/app/generative_ui/utils/server.tsx#L89) 和 [`streamRunnableUI`](https://github.com/langchain-ai/langchain-nextjs-template/blob/7f764d558682214d50b064f4293667123a31e6fe/app/generative_ui/utils/server.tsx#L126)。
 
-- The `streamRunnableUI` executes the provided Runnable with `streamEvents` method and sends every `stream` event to the client via the React Server Components stream.
-- The `createRunnableUI` wraps the `createStreamableUI` function from AI SDK to properly hook into the Runnable event stream.
+- `streamRunnableUI` 使用 `streamEvents` 方法执行提供的 Runnable，并通过 React Server Components 的流将每个 `stream` 事件发送到客户端。
+- `createRunnableUI` 封装了 AI SDK 中的 `createStreamableUI` 函数，以便正确接入 Runnable 的事件流。
 
-The usage is then as follows:
+其使用方式如下所示：
 
 ```tsx ai/chain.tsx
 "use server";
@@ -18,7 +17,7 @@ The usage is then as follows:
 const tool = tool(
   async (input, config) => {
     const stream = await createRunnableUI(config);
-    stream.update(<div>Searching...</div>);
+    stream.update(<div>搜索中...</div>);
 
     const result = await images(input);
     stream.done(
@@ -29,19 +28,19 @@ const tool = tool(
       />
     );
 
-    return `[Returned ${result.images_results.length} images]`;
+    return `[返回了 ${result.images_results.length} 张图片]`;
   },
   {
     name: "Images",
-    description: "A tool to search for images. input should be a search query.",
+    description: "一个用于搜索图片的工具。输入应为一个搜索查询。",
     schema: z.object({
-      query: z.string().describe("The search query used to search for cats"),
-      limit: z.number().describe("The number of pictures shown to the user"),
+      query: z.string().describe("用于搜索猫的搜索查询"),
+      limit: z.number().describe("向用户显示的图片数量"),
     }),
   }
 );
 
-// add LLM, prompt, etc...
+// 添加 LLM、prompt 等...
 
 const tools = [tool];
 
@@ -52,7 +51,7 @@ export const agentExecutor = new AgentExecutor({
 ```
 
 :::tip
-As of `langchain` version `0.2.8`, the `createToolCallingAgent` function now supports [OpenAI-formatted tools](https://api.js.langchain.com/interfaces/langchain_core.language_models_base.ToolDefinition.html).
+从 `langchain` 版本 `0.2.8` 开始，`createToolCallingAgent` 函数现在支持 [OpenAI 格式的工具](https://api.js.langchain.com/interfaces/langchain_core.language_models_base.ToolDefinition.html)。
 :::
 
 ```tsx agent.tsx
@@ -73,7 +72,7 @@ async function agent(inputs: {
 export const EndpointsContext = exposeEndpoints({ agent });
 ```
 
-In order to ensure all of the client components are included in the bundle, we need to wrap all of the Server Actions into `exposeEndpoints` method. These endpoints will be accessible from the client via the Context API, seen in the `useActions` hook.
+为了确保所有客户端组件都被包含在打包文件中，我们需要将所有的 Server Actions 包装进 `exposeEndpoints` 方法中。这些端点将可以通过 Context API 从客户端访问，如 `useActions` 钩子中所示。
 
 ```tsx
 "use client";
@@ -92,7 +91,7 @@ export default function Page() {
           setNode(await actions.agent({ input: "cats" }));
         }}
       >
-        Get images of cats
+        获取猫的图片
       </button>
     </div>
   );

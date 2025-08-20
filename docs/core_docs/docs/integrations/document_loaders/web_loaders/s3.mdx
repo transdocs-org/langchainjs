@@ -3,31 +3,31 @@ hide_table_of_contents: true
 sidebar_class_name: node-only
 ---
 
-# S3 File
+# S3 文件
 
-:::tip Compatibility
-Only available on Node.js.
+:::tip 兼容性
+仅适用于 Node.js。
 :::
 
-This covers how to load document objects from an s3 file object.
+本文介绍了如何从一个 S3 文件对象中加载文档对象。
 
-## Setup
+## 配置
 
-To run this index you'll need to have Unstructured already set up and ready to use at an available URL endpoint. It can also be configured to run locally.
+要运行此索引，你需要已经配置好并可以使用的 Unstructured，并且可以通过一个可用的 URL 端点访问。也可以配置为在本地运行。
 
-See the docs [here](/docs/integrations/document_loaders/file_loaders/unstructured) for information on how to do that.
+有关如何操作的信息，请参阅[此处](/docs/integrations/document_loaders/file_loaders/unstructured)的文档。
 
-You'll also need to install the official AWS SDK:
+你还需要安装官方的 AWS SDK：
 
 ```bash npm2yarn
 npm install @langchain/community @langchain/core @aws-sdk/client-s3
 ```
 
-## Usage
+## 使用方法
 
-Once Unstructured is configured, you can use the S3 loader to load files and then convert them into a Document.
+配置好 Unstructured 后，你可以使用 S3 加载器来加载文件，并将其转换为 Document 对象。
 
-You can optionally provide a s3Config parameter to specify your bucket region, access key, and secret access key. If these are not provided, you will need to have them in your environment (e.g., by running `aws configure`).
+你可以选择性地提供一个 s3Config 参数来指定你的存储桶区域、访问密钥和秘密访问密钥。如果未提供这些信息，则需要将它们设置在你的环境变量中（例如，通过运行 `aws configure` 命令）。
 
 import CodeBlock from "@theme/CodeBlock";
 import Example from "@examples/document_loaders/s3.ts";

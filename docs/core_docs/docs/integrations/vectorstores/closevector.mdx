@@ -2,13 +2,13 @@ import CodeBlock from "@theme/CodeBlock";
 
 # CloseVector
 
-:::tip Compatibility
-available on both browser and Node.js
+:::tip 兼容性
+在浏览器和 Node.js 中均可使用
 :::
 
-[CloseVector](https://closevector.getmegaportal.com/) is a cross-platform vector database that can run in both the browser and Node.js. For example, you can create your index on Node.js and then load/query it on browser. For more information, please visit [CloseVector Docs](https://closevector-docs.getmegaportal.com/).
+[CloseVector](https://closevector.getmegaportal.com/) 是一个跨平台的向量数据库，可以在浏览器和 Node.js 中运行。例如，你可以在 Node.js 上创建索引，然后在浏览器中加载/查询它。更多信息，请访问 [CloseVector 文档](https://closevector-docs.getmegaportal.com/)。
 
-## Setup
+## 安装配置
 
 ### CloseVector Web
 
@@ -30,35 +30,35 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/openai @langchain/community @langchain/core
 ```
 
-## Usage
+## 使用方法
 
-### Create a new index from texts
+### 从文本创建新索引
 
 import ExampleTexts from "@examples/indexes/vector_stores/closevector.ts";
 
 <CodeBlock language="typescript">{ExampleTexts}</CodeBlock>
 
-### Create a new index from a loader
+### 通过加载器创建新索引
 
 import ExampleLoader from "@examples/indexes/vector_stores/closevector_fromdocs.ts";
 
 <CodeBlock language="typescript">{ExampleLoader}</CodeBlock>
 
-### Save an index to CloseVector CDN and load it again
+### 将索引保存到 CloseVector CDN 并重新加载
 
-CloseVector supports saving/loading indexes to/from cloud. To use this feature, you need to create an account on [CloseVector](https://closevector.getmegaportal.com/). Please read [CloseVector Docs](https://closevector-docs.getmegaportal.com/) and generate your API key first by [loging in](https://closevector.getmegaportal.com/).
+CloseVector 支持将索引保存/加载到云端。要使用此功能，你需要在 [CloseVector](https://closevector.getmegaportal.com/) 上创建一个账户。请阅读 [CloseVector 文档](https://closevector-docs.getmegaportal.com/)，并先通过[登录](https://closevector.getmegaportal.com/)生成你的 API 密钥。
 
 import ExampleCloud from "@examples/indexes/vector_stores/closevector_saveload_fromcloud.ts";
 
 <CodeBlock language="typescript">{ExampleCloud}</CodeBlock>
 
-### Save an index to file and load it again
+### 将索引保存到文件并重新加载
 
 import ExampleSave from "@examples/indexes/vector_stores/closevector_saveload.ts";
 
 <CodeBlock language="typescript">{ExampleSave}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Vector store [conceptual guide](/docs/concepts/#vectorstores)
-- Vector store [how-to guides](/docs/how_to/#vectorstores)
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

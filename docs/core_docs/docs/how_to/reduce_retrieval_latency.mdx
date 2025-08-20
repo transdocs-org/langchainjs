@@ -1,32 +1,30 @@
-# How to reduce retrieval latency
+# 如何减少检索延迟
 
-:::info Prerequisites
+:::info 前提条件
 
-This guide assumes familiarity with the following concepts:
+本指南假设您熟悉以下概念：
 
-- [Retrievers](/docs/concepts/retrievers)
-- [Embeddings](/docs/concepts/embedding_models)
-- [Vector stores](/docs/concepts/#vectorstores)
-- [Retrieval-augmented generation (RAG)](/docs/tutorials/rag)
+- [检索器（Retrievers）](/docs/concepts/retrievers)
+- [嵌入模型（Embeddings）](/docs/concepts/embedding_models)
+- [向量存储（Vector stores）](/docs/concepts/#vectorstores)
+- [基于检索增强生成（RAG）](/docs/tutorials/rag)
 
 :::
 
-One way to reduce retrieval latency is through a technique called "Adaptive Retrieval".
-The [`MatryoshkaRetriever`](https://api.js.langchain.com/classes/langchain.retrievers_matryoshka_retriever.MatryoshkaRetriever.html) uses the
-Matryoshka Representation Learning (MRL) technique to retrieve documents for a given query in two steps:
+一种减少检索延迟的方法是使用一种称为“自适应检索（Adaptive Retrieval）”的技术。
+[`MatryoshkaRetriever`](https://api.js.langchain.com/classes/langchain.retrievers_matryoshka_retriever.MatryoshkaRetriever.html) 使用
+Matryoshka Representation Learning (MRL) 技术，通过两个步骤为给定查询检索文档：
 
-- **First-pass**: Uses a lower dimensional sub-vector from the MRL embedding for an initial, fast,
-  but less accurate search.
+- **首次检索**：使用来自 MRL 嵌入的低维子向量进行初始快速但准确度较低的搜索。
 
-- **Second-pass**: Re-ranks the top results from the first pass using the full, high-dimensional
-  embedding for higher accuracy.
+- **二次检索**：使用完整高维嵌入对首次检索的结果进行重新排序，以提高准确度。
 
-![Matryoshka Retriever](/img/adaptive_retrieval.png)
+![Matryoshka 检索器](/img/adaptive_retrieval.png)
 
-It is based on this [Supabase](https://supabase.com/) blog post
-["Matryoshka embeddings: faster OpenAI vector search using Adaptive Retrieval"](https://supabase.com/blog/matryoshka-embeddings).
+它基于这篇 [Supabase](https://supabase.com/) 博客文章
+["Matryoshka embeddings: faster OpenAI vector search using Adaptive Retrieval"](https://supabase.com/blog/matryoshka-embeddings)。
 
-### Setup
+### 安装设置
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -36,13 +34,13 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/openai @langchain/community @langchain/core
 ```
 
-To follow the example below, you need an OpenAI API key:
+要运行以下示例，您需要一个 OpenAI API 密钥：
 
 ```bash
 export OPENAI_API_KEY=your-api-key
 ```
 
-We'll also be using `chroma` for our vector store. Follow the instructions [here](/docs/integrations/vectorstores/chroma) to setup.
+我们还将使用 `chroma` 作为我们的向量存储。请按照 [此处](/docs/integrations/vectorstores/chroma) 的说明进行设置。
 
 import CodeBlock from "@theme/CodeBlock";
 import Example from "@examples/retrievers/matryoshka_retriever.ts";
@@ -50,12 +48,12 @@ import Example from "@examples/retrievers/matryoshka_retriever.ts";
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
 :::note
-Due to the constraints of some vector stores, the large embedding metadata field is stringified (`JSON.stringify`) before being stored. This means that the metadata field will need to be parsed (`JSON.parse`) when retrieved from the vector store.
+由于某些向量存储的限制，大型嵌入元数据字段在存储之前会被序列化（`JSON.stringify`）。这意味着从向量存储中检索时需要对元数据字段进行解析（`JSON.parse`）。
 :::
 
-## Next steps
+## 下一步
 
-You've now learned a technique that can help speed up your retrieval queries.
+您现在已经学习了一种可以加快检索查询的技术。
 
-Next, check out the [broader tutorial on RAG](/docs/tutorials/rag), or this section to learn how to
-[create your own custom retriever over any data source](/docs/how_to/custom_retriever/).
+接下来，查看关于 RAG 的[完整教程](/docs/tutorials/rag)，或查看本节内容学习如何
+[在任何数据源上创建自定义检索器](/docs/how_to/custom_retriever/)。

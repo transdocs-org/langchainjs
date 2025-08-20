@@ -2,42 +2,42 @@ import CodeBlock from "@theme/CodeBlock";
 import Example from "@examples/tools/connery.ts";
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
-# Connery Action Tool
+# Connery Action 工具
 
-Using this tool, you can integrate individual Connery Action into your LangChain agent.
+使用该工具，您可以将单个 Connery Action 集成到您的 LangChain 代理中。
 
 :::note
-If you want to use more than one Connery Action in your agent,
-check out the [Connery Toolkit](/docs/integrations/toolkits/connery) documentation.
+如果要在您的代理中使用多个 Connery Action，
+请参阅 [Connery Toolkit](/docs/integrations/toolkits/connery) 文档。
 :::
 
-## What is Connery?
+## 什么是 Connery？
 
-Connery is an open-source plugin infrastructure for AI.
+Connery 是一个面向 AI 的开源插件基础设施。
 
-With Connery, you can easily create a custom plugin with a set of actions and seamlessly integrate them into your LangChain agent.
-Connery will take care of critical aspects such as runtime, authorization, secret management, access management, audit logs, and other vital features.
+通过 Connery，您可以轻松创建一个包含一组动作的自定义插件，并无缝集成到您的 LangChain 代理中。
+Connery 将负责运行时、授权、密钥管理、访问管理、审计日志以及其他关键功能等重要方面。
 
-Furthermore, Connery, supported by our community, provides a diverse collection of ready-to-use open-source plugins for added convenience.
+此外，Connery 得益于我们社区的支持，提供了多种现成的开源插件，以增加便利性。
 
-Learn more about Connery:
+了解更多关于 Connery 的信息：
 
-- GitHub: https://github.com/connery-io/connery
-- Documentation: https://docs.connery.io
+- GitHub：https://github.com/connery-io/connery
+- 文档：https://docs.connery.io
 
-## Prerequisites
+## 前提条件
 
-To use Connery Actions in your LangChain agent, you need to do some preparation:
+要在您的 LangChain 代理中使用 Connery Actions，您需要进行一些准备工作：
 
-1. Set up the Connery runner using the [Quickstart](https://docs.connery.io/docs/runner/quick-start/) guide.
-2. Install all the plugins with the actions you want to use in your agent.
-3. Set environment variables `CONNERY_RUNNER_URL` and `CONNERY_RUNNER_API_KEY` so the toolkit can communicate with the Connery Runner.
+1. 使用 [快速入门](https://docs.connery.io/docs/runner/quick-start/) 指南设置 Connery 运行器。
+2. 安装所有您希望在代理中使用的动作对应的插件。
+3. 设置环境变量 `CONNERY_RUNNER_URL` 和 `CONNERY_RUNNER_API_KEY`，以便工具包可以与 Connery Runner 进行通信。
 
-## Example of using Connery Action Tool
+## 使用 Connery Action 工具的示例
 
-### Setup
+### 安装
 
-To use the Connery Action Tool you need to install the following official peer dependency:
+要使用 Connery Action 工具，您需要安装以下官方对等依赖项：
 
 ```bash npm2yarn
 npm install @langchain/community @langchain/core
@@ -45,23 +45,23 @@ npm install @langchain/community @langchain/core
 
 <IntegrationInstallTooltip></IntegrationInstallTooltip>
 
-### Usage
+### 使用方法
 
-In the example below, we fetch action by its ID from the Connery Runner and then call it with the specified parameters.
+在下面的示例中，我们通过其 ID 从 Connery Runner 获取一个动作，然后使用指定的参数调用它。
 
-Here, we use the ID of the **Send email** action from the [Gmail](https://github.com/connery-io/gmail) plugin.
+这里我们使用了 [Gmail](https://github.com/connery-io/gmail) 插件中 **发送邮件** 动作的 ID。
 
 :::info
-You can see a LangSmith trace of this example [here](https://smith.langchain.com/public/c4b6723d-f91c-440c-8682-16ec8297a602/r).
+您可以在 [此处](https://smith.langchain.com/public/c4b6723d-f91c-440c-8682-16ec8297a602/r) 查看该示例的 LangSmith 跟踪。
 :::
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
 :::note
-Connery Action is a structured tool, so you can only use it in the agents supporting structured tools.
+Connery Action 是一个结构化工具，因此只能在支持结构化工具的代理中使用它。
 :::
 
-## Related
+## 相关内容
 
-- Tool [conceptual guide](/docs/concepts/tools)
-- Tool [how-to guides](/docs/how_to/#tools)
+- 工具[概念指南](/docs/concepts/tools)
+- 工具[操作指南](/docs/how_to/#tools)

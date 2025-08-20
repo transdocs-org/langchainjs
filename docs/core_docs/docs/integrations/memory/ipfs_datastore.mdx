@@ -4,13 +4,13 @@ hide_table_of_contents: true
 
 import CodeBlock from "@theme/CodeBlock";
 
-# IPFS Datastore Chat Memory
+# IPFS 数据存储聊天记忆
 
-For a storage backend you can use the IPFS Datastore Chat Memory to wrap an IPFS Datastore allowing you to use any IPFS compatible datastore.
+对于存储后端，您可以使用 IPFS Datastore Chat Memory 来包装一个 IPFS 数据存储，从而允许您使用任何兼容 IPFS 的数据存储。
 
-## Setup
+## 安装配置
 
-First, install the integration dependencies:
+首先，安装集成所需的依赖项：
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -20,18 +20,18 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install cborg interface-datastore it-all @langchain/community @langchain/core
 ```
 
-Now you can install and use an IPFS Datastore of your choice. Here are some options:
+现在您可以安装并使用您选择的 IPFS 数据存储。以下是一些选项：
 
-- [datastore-core](https://github.com/ipfs/js-stores/blob/main/packages/datastore-core) Datastore in-memory implementation.
-- [datastore-fs](https://github.com/ipfs/js-stores/blob/main/packages/datastore-fs) Datastore implementation with file system backend.
-- [datastore-idb](https://github.com/ipfs/js-stores/blob/main/packages/datastore-idb) Datastore implementation with IndexedDB backend.
-- [datastore-level](https://github.com/ipfs/js-stores/blob/main/packages/datastore-level) Datastore implementation with level(up|down) backend
-- [datastore-s3](https://github.com/ipfs/js-stores/blob/main/packages/datastore-s3) Datastore implementation backed by s3.
+- [datastore-core](https://github.com/ipfs/js-stores/blob/main/packages/datastore-core) 内存中的数据存储实现。
+- [datastore-fs](https://github.com/ipfs/js-stores/blob/main/packages/datastore-fs) 使用文件系统作为后端的数据存储实现。
+- [datastore-idb](https://github.com/ipfs/js-stores/blob/main/packages/datastore-idb) 使用 IndexedDB 作为后端的数据存储实现。
+- [datastore-level](https://github.com/ipfs/js-stores/blob/main/packages/datastore-level) 使用 level(up|down) 作为后端的数据存储实现。
+- [datastore-s3](https://github.com/ipfs/js-stores/blob/main/packages/datastore-s3) 由 S3 提供支持的底层数据存储实现。
 
-## Usage
+## 使用方法
 
 ```typescript
-// Replace FsDatastore with the IPFS Datastore of your choice.
+// 将 FsDatastore 替换为您选择的 IPFS 数据存储。
 import { FsDatastore } from "datastore-fs";
 import { IPFSDatastoreChatMessageHistory } from "@langchain/community/stores/message/ipfs_datastore";
 

@@ -1,53 +1,50 @@
-# Tool calling
+# 工具调用
 
-:::info[Prerequisites]
+:::info[前提条件]
 
-- [Tools](/docs/concepts/tools)
-- [Chat Models](/docs/concepts/chat_models)
+- [工具](/docs/concepts/tools)
+- [聊天模型](/docs/concepts/chat_models)
 
 :::
 
-## Overview
+## 概述
 
-Many AI applications interact directly with humans. In these cases, it is appropriate for models to respond in natural language.
-But what about cases where we want a model to also interact _directly_ with systems, such as databases or an API?
-These systems often have a particular input schema; for example, APIs frequently have a required payload structure.
-This need motivates the concept of _tool calling_. You can use [tool calling](https://platform.openai.com/docs/guides/function-calling/example-use-cases) to request model responses that match a particular schema.
+许多人工智能应用会直接与人类进行交互。在这种情况下，模型以自然语言进行响应是合适的。但如果我们希望模型也能直接与系统（如数据库或API）进行交互时，应该怎么做呢？这些系统通常有特定的输入模式；例如，API通常需要特定的负载结构。这种需求催生了**工具调用**的概念。你可以使用[工具调用](https://platform.openai.com/docs/guides/function-calling/example-use-cases)来请求模型生成符合特定模式的响应。
 
 :::info
-You will sometimes hear the term `function calling`. We use this term interchangeably with `tool calling`.
+你有时会听到术语`函数调用（function calling）`。我们将其与`工具调用（tool calling）`视为同义词。
 :::
 
-![Conceptual overview of tool calling](/img/tool_calling_concept.png)
+![工具调用概念图](/img/tool_calling_concept.png)
 
-## Key concepts
+## 关键概念
 
-**(1) Tool Creation:** Use the [tool](https://api.js.langchain.com/functions/_langchain_core.tools.tool-1.html) function to create a [tool](/docs/concepts/tools). A tool is an association between a function and its schema.
-**(2) Tool Binding:** The tool needs to be connected to a model that supports tool calling. This gives the model awareness of the tool and the associated input schema required by the tool.
-**(3) Tool Calling:** When appropriate, the model can decide to call a tool and ensure its response conforms to the tool's input schema.
-**(4) Tool Execution:** The tool can be executed using the arguments provided by the model.
+**(1) 创建工具：** 使用 [tool](https://api.js.langchain.com/functions/_langchain_core.tools.tool-1.html) 函数来创建一个 [tool](/docs/concepts/tools)。工具是函数与其模式之间的关联。
 
-![Conceptual parts of tool calling](/img/tool_calling_components.png)
+**(2) 绑定工具：** 需要将工具连接到支持工具调用的模型上。这使得模型能够感知到该工具及其所需的输入模式。
 
-## Recommended usage
+**(3) 调用工具：** 在适当的时候，模型可以决定调用一个工具，并确保其响应符合该工具的输入模式。
 
-This pseudo-code illustrates the recommended workflow for using tool calling.
-Created tools are passed to `.bindTools()` method as a list.
-This model can be called, as usual. If a tool call is made, model's response will contain the tool call arguments.
-The tool call arguments can be passed directly to the tool.
+**(4) 执行工具：** 可以使用模型提供的参数执行该工具。
+
+![工具调用的组成部分](/img/tool_calling_components.png)
+
+## 推荐用法
+
+以下伪代码说明了使用工具调用的推荐工作流程。创建的工具将以列表形式传递给`.bindTools()`方法。这个模型可以像往常一样被调用。如果进行了工具调用，模型的响应将包含工具调用的参数。这些参数可以直接传递给工具。
 
 ```typescript
-// Tool creation
+// 创建工具
 const tools = [myTool];
-// Tool binding
+// 绑定工具
 const modelWithTools = model.bindTools(tools);
-// Tool calling
+// 调用工具
 const response = await modelWithTools.invoke(userInput);
 ```
 
-## Tool creation
+## 创建工具
 
-The recommended way to create a tool is using the `tool` function.
+创建工具的推荐方式是使用`tool`函数。
 
 ```typescript
 import { tool } from "@langchain/core/tools";
@@ -55,13 +52,13 @@ import { tool } from "@langchain/core/tools";
 const multiply = tool(
   ({ a, b }: { a: number; b: number }): number => {
     /**
-     * Multiply a and b.
+     * 将a和b相乘。
      */
     return a * b;
   },
   {
     name: "multiply",
-    description: "Multiply two numbers",
+    description: "将两个数字相乘",
     schema: z.object({
       a: z.number(),
       b: z.number(),
@@ -70,20 +67,20 @@ const multiply = tool(
 );
 ```
 
-:::info[Further reading]
+:::info[进一步阅读]
 
-- See our conceptual guide on [tools](/docs/concepts/tools/) for more details.
-- See our [model integrations](/docs/integrations/chat/) that support tool calling.
-- See our [how-to guide](/docs/how_to/tool_calling/) on tool calling.
+- 有关详细信息，请参阅我们的[工具概念指南](/docs/concepts/tools/)。
+- 请查看支持工具调用的[模型集成](/docs/integrations/chat/)。
+- 请查看我们的[工具调用操作指南](/docs/how_to/tool_calling/)。
 
 :::
 
-For tool calling that does not require a function to execute, you can also define just the tool schema:
+对于不需要执行函数的工具调用，你也可以只定义工具的模式：
 
 ```typescript
 const multiplyTool = {
   name: "multiply",
-  description: "Multiply two numbers",
+  description: "将两个数字相乘",
   schema: z.object({
     a: z.number(),
     b: z.number(),
@@ -91,38 +88,37 @@ const multiplyTool = {
 };
 ```
 
-## Tool binding
+## 绑定工具
 
-[Many](https://platform.openai.com/docs/guides/function-calling) [model providers](https://platform.openai.com/docs/guides/function-calling) support tool calling.
+许多[模型提供商](https://platform.openai.com/docs/guides/function-calling)支持工具调用。
 
 :::tip
-See our [model integration page](/docs/integrations/chat/) for a list of providers that support tool calling.
+请参阅我们的[模型集成页面](/docs/integrations/chat/)，了解支持工具调用的提供商列表。
 :::
 
-The central concept to understand is that LangChain provides a standardized interface for connecting tools to models.
-The `.bindTools()` method can be used to specify which tools are available for a model to call.
+需要理解的核心概念是LangChain提供了一个标准化接口，用于将工具连接到模型。可以使用`.bindTools()`方法指定模型可以调用哪些工具。
 
 ```typescript
 const modelWithTools = model.bindTools([toolsList]);
 ```
 
-As a specific example, let's take a function `multiply` and bind it as a tool to a model that supports tool calling.
+举个具体例子，假设我们有一个`multiply`函数，并将其绑定为一个工具到支持工具调用的模型上。
 
 ```typescript
 const multiply = tool(
   ({ a, b }: { a: number; b: number }): number => {
     /**
-     * Multiply a and b.
+     * 将a和b相乘。
      *
-     * @param a - first number
-     * @param b - second number
-     * @returns The product of a and b
+     * @param a - 第一个数字
+     * @param b - 第二个数字
+     * @returns a和b的乘积
      */
     return a * b;
   },
   {
     name: "multiply",
-    description: "Multiply two numbers",
+    description: "将两个数字相乘",
     schema: z.object({
       a: z.number(),
       b: z.number(),
@@ -133,53 +129,49 @@ const multiply = tool(
 const llmWithTools = toolCallingModel.bindTools([multiply]);
 ```
 
-## Tool calling
+## 调用工具
 
-![Diagram of a tool call by a model](/img/tool_call_example.png)
+![模型调用工具的示意图](/img/tool_call_example.png)
 
-A key principle of tool calling is that the model decides when to use a tool based on the input's relevance. The model doesn't always need to call a tool.
-For example, given an unrelated input, the model would not call the tool:
+工具调用的一个关键原则是模型根据输入的相关性决定是否使用某个工具。模型并不总是需要调用工具。例如，对于一个不相关的输入，模型不会调用工具：
 
 ```typescript
 const result = await llmWithTools.invoke("Hello world!");
 ```
 
-The result would be an `AIMessage` containing the model's response in natural language (e.g., "Hello!").
-However, if we pass an input _relevant to the tool_, the model should choose to call it:
+结果将是一个包含模型自然语言响应的`AIMessage`（例如："Hello!"）。然而，如果我们传递一个与工具相关的输入，模型应该选择调用它：
 
 ```typescript
 const result = await llmWithTools.invoke("What is 2 multiplied by 3?");
 ```
 
-As before, the output `result` will be an `AIMessage`.
-But, if the tool was called, `result` will have a `tool_calls` attribute.
-This attribute includes everything needed to execute the tool, including the tool name and input arguments:
+和之前一样，输出`result`将是一个`AIMessage`。但如果调用了工具，`result`将包含一个`tool_calls`属性。该属性包含执行工具所需的所有信息，包括工具名称和输入参数：
 
 ```
 result.tool_calls
 {'name': 'multiply', 'args': {'a': 2, 'b': 3}, 'id': 'xxx', 'type': 'tool_call'}
 ```
 
-For more details on usage, see our [how-to guides](/docs/how_to/#tools)!
+有关更多使用细节，请参阅我们的[操作指南](/docs/how_to/#tools)！
 
-## Tool execution
+## 执行工具
 
-[Tools](/docs/concepts/tools/) implement the [Runnable](/docs/concepts/runnables/) interface, which means that they can be invoked (e.g., `tool.invoke(args)`) directly.
+[工具](/docs/concepts/tools/)实现了[Runnable](/docs/concepts/runnables/)接口，这意味着可以直接调用它们（例如，`tool.invoke(args)`）。
 
-[LangGraph](https://langchain-ai.github.io/langgraphjs/) offers pre-built components (e.g., [`ToolNode`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph_prebuilt.ToolNode.html)) that will often invoke the tool in behalf of the user.
+[LangGraph](https://langchain-ai.github.io/langgraphjs/) 提供了预构建的组件（例如 [`ToolNode`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph_prebuilt.ToolNode.html)），通常会代表用户调用工具。
 
-:::info[Further reading]
+:::info[进一步阅读]
 
-- See our [how-to guide](/docs/how_to/tool_calling/) on tool calling.
-- See the [LangGraph documentation on using ToolNode](https://langchain-ai.github.io/langgraphjs/how-tos/tool-calling/).
+- 请参阅我们的[工具调用操作指南](/docs/how_to/tool_calling/)。
+- 请参阅 [LangGraph 文档中关于使用 ToolNode 的内容](https://langchain-ai.github.io/langgraphjs/how-tos/tool-calling/)。
 
 :::
 
-## Best practices
+## 最佳实践
 
-When designing [tools](/docs/concepts/tools/) to be used by a model, it is important to keep in mind that:
+在设计供模型使用的[工具](/docs/concepts/tools/)时，需要牢记以下几点：
 
-- Models that have explicit [tool-calling APIs](/docs/concepts/tool_calling) will be better at tool calling than non-fine-tuned models.
-- Models will perform better if the tools have well-chosen names and descriptions.
-- Simple, narrowly scoped tools are easier for models to use than complex tools.
-- Asking the model to select from a large list of tools poses challenges for the model.
+- 具有显式[工具调用API](/docs/concepts/tool_calling)的模型在工具调用方面会优于未经过微调的模型。
+- 如果工具具有精心选择的名称和描述，模型的表现会更好。
+- 简单、功能范围明确的工具比复杂的工具更容易被模型使用。
+- 要求模型从大量工具列表中进行选择，会给模型带来挑战。

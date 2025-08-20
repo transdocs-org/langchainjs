@@ -1,12 +1,12 @@
 # Friendli
 
-> [Friendli](https://friendli.ai/) enhances AI application performance and optimizes cost savings with scalable, efficient deployment options, tailored for high-demand AI workloads.
+> [Friendli](https://friendli.ai/) 通过可扩展、高效的部署选项提升 AI 应用性能并优化成本节省，专为高需求的 AI 工作负载而设计。
 
-This tutorial guides you through integrating `Friendli` with LangChain.
+本教程将指导你将 `Friendli` 与 LangChain 集成。
 
-## Setup
+## 安装配置
 
-Ensure the `@langchain/community` is installed.
+确保安装了 `@langchain/community`。
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -16,19 +16,19 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/community @langchain/core
 ```
 
-Sign in to [Friendli Suite](https://suite.friendli.ai/) to create a Personal Access Token, and set it as the `FRIENDLI_TOKEN` environment.
-You can set team id as `FRIENDLI_TEAM` environment.
+登录 [Friendli Suite](https://suite.friendli.ai/) 创建个人访问令牌，并将其设置为 `FRIENDLI_TOKEN` 环境变量。  
+你也可以将团队 ID 设置为 `FRIENDLI_TEAM` 环境变量。
 
-You can initialize a Friendli chat model with selecting the model you want to use. The default model is `mixtral-8x7b-instruct-v0-1`. You can check the available models at [docs.friendli.ai](https://docs.friendli.ai/guides/serverless_endpoints/pricing#text-generation-models).
+你可以通过选择要使用的模型来初始化 Friendli 的聊天模型。默认模型是 `mixtral-8x7b-instruct-v0-1`。你可以在 [docs.friendli.ai](https://docs.friendli.ai/guides/serverless_endpoints/pricing#text-generation-models) 查看可用模型。
 
-## Usage
+## 使用方法
 
 import CodeBlock from "@theme/CodeBlock";
 import Example from "@examples/models/llm/friendli.ts";
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-## Related
+## 相关内容
 
-- LLM [conceptual guide](/docs/concepts/text_llms)
-- LLM [how-to guides](/docs/how_to/#llms)
+- LLM [概念指南](/docs/concepts/text_llms)
+- LLM [操作指南](/docs/how_to/#llms)

@@ -1,35 +1,35 @@
-# OpenAI functions metadata tagger
+# OpenAI 函数元数据标记器
 
-It can often be useful to tag ingested documents with structured metadata, such as the title, tone, or length of a document, to allow for more targeted similarity search later. However, for large numbers of documents, performing this labelling process manually can be tedious.
+在处理文档时，常常需要为导入的文档添加结构化元数据标签，例如文档的标题、语气或长度，以便后续进行更精确的相似性搜索。然而，当文档数量庞大时，手动完成这一标注过程可能会非常繁琐。
 
-The `MetadataTagger` document transformer automates this process by extracting metadata from each provided document according to a provided schema. It uses a configurable OpenAI Functions-powered chain under the hood, so if you pass a custom LLM instance, it must be an OpenAI model with functions support.
+`MetadataTagger` 文档转换器通过根据提供的模式从每个文档中自动提取元数据，从而实现自动化处理。它底层使用了基于 OpenAI Functions 的可配置链，因此如果你传入了一个自定义的 LLM 实例，该实例必须是支持函数调用的 OpenAI 模型。
 
-**Note:** This document transformer works best with complete documents, so it's best to run it first with whole documents before doing any other splitting or processing!
+**注意：** 此文档转换器最适合处理完整的文档，因此建议在进行其他拆分或处理之前，先使用完整文档运行它！
 
-### Usage
+### 使用方法
 
-For example, let's say you wanted to index a set of movie reviews. You could initialize the document transformer as follows:
-
-import CodeBlock from "@theme/CodeBlock";
-import Example from "@examples/document_transformers/metadata_tagger.ts";
-
-import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
-
-<IntegrationInstallTooltip></IntegrationInstallTooltip>
+例如，假设你有一组影评需要索引。你可以按如下方式初始化文档转换器：
 
 ```bash npm2yarn
 npm install @langchain/openai @langchain/core
 ```
 
+```typescript
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_transformers/metadata_tagger.ts";
+
 <CodeBlock language="typescript">{Example}</CodeBlock>
+```
 
-There is an additional `createMetadataTagger` method that accepts a valid JSON Schema object as well.
+此外还有一个 `createMetadataTagger` 方法，它接受一个有效的 JSON Schema 对象作为参数。
 
-### Customization
+### 自定义设置
 
-You can pass the underlying tagging chain the standard LLMChain arguments in the second options parameter.
-For example, if you wanted to ask the LLM to focus specific details in the input documents, or extract metadata in a certain style, you could pass in a custom prompt:
+你可以在第二个选项参数中将标准的 LLMChain 参数传递给底层的标记链。  
+例如，如果你希望 LLM 关注输入文档中的特定细节，或者以某种风格提取元数据，可以传入一个自定义提示：
 
+```typescript
 import CustomExample from "@examples/document_transformers/metadata_tagger_custom_prompt.ts";
 
 <CodeBlock language="typescript">{CustomExample}</CodeBlock>
+```

@@ -1,62 +1,62 @@
-# Prompt Templates
+# 提示模板
 
-Prompt templates help to translate user input and parameters into instructions for a language model.
-This can be used to guide a model's response, helping it understand the context and generate relevant and coherent language-based output.
+提示模板有助于将用户输入和参数转换为语言模型的指令。
+这可以用于引导模型的响应，帮助它理解上下文并生成相关且连贯的基于语言的输出。
 
-Prompt Templates take as input an object, where each key represents a variable in the prompt template to fill in.
+提示模板的输入是一个对象，其中每个键代表提示模板中的一个变量，用于填充。
 
-Prompt Templates output a PromptValue. This PromptValue can be passed to an LLM or a ChatModel, and can also be cast to a string or a list of messages.
-The reason this PromptValue exists is to make it easy to switch between strings and messages.
+提示模板输出一个 `PromptValue`。这个 `PromptValue` 可以传递给一个语言模型（LLM）或聊天模型（ChatModel），也可以转换为字符串或消息列表。
+存在这个 `PromptValue` 的原因是方便在字符串和消息之间进行切换。
 
-There are a few different types of prompt templates:
+目前有几种不同类型的提示模板：
 
-## String PromptTemplates
+## 字符串提示模板（String PromptTemplates）
 
-These prompt templates are used to format a single string, and generally are used for simpler inputs.
-For example, a common way to construct and use a PromptTemplate is as follows:
+这些提示模板用于格式化单个字符串，通常用于较简单的输入。
+例如，构造和使用 `PromptTemplate` 的常见方式如下：
 
 ```typescript
 import { PromptTemplate } from "@langchain/core/prompts";
 
 const promptTemplate = PromptTemplate.fromTemplate(
-  "Tell me a joke about {topic}"
+  "给我讲一个关于{topic}的笑话"
 );
 
-await promptTemplate.invoke({ topic: "cats" });
+await promptTemplate.invoke({ topic: "猫" });
 ```
 
 ```text
 StringPromptValue {
-  value: 'Tell me a joke about cats'
+  value: '给我讲一个关于猫的笑话'
 }
 ```
 
-## ChatPromptTemplates
+## 聊天提示模板（ChatPromptTemplates）
 
-These prompt templates are used to format a list of messages. These "templates" consist of a list of templates themselves.
-For example, a common way to construct and use a ChatPromptTemplate is as follows:
+这些提示模板用于格式化消息列表。这些“模板”本身由多个模板组成。
+例如，构造和使用 `ChatPromptTemplate` 的常见方式如下：
 
 ```typescript
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 
 const promptTemplate = ChatPromptTemplate.fromMessages([
-  ["system", "You are a helpful assistant"],
-  ["user", "Tell me a joke about {topic}"],
+  ["system", "你是一个有帮助的助手"],
+  ["user", "给我讲一个关于{topic}的笑话"],
 ]);
 
-await promptTemplate.invoke({ topic: "cats" });
+await promptTemplate.invoke({ topic: "猫" });
 ```
 
 ```text
 ChatPromptValue {
   messages: [
     SystemMessage {
-      "content": "You are a helpful assistant",
+      "content": "你是一个有帮助的助手",
       "additional_kwargs": {},
       "response_metadata": {}
     },
     HumanMessage {
-      "content": "Tell me a joke about cats",
+      "content": "给我讲一个关于猫的笑话",
       "additional_kwargs": {},
       "response_metadata": {}
     }
@@ -64,18 +64,17 @@ ChatPromptValue {
 }
 ```
 
-In the above example, this ChatPromptTemplate will construct two messages when called.
-The first is a system message, that has no variables to format.
-The second is a HumanMessage, and will be formatted by the `topic` variable the user passes in.
+在上面的例子中，当调用此 `ChatPromptTemplate` 时会生成两条消息。
+第一条是系统消息，没有需要格式化的变量。
+第二条是用户消息，将由用户传入的 `topic` 变量进行格式化。
 
-## MessagesPlaceholder
+## 消息占位符（MessagesPlaceholder）
 
 <span data-heading-keywords="messagesplaceholder"></span>
 
-This prompt template is responsible for adding a list of messages in a particular place.
-In the above ChatPromptTemplate, we saw how we could format two messages, each one a string.
-But what if we wanted the user to pass in a list of messages that we would slot into a particular spot?
-This is how you use MessagesPlaceholder.
+此提示模板负责在特定位置添加一条消息列表。
+在上面的 `ChatPromptTemplate` 示例中，我们看到了如何格式化两条消息，每条消息都是字符串。
+但如果我们希望用户传入一组消息，并将它们插入到特定的位置，该如何操作呢？这时就可以使用 `MessagesPlaceholder`。
 
 ```typescript
 import {
@@ -85,23 +84,23 @@ import {
 import { HumanMessage } from "@langchain/core/messages";
 
 const promptTemplate = ChatPromptTemplate.fromMessages([
-  ["system", "You are a helpful assistant"],
+  ["system", "你是一个有帮助的助手"],
   new MessagesPlaceholder("msgs"),
 ]);
 
-await promptTemplate.invoke({ msgs: [new HumanMessage("hi!")] });
+await promptTemplate.invoke({ msgs: [new HumanMessage("你好！")] });
 ```
 
 ```text
 ChatPromptValue {
   messages: [
     SystemMessage {
-      "content": "You are a helpful assistant",
+      "content": "你是一个有帮助的助手",
       "additional_kwargs": {},
       "response_metadata": {}
     },
     HumanMessage {
-      "content": "hi!",
+      "content": "你好！",
       "additional_kwargs": {},
       "response_metadata": {}
     }
@@ -109,18 +108,18 @@ ChatPromptValue {
 }
 ```
 
-This will produce a list of two messages, the first one being a system message, and the second one being the HumanMessage we passed in.
-If we had passed in 5 messages, then it would have produced 6 messages in total (the system message plus the 5 passed in).
-This is useful for letting a list of messages be slotted into a particular spot.
+这将生成两条消息，第一条是系统消息，第二条是我们传入的用户消息。
+如果我们传入了五条消息，那么总共将生成六条消息（系统消息加五条传入的消息）。
+这对于将消息列表插入到特定位置非常有用。
 
-An alternative way to accomplish the same thing without using the `MessagesPlaceholder` class explicitly is:
+另一种不显式使用 `MessagesPlaceholder` 类来实现相同功能的方式如下：
 
 ```typescript
 const promptTemplate = ChatPromptTemplate.fromMessages([
-  ["system", "You are a helpful assistant"],
+  ["system", "你是一个有帮助的助手"],
   // highlight-next-line
-  ["placeholder", "{msgs}"], // <-- This is the changed part
+  ["placeholder", "{msgs}"], // <-- 这部分是修改的地方
 ]);
 ```
 
-For specifics on how to use prompt templates, see the [relevant how-to guides here](/docs/how_to/#prompt-templates).
+有关如何使用提示模板的具体说明，请参阅[此处的相关指南](/docs/how_to/#prompt-templates)。

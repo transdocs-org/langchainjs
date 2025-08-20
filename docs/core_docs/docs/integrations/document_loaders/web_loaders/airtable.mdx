@@ -7,19 +7,19 @@ import CodeBlock from "@theme/CodeBlock";
 
 # AirtableLoader
 
-The `AirtableLoader` class provides functionality to load documents from Airtable tables. It supports two main methods:
+`AirtableLoader` 类提供了从 Airtable 表格加载文档的功能。它支持两种主要方法：
 
-1. `load()`: Retrieves all records at once, ideal for small to moderate datasets.
-2. `loadLazy()`: Fetches records one by one, which is more memory-efficient for large datasets.
+1. `load()`：一次性检索所有记录，适用于小型到中型数据集。
+2. `loadLazy()`：逐条记录获取，适用于大型数据集，内存效率更高。
 
-## Prerequisites
+## 前提条件
 
-Ensure that your Airtable API token is available as an environment variable:
+请确保你的 Airtable API 密钥已作为环境变量提供：
 
 ```typescript
 process.env.AIRTABLE_API_TOKEN = "YOUR_AIRTABLE_API_TOKEN";
 ```
 
-## Usage
+## 使用方法
 
 <CodeBlock language="typescript">{loadExample}</CodeBlock>

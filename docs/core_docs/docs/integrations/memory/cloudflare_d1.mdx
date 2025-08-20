@@ -4,18 +4,18 @@ hide_table_of_contents: true
 
 import CodeBlock from "@theme/CodeBlock";
 
-# Cloudflare D1-Backed Chat Memory
+# 基于 Cloudflare D1 的聊天记忆
 
 :::info
-This integration is only supported in Cloudflare Workers.
+此集成仅支持在 Cloudflare Workers 中使用。
 :::
 
-For longer-term persistence across chat sessions, you can swap out the default in-memory `chatHistory` that backs chat memory classes like `BufferMemory` for a Cloudflare D1 instance.
+为了在多个聊天会话中实现更长期的数据持久化，您可以将用于聊天记忆类（如 `BufferMemory`）的默认内存 `chatHistory` 替换为 Cloudflare D1 实例。
 
-## Setup
+## 安装与配置
 
-You'll need to install the LangChain Cloudflare integration package.
-For the below example, we also use Anthropic, but you can use any model you'd like:
+您需要安装 LangChain Cloudflare 集成包。  
+在以下示例中，我们同时使用了 Anthropic，但您也可以使用任意模型：
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -25,8 +25,7 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/cloudflare @langchain/anthropic @langchain/core
 ```
 
-Set up a D1 instance for your worker by following [the official documentation](https://developers.cloudflare.com/d1/). Your project's `wrangler.toml` file should
-look something like this:
+按照 [官方文档](https://developers.cloudflare.com/d1/) 为您的 Worker 设置 D1 实例。您项目的 `wrangler.toml` 文件应类似于以下内容：
 
 ```toml
 name = "YOUR_PROJECT_NAME"
@@ -37,14 +36,14 @@ compatibility_date = "2024-01-10"
 ANTHROPIC_API_KEY = "YOUR_ANTHROPIC_KEY"
 
 [[d1_databases]]
-binding = "DB"                                       # available in your Worker as env.DB
+binding = "DB"                                       # 在 Worker 中可通过 env.DB 使用
 database_name = "YOUR_D1_DB_NAME"
 database_id = "YOUR_D1_DB_ID"
 ```
 
-## Usage
+## 使用方法
 
-You can then use D1 to store your history as follows:
+然后，您可以使用 D1 来存储聊天历史记录，如下所示：
 
 import Example from "@examples/memory/cloudflare_d1.ts";
 

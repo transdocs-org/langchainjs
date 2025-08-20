@@ -1,10 +1,10 @@
-# How to write a custom document loader
+# 如何编写自定义文档加载器
 
-If you want to implement your own Document Loader, you have a few options.
+如果你想实现自己的文档加载器，有几种选项可供选择。
 
-### Subclassing `BaseDocumentLoader`
+### 继承 `BaseDocumentLoader`
 
-You can extend the `BaseDocumentLoader` class directly. The `BaseDocumentLoader` class provides a few convenience methods for loading documents from a variety of sources.
+你可以直接继承 `BaseDocumentLoader` 类。该类提供了一些便捷的方法，用于从多种来源加载文档。
 
 ```typescript
 abstract class BaseDocumentLoader implements DocumentLoader {
@@ -12,9 +12,9 @@ abstract class BaseDocumentLoader implements DocumentLoader {
 }
 ```
 
-### Subclassing `TextLoader`
+### 继承 `TextLoader`
 
-If you want to load documents from a text file, you can extend the `TextLoader` class. The `TextLoader` class takes care of reading the file, so all you have to do is implement a parse method.
+如果你想从文本文件加载文档，可以继承 `TextLoader` 类。`TextLoader` 类会负责读取文件，你只需实现一个解析方法即可。
 
 ```typescript
 abstract class TextLoader extends BaseDocumentLoader {
@@ -22,9 +22,9 @@ abstract class TextLoader extends BaseDocumentLoader {
 }
 ```
 
-### Subclassing `BufferLoader`
+### 继承 `BufferLoader`
 
-If you want to load documents from a binary file, you can extend the `BufferLoader` class. The `BufferLoader` class takes care of reading the file, so all you have to do is implement a parse method.
+如果你想从二进制文件加载文档，可以继承 `BufferLoader` 类。`BufferLoader` 类会负责读取文件，你只需实现一个解析方法即可。
 
 ```typescript
 abstract class BufferLoader extends BaseDocumentLoader {

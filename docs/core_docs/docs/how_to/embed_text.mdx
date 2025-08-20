@@ -2,27 +2,27 @@
 sidebar_position: 2
 ---
 
-# How to embed text data
+# 如何嵌入文本数据
 
 :::info
-Head to [Integrations](/docs/integrations/text_embedding) for documentation on built-in integrations with text embedding providers.
+前往 [集成](/docs/integrations/text_embedding) 查看与文本嵌入提供商集成的文档。
 :::
 
-:::info Prerequisites
+:::info 前提条件
 
-This guide assumes familiarity with the following concepts:
+本指南假设您熟悉以下概念：
 
-- [Embeddings](/docs/concepts/embedding_models)
+- [嵌入](/docs/concepts/embedding_models)
 
 :::
 
-Embeddings create a vector representation of a piece of text. This is useful because it means we can think about text in the vector space, and do things like semantic search where we look for pieces of text that are most similar in the vector space.
+嵌入会创建一段文本的向量表示。这非常有用，因为它意味着我们可以在向量空间中思考文本，并执行诸如语义搜索之类的事情，即在向量空间中查找最相似的文本片段。
 
-The base Embeddings class in LangChain exposes two methods: one for embedding documents and one for embedding a query. The former takes as input multiple texts, while the latter takes a single text. The reason for having these as two separate methods is that some embedding providers have different embedding methods for documents (to be searched over) vs queries (the search query itself).
+LangChain 中的基础 Embeddings 类公开了两种方法：一种用于嵌入文档，另一种用于嵌入查询。前者接收多个文本作为输入，而后者接收单个文本。之所以将这两个方法分开，是因为某些嵌入提供商会对文档（用于搜索）和查询（搜索本身）采用不同的嵌入方法。
 
-## Get started
+## 入门
 
-Below is an example of how to use the OpenAI embeddings. Embeddings occasionally have different embedding methods for queries versus documents, so the embedding class exposes a `embedQuery` and `embedDocuments` method.
+以下是使用 OpenAI 嵌入的示例。嵌入有时会对查询和文档采用不同的嵌入方法，因此嵌入类暴露了 `embedQuery` 和 `embedDocuments` 方法。
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -32,7 +32,7 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/openai @langchain/core
 ```
 
-## Get started
+## 入门
 
 ```typescript
 import { OpenAIEmbeddings } from "@langchain/openai";
@@ -40,7 +40,7 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 const embeddings = new OpenAIEmbeddings();
 ```
 
-## Embed queries
+## 嵌入查询
 
 ```typescript
 const res = await embeddings.embedQuery("Hello world");
@@ -56,7 +56,7 @@ const res = await embeddings.embedQuery("Hello world");
 */
 ```
 
-## Embed documents
+## 嵌入文档
 
 ```typescript
 const documentRes = await embeddings.embedDocuments(["Hello world", "Bye bye"]);
@@ -82,8 +82,8 @@ const documentRes = await embeddings.embedDocuments(["Hello world", "Bye bye"]);
 */
 ```
 
-## Next steps
+## 下一步
 
-You've now learned how to use embeddings models with queries and text.
+现在您已经了解了如何将嵌入模型用于查询和文本。
 
-Next, check out how to [avoid excessively recomputing embeddings with caching](/docs/how_to/caching_embeddings), or the [full tutorial on retrieval-augmented generation](/docs/tutorials/rag).
+接下来，查看如何 [通过缓存避免重复计算嵌入](/docs/how_to/caching_embeddings)，或者完整的 [检索增强生成教程](/docs/tutorials/rag)。

@@ -6,17 +6,17 @@ import CodeBlock from "@theme/CodeBlock";
 
 # MyScale
 
-:::tip Compatibility
-Only available on Node.js.
+:::tip 兼容性
+仅支持 Node.js。
 :::
 
-[MyScale](https://myscale.com/) is an emerging AI database that harmonizes the power of vector search and SQL analytics, providing a managed, efficient, and responsive experience.
+[MyScale](https://myscale.com/) 是一个新兴的 AI 数据库，它将向量搜索和 SQL 分析的能力结合在一起，提供一种托管的、高效的、响应迅速的体验。
 
-## Setup
+## 安装配置
 
-1. Launch a cluster through [MyScale's Web Console](https://console.myscale.com/). See [MyScale's official documentation](https://docs.myscale.com/en/quickstart/) for more information.
-2. After launching a cluster, view your `Connection Details` from your cluster's `Actions` menu. You will need the host, port, username, and password.
-3. Install the required Node.js peer dependency in your workspace.
+1. 通过 [MyScale 的 Web 控制台](https://console.myscale.com/) 启动一个集群。更多信息请参见 [MyScale 官方文档](https://docs.myscale.com/en/quickstart/)。
+2. 启动集群后，从集群的 `Actions` 菜单中查看您的 `连接详情（Connection Details）`。您将需要主机地址、端口、用户名和密码。
+3. 在您的工作区中安装所需的 Node.js 对等依赖。
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -26,19 +26,19 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install -S @langchain/openai @clickhouse/client @langchain/community @langchain/core
 ```
 
-## Index and Query Docs
+## 索引和查询文档
 
 import InsertExample from "@examples/indexes/vector_stores/myscale_fromTexts.ts";
 
 <CodeBlock language="typescript">{InsertExample}</CodeBlock>
 
-## Query Docs From an Existing Collection
+## 从现有集合中查询文档
 
 import SearchExample from "@examples/indexes/vector_stores/myscale_search.ts";
 
 <CodeBlock language="typescript">{SearchExample}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Vector store [conceptual guide](/docs/concepts/#vectorstores)
-- Vector store [how-to guides](/docs/how_to/#vectorstores)
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

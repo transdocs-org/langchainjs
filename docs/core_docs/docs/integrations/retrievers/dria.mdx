@@ -2,28 +2,28 @@
 hide_table_of_contents: true
 ---
 
-# Dria Retriever
+# Dria 检索器
 
-The [Dria](https://dria.co/) retriever allows an agent to perform a text-based search across a comprehensive knowledge hub.
+[ Dria ](https://dria.co/) 检索器允许代理在整个知识库中执行基于文本的搜索。
 
-## Setup
+## 安装配置
 
-To use Dria retriever, first install Dria JS client:
+要使用 Dria 检索器，首先安装 Dria JS 客户端：
 
 ```bash npm2yarn
 npm install dria
 ```
 
-You need to provide two things to the retriever:
+你需要向检索器提供以下两项信息：
 
-- **API Key**: you can get yours at your [profile page](https://dria.co/) when you create an account.
-- **Contract ID**: accessible at the top of the page when viewing a knowledge or in its URL.
-  For example, the Bitcoin whitepaper is uploaded on Dria at https://dria.co/knowledge/2KxNbEb040GKQ1DSDNDsA-Fsj_BlQIEAlzBNuiapBR0, so its contract ID is `2KxNbEb040GKQ1DSDNDsA-Fsj_BlQIEAlzBNuiapBR0`.
-  Contract ID can be omitted during instantiation, and later be set via `dria.contractId = "your-contract"`
+- **API 密钥**：在你创建账户后，可以在你的[个人资料页面](https://dria.co/)获取。
+- **合约 ID**：在查看某个知识条目时，位于页面顶部或其 URL 中即可找到。
+  例如，比特币白皮书在 Dria 上的地址为 https://dria.co/knowledge/2KxNbEb040GKQ1DSDNDsA-Fsj_BlQIEAlzBNuiapBR0，因此其合约 ID 为 `2KxNbEb040GKQ1DSDNDsA-Fsj_BlQIEAlzBNuiapBR0`。
+  合约 ID 在实例化时可以省略，之后可通过 `dria.contractId = "your-contract"` 设置。
 
-Dria retriever exposes the underlying [Dria client](https://npmjs.com/package/dria) as well, refer to the [Dria documentation](https://github.com/firstbatchxyz/dria-js-client?tab=readme-ov-file#usage) to learn more about the client.
+Dria 检索器还公开了底层的 [Dria 客户端](https://npmjs.com/package/dria)，有关客户端的更多信息，请参阅 [Dria 文档](https://github.com/firstbatchxyz/dria-js-client?tab=readme-ov-file#usage)。
 
-## Usage
+## 使用方法
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -38,7 +38,7 @@ import Example from "@examples/retrievers/dria.ts";
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Retriever [conceptual guide](/docs/concepts/retrievers)
-- Retriever [how-to guides](/docs/how_to/#retrievers)
+- 检索器 [概念指南](/docs/concepts/retrievers)
+- 检索器 [操作指南](/docs/how_to/#retrievers)

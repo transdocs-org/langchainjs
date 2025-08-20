@@ -4,15 +4,13 @@ keywords: [gemini, gemini-pro, gemma]
 
 # Google
 
-Functionality related to [Google Cloud Platform](https://cloud.google.com/)
-and [AI Studio](https://aistudio.google.com/)
+与 [Google Cloud Platform](https://cloud.google.com/) 和 [AI Studio](https://aistudio.google.com/) 相关的功能。
 
-## Chat models
+## 聊天模型
 
-### Gemini Models
+### Gemini 模型
 
-Access Gemini models such as `gemini-1.5-pro` and `gemini-2.0-flex` through the [`ChatGoogleGenerativeAI`](/docs/integrations/chat/google_generativeai),
-or if using VertexAI, via the [`ChatVertexAI`](/docs/integrations/chat/google_vertex_ai) class.
+可以通过 [`ChatGoogleGenerativeAI`](/docs/integrations/chat/google_generativeai) 访问 Gemini 模型，例如 `gemini-1.5-pro` 和 `gemini-2.0-flex`，如果使用 VertexAI，则可以通过 [`ChatVertexAI`](/docs/integrations/chat/google_vertex_ai) 类访问。
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
@@ -26,7 +24,7 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/google-genai @langchain/core
 ```
 
-Configure your API key.
+配置你的 API 密钥。
 
 ```
 export GOOGLE_API_KEY=your-api-key
@@ -40,16 +38,16 @@ const model = new ChatGoogleGenerativeAI({
   maxOutputTokens: 2048,
 });
 
-// Batch and stream are also supported
+// 也支持批量和流式调用
 const res = await model.invoke([
   [
     "human",
-    "What would be a good company name for a company that makes colorful socks?",
+    "为一家生产彩色袜子的公司取一个好名字？",
   ],
 ]);
 ```
 
-More recent Gemini models support image inputs:
+较新的 Gemini 模型支持图像输入：
 
 ```typescript
 const visionModel = new ChatGoogleGenerativeAI({
@@ -62,7 +60,7 @@ const input2 = [
     content: [
       {
         type: "text",
-        text: "Describe the following image.",
+        text: "描述以下图像。",
       },
       {
         type: "image_url",
@@ -76,7 +74,7 @@ const res = await visionModel.invoke(input2);
 ```
 
 :::tip
-Click [here](/docs/integrations/chat/google_generativeai) for the `@langchain/google-genai` specific integration docs
+点击 [这里](/docs/integrations/chat/google_generativeai) 查看 `@langchain/google-genai` 的具体集成文档
 :::
 
 </TabItem>
@@ -88,13 +86,13 @@ Click [here](/docs/integrations/chat/google_generativeai) for the `@langchain/go
 npm install @langchain/google-vertexai @langchain/core
 ```
 
-Then, you'll need to add your service account credentials, either directly as a `GOOGLE_VERTEX_AI_WEB_CREDENTIALS` environment variable:
+然后，你需要添加你的服务账户凭证，可以通过 `GOOGLE_VERTEX_AI_WEB_CREDENTIALS` 环境变量直接提供：
 
 ```
 GOOGLE_VERTEX_AI_WEB_CREDENTIALS={"type":"service_account","project_id":"YOUR_PROJECT-12345",...}
 ```
 
-or as a file path:
+或通过文件路径提供：
 
 ```
 GOOGLE_VERTEX_AI_WEB_CREDENTIALS_FILE=/path/to/your/credentials.json
@@ -102,7 +100,7 @@ GOOGLE_VERTEX_AI_WEB_CREDENTIALS_FILE=/path/to/your/credentials.json
 
 ```typescript
 import { ChatVertexAI } from "@langchain/google-vertexai";
-// Or, if using the web entrypoint:
+// 或者，如果使用 Web 入口：
 // import { ChatVertexAI } from "@langchain/google-vertexai-web";
 
 const model = new ChatVertexAI({
@@ -110,16 +108,16 @@ const model = new ChatVertexAI({
   maxOutputTokens: 2048,
 });
 
-// Batch and stream are also supported
+// 也支持批量和流式调用
 const res = await model.invoke([
   [
     "human",
-    "What would be a good company name for a company that makes colorful socks?",
+    "为一家生产彩色袜子的公司取一个好名字？",
   ],
 ]);
 ```
 
-Gemini vision models support image inputs when providing a single human message. For example:
+Gemini 视觉模型在提供单个用户消息时支持图像输入。例如：
 
 ```typescript
 const visionModel = new ChatVertexAI({
@@ -132,7 +130,7 @@ const input2 = [
     content: [
       {
         type: "text",
-        text: "Describe the following image.",
+        text: "描述以下图像。",
       },
       {
         type: "image_url",
@@ -146,30 +144,28 @@ const res = await visionModel.invoke(input2);
 ```
 
 :::tip
-Click [here](/docs/integrations/chat/google_vertex_ai) for the `@langchain/google-vertexai` specific integration docs
+点击 [这里](/docs/integrations/chat/google_vertex_ai) 查看 `@langchain/google-vertexai` 的具体集成文档
 :::
 
 </TabItem>
 </Tabs>
 
-The value of `image_url` must be a base64 encoded image (e.g., `data:image/png;base64,abcd124`).
+`image_url` 的值必须是 base64 编码的图像（例如：`data:image/png;base64,abcd124`）。
 
 ### Gemma
 
-Access the `gemma-3-27b-it` model through AI Studio using the `ChatGoogle` class.
-(This class is a superclass of the [`ChatVertexAI`](/docs/integrations/chat/google_vertex_ai)
-class that works with both Vertex AI and the AI Studio APIs.)
+可以通过 AI Studio 使用 `gemma-3-27b-it` 模型，使用 `ChatGoogle` 类。
+（此类是 [`ChatVertexAI`](/docs/integrations/chat/google_vertex_ai) 类的超类，支持 Vertex AI 和 AI Studio API。）
 
 :::tip
-Since Gemma is an open model, it may also be available from other platforms
-including [Ollama](/docs/integrations/chat/ollama/).
+由于 Gemma 是开源模型，它也可能通过其他平台提供，包括 [Ollama](/docs/integrations/chat/ollama/)。
 :::
 
 ```bash npm2yarn
 npm install @langchain/google-gauth @langchain/core
 ```
 
-Configure your API key.
+配置你的 API 密钥。
 
 ```
 export GOOGLE_API_KEY=your-api-key
@@ -186,46 +182,38 @@ const res = await model.invoke([
   {
     role: "user",
     content:
-      "What would be a good company name for a company that makes colorful socks?",
+      "为一家生产彩色袜子的公司取一个好名字？",
   },
 ]);
 ```
 
-### Third Party Models
+### 第三方模型
 
-See above for setting up authentication through Vertex AI to use these models.
+有关通过 Vertex AI 使用这些模型的身份验证设置，请参见上文。
 
-[Anthropic](/docs/integrations/chat/anthropic) Claude models are also available through
-the [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-claude)
-platform. See [here](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-claude)
-for more information about enabling access to the models and the model names to use.
+[Anthropic](/docs/integrations/chat/anthropic) 的 Claude 模型也可通过 [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-claude) 平台使用。有关启用模型访问权限和模型名称的更多信息，请参见 [这里](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-claude)。
 
-PaLM models are no longer supported.
+PaLM 模型不再受支持。
 
-## Vector Store
+## 向量存储
 
-### Vertex AI Vector Search
+### Vertex AI 向量搜索
 
-> [Vertex AI Vector Search](https://cloud.google.com/vertex-ai/docs/matching-engine/overview),
-> formerly known as Vertex AI Matching Engine, provides the industry's leading high-scale
-> low latency vector database. These vector databases are commonly
-> referred to as vector similarity-matching or an approximate nearest neighbor (ANN) service.
+> [Vertex AI 向量搜索](https://cloud.google.com/vertex-ai/docs/matching-engine/overview)（以前称为 Vertex AI 匹配引擎）提供了业界领先的高规模、低延迟的向量数据库。这些向量数据库通常被称为向量相似匹配或近似最近邻（ANN）服务。
 
 ```typescript
 import { MatchingEngine } from "@langchain/community/vectorstores/googlevertexai";
 ```
 
-### Postgres Vector Store
+### Postgres 向量存储
 
-The [PostgresVectorStore](/docs/integrations/vectorstores/google_cloudsql_pg) module from the
-[`@langchain/google-cloud-sql-pg`](https://www.npmjs.com/package/@langchain/google-cloud-sql-pg) package provides a way to use the CloudSQL for PostgresSQL to store
-vector embeddings using the class.
+来自 [`@langchain/google-cloud-sql-pg`](https://www.npmjs.com/package/@langchain/google-cloud-sql-pg) 包的 [PostgresVectorStore](/docs/integrations/vectorstores/google_cloudsql_pg) 模块提供了一种使用 CloudSQL for PostgresSQL 存储向量嵌入的方法。
 
 ```bash
 $ yarn add @langchain/google-cloud-sql-pg
 ```
 
-Set your environment variables:
+设置你的环境变量：
 
 ```bash
 PROJECT_ID="your-project-id"
@@ -236,7 +224,7 @@ DB_USER="your-database-user"
 PASSWORD="your-database-password"
 ```
 
-Create a DB connection through the PostgresEngine class:
+通过 PostgresEngine 类创建数据库连接：
 
 ```typescript
 const engine: PostgresEngine = await PostgresEngine.fromInstance(
@@ -248,7 +236,7 @@ const engine: PostgresEngine = await PostgresEngine.fromInstance(
 );
 ```
 
-Initialize the vector store table:
+初始化向量存储表：
 
 ```typescript
 await engine.initVectorstoreTable(
@@ -258,7 +246,7 @@ await engine.initVectorstoreTable(
 );
 ```
 
-Create a vector store instance:
+创建一个向量存储实例：
 
 ```typescript
 const vectorStore = await PostgresVectorStore.initialize(
@@ -269,47 +257,45 @@ const vectorStore = await PostgresVectorStore.initialize(
 );
 ```
 
-## Tools
+## 工具
 
-### Google Search
+### Google 搜索
 
-- Set up a Custom Search Engine, following [these instructions](https://stackoverflow.com/questions/37083058/programmatically-searching-google-in-python-using-custom-search)
-- Get an API Key and Custom Search Engine ID from the previous step, and set them as environment variables `GOOGLE_API_KEY` and `GOOGLE_CSE_ID` respectively
+- 按照 [这些说明](https://stackoverflow.com/questions/37083058/programmatically-searching-google-in-python-using-custom-search) 设置自定义搜索引擎
+- 从上一步获取 API 密钥和自定义搜索引擎 ID，并将它们设置为环境变量 `GOOGLE_API_KEY` 和 `GOOGLE_CSE_ID`
 
-There exists a `GoogleCustomSearch` utility which wraps this API. To import this utility:
+存在一个 `GoogleCustomSearch` 工具来封装此 API。要导入该工具：
 
 ```typescript
 import { GoogleCustomSearch } from "@langchain/community/tools/google_custom_search";
 ```
 
-We can easily load this wrapper as a Tool (to use with an Agent). We can do this with:
+我们可以轻松地将此封装作为工具（与 Agent 一起使用）。例如：
 
 ```typescript
 const tools = [new GoogleCustomSearch({})];
-// Pass this variable into your agent.
+// 将此变量传递给你的 Agent。
 ```
 
-## Chat history
+## 聊天历史
 
-### Postgres Chat Message History
+### Postgres 聊天消息历史
 
-The [PostgresChatMessageHistory](/docs/integrations/memory/google_cloudsql_pg) from
-the [`@langchain/google-cloud-sql-pg`](https://www.npmjs.com/package/@langchain/google-cloud-sql-pg) package provides a way to use the CloudSQL for PostgresSQL to store messages and provide conversation history.
+来自 [`@langchain/google-cloud-sql-pg`](https://www.npmjs.com/package/@langchain/google-cloud-sql-pg) 包的 [PostgresChatMessageHistory](/docs/integrations/memory/google_cloudsql_pg) 提供了一种使用 CloudSQL for PostgresSQL 存储消息并提供对话历史的方法。
 
 ```bash
 $ yarn add @langchain/google-cloud-sql-pg
 ```
 
-_Note:_ See the [Postgres Vector Store](#Postgres Vector Store) section on this page to learn
-how to install the package and initialize a DB connection.
+_注意：_ 如何安装包和初始化数据库连接，请参见本页的 [Postgres 向量存储](#Postgres 向量存储) 部分。
 
-Initialize the chat history table:
+初始化聊天历史表：
 
 ```typescript
 await engine.initChatHistoryTable("chat_message_table");
 ```
 
-Create a chat message history instance:
+创建一个聊天消息历史实例：
 
 ```typescript
 const historyInstance = await PostgresChatMessageHistory.initialize(
@@ -319,17 +305,15 @@ const historyInstance = await PostgresChatMessageHistory.initialize(
 );
 ```
 
-## Document Loaders
+## 文档加载器
 
-### Postgres Loader
+### Postgres 加载器
 
-The [PostgresLoader](/docs/integrations/memory/google_cloudsql_pg) from
-`@langchain/google-cloud-sql-pg` provides a way to use the CloudSQL for PostgresSQL to load data as LangChain `Document`s.
+来自 `@langchain/google-cloud-sql-pg` 的 [PostgresLoader](/docs/integrations/memory/google_cloudsql_pg) 提供了一种使用 CloudSQL for PostgresSQL 加载数据作为 LangChain `Document` 的方法。
 
-_Note:_ See the [Postgres Vector Store](#Postgres Vector Store) section on this page to learn
-how to install the package and initialize a DB connection.
+_注意：_ 如何安装包和初始化数据库连接，请参见本页的 [Postgres 向量存储](#Postgres 向量存储) 部分。
 
-Create a loader instance:
+创建一个加载器实例：
 
 ```typescript
 const documentLoaderArgs: PostgresLoaderOptions = {

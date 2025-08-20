@@ -4,18 +4,18 @@ sidebar_class_name: node-only
 
 # Jira
 
-:::tip Compatibility
-Only available on Node.js.
+:::tip 兼容性
+仅适用于 Node.js。
 :::
 
-This covers how to load document objects from issues in a Jira projects.
+这部分内容介绍如何从 Jira 项目的问题中加载文档对象。
 
-## Credentials
+## 凭据
 
-- You'll need to set up an access token and provide it along with your Jira username in order to authenticate the request
-- You'll also need the project key and host URL for the project containing the issues to load as documents.
+- 您需要设置一个访问令牌，并将其与您的 Jira 用户名一起提供，以便对请求进行身份验证。
+- 您还需要包含待加载问题的项目的项目密钥和主机 URL。
 
-## Usage
+## 使用方式
 
 import CodeBlock from "@theme/CodeBlock";
 import Example from "@examples/document_loaders/jira.ts";

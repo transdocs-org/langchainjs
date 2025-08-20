@@ -1,7 +1,7 @@
 /* eslint-disable global-require,import/no-extraneous-dependencies */
 
 // @ts-check
-// Note: type annotations allow type checking and IDEs autocompletion
+// 注意：类型注解支持类型检查与 IDE 自动补全
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { ProvidePlugin } = require("webpack");
 const path = require("path");
@@ -17,13 +17,14 @@ const baseUrl = "/";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "🦜️🔗 Langchain",
-  tagline: "LangChain.js Docs",
+
+  title: '🦜️🔗 Langchain | Langchainjs 中文文档',
+  tagline: "LangChain.js 中文文档",
   favicon: "img/brand/favicon.png",
-  // Set the production url of your site here
-  url: "https://js.langchain.com",
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
+  // 在此设置您站点的生产环境 URL
+  url: "https://langchainjs.transdocs.org",
+  // 设置站点服务的 /<baseUrl>/ 路径
+  // 对于 GitHub Pages 部署，通常是 '/<projectName>/'
   baseUrl,
 
   onBrokenLinks: "throw",
@@ -93,8 +94,7 @@ const config = {
           }) {
             const sidebarItems = await defaultSidebarItemsGenerator(args);
             sidebarItems.forEach((subItem) => {
-              // This allows breaking long sidebar labels into multiple lines
-              // by inserting a zero-width space after each slash.
+              // 通过在斜杠后插入零宽空格，允许将长侧边栏标签拆分为多行
               if (
                 "label" in subItem &&
                 subItem.label &&
@@ -141,13 +141,17 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      metadata: [
+        { name: 'description', content: 'langchainjs 中文文档，每天定时同步官网更新。' },
+        { name: 'keywords', content: 'langchain,langchainjs,中文文档' },
+      ],
       colorMode: {
         disableSwitch: false,
         respectPrefersColorScheme: true,
       },
       announcementBar: {
         content:
-          'Our new LangChain Academy Course Deep Research with LangGraph is now live! <a href="https://academy.langchain.com/courses/deep-research-with-langgraph/?utm_medium=internal&utm_source=docs&utm_campaign=q3-2025_deep-research-course_co" target="_blank">Enroll for free</a>.',
+          '我们的新课程《LangChain Academy：用 LangGraph 进行深度研究》现已上线！<a href="https://academy.langchain.com/courses/deep-research-with-langgraph/?utm_medium=internal&utm_source=docs&utm_campaign=q3-2025_deep-research-course_co" target="_blank">免费报名</a>。',
         backgroundColor: "#d0c9fe",
       },
       prism: {
@@ -177,37 +181,37 @@ const config = {
             type: "docSidebar",
             position: "left",
             sidebarId: "integrations",
-            label: "Integrations",
+            label: "集成",
           },
           {
             href: "https://v03.api.js.langchain.com",
-            label: "API Reference",
+            label: "API 参考",
             position: "left",
           },
           {
             type: "dropdown",
-            label: "More",
+            label: "更多",
             position: "left",
             items: [
               {
                 to: "/docs/people/",
-                label: "People",
+                label: "人员",
               },
               {
                 to: "/docs/community",
-                label: "Community",
+                label: "社区",
               },
               {
                 to: "/docs/troubleshooting/errors",
-                label: "Error reference",
+                label: "错误参考",
               },
               {
                 to: "/docs/additional_resources/tutorials",
-                label: "External guides",
+                label: "外部指南",
               },
               {
                 to: "/docs/contributing",
-                label: "Contributing",
+                label: "贡献",
               },
             ],
           },
@@ -241,7 +245,7 @@ const config = {
               },
               {
                 href: "https://docs.smith.langchain.com",
-                label: "LangSmith Docs",
+                label: "LangSmith 文档",
               },
               {
                 href: "https://smith.langchain.com/hub",
@@ -253,21 +257,21 @@ const config = {
               },
               {
                 href: "https://python.langchain.com/",
-                label: "Python Docs",
+                label: "Python 文档",
               },
             ],
           },
           {
             href: "https://chatjs.langchain.com",
-            label: "Chat",
+            label: "聊天",
             position: "right",
           },
-          // Please keep GitHub link to the right for consistency.
+          // 请保持 GitHub 链接在右侧以保持一致性
           {
             href: "https://github.com/langchain-ai/langchainjs",
             className: "header-github-link",
             position: "right",
-            "aria-label": "GitHub repository",
+            "aria-label": "GitHub 仓库",
           },
         ],
       },
@@ -275,10 +279,10 @@ const config = {
         style: "light",
         links: [
           {
-            title: "Community",
+            title: "社区",
             items: [
               {
-                label: "LangChain Forum",
+                label: "LangChain 论坛",
                 href: "https://forum.langchain.com/",
               },
               {
@@ -301,14 +305,14 @@ const config = {
             ],
           },
           {
-            title: "More",
+            title: "更多",
             items: [
               {
-                label: "Homepage",
+                label: "首页",
                 href: "https://langchain.com",
               },
               {
-                label: "Blog",
+                label: "博客",
                 href: "https://blog.langchain.dev",
               },
             ],
@@ -317,11 +321,11 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} LangChain, Inc.`,
       },
       algolia: {
-        // The application ID provided by Algolia
+        // Algolia 提供的应用 ID
         appId: "3EZV6U1TYC",
 
-        // Public API key: it is safe to commit it
-        // this is linked to erick@langchain.dev currently
+        // 公开 API 密钥：可以安全提交
+        // 当前关联到 erick@langchain.dev
         apiKey: "180851bbb9ba0ef6be9214849d6efeaf",
 
         indexName: "js-langchain-latest",
@@ -330,7 +334,17 @@ const config = {
       },
     }),
 
-  scripts: [baseUrl + "js/job_link.js"],
+  scripts: [
+    baseUrl + "js/job_link.js",
+    {
+      src: 'https://cdn.jsdmirror.com/gh/transdocs-org/cdn/transdocs-info-modal.js',
+      defer: true
+    },
+    {
+      src: 'https://hm.baidu.com/hm.js?2fe1095387fd2f2c25892a4fde2f0cc2',
+      async: true
+    },
+  ],
 
   customFields: {
     supabasePublicKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY,

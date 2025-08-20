@@ -4,15 +4,15 @@ sidebar_class_name: node-only
 
 # ZhipuAI
 
-The `ZhipuAIEmbeddings` class uses the ZhipuAI API to generate embeddings for a given text.
+`ZhipuAIEmbeddings` 类使用 ZhipuAI API 为给定文本生成嵌入（embeddings）。
 
-## Setup
+## 准备工作
 
-You'll need to sign up for an ZhipuAI API key and set it as an environment variable named `ZHIPUAI_API_KEY`.
+你需要注册一个 ZhipuAI API 密钥，并将其设置为名为 `ZHIPUAI_API_KEY` 的环境变量。
 
 https://open.bigmodel.cn
 
-Then, you'll need to install the [`@langchain/community`](https://www.npmjs.com/package/@langchain/community) package:
+然后，你需要安装 [`@langchain/community`](https://www.npmjs.com/package/@langchain/community) 包：
 
 import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
 
@@ -22,14 +22,14 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/community @langchain/core jsonwebtoken
 ```
 
-## Usage
+## 使用方法
 
 import CodeBlock from "@theme/CodeBlock";
 import ZhipuAIExample from "@examples/embeddings/zhipuai.ts";
 
 <CodeBlock language="typescript">{ZhipuAIExample}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Embedding model [conceptual guide](/docs/concepts/embedding_models)
-- Embedding model [how-to guides](/docs/how_to/#embedding-models)
+- 嵌入模型 [概念指南](/docs/concepts/embedding_models)
+- 嵌入模型 [操作指南](/docs/how_to/#embedding-models)

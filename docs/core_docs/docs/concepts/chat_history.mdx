@@ -1,49 +1,49 @@
-# Chat history
+# 聊天历史
 
-:::info Prerequisites
+:::info 前提条件
 
-- [Messages](/docs/concepts/messages)
-- [Chat models](/docs/concepts/chat_models)
-- [Tool calling](/docs/concepts/tool_calling)
+- [消息](/docs/concepts/messages)
+- [聊天模型](/docs/concepts/chat_models)
+- [工具调用](/docs/concepts/tool_calling)
 
 :::
 
-Chat history is a record of the conversation between the user and the chat model. It is used to maintain context and state throughout the conversation. The chat history is sequence of [messages](/docs/concepts/messages), each of which is associated with a specific [role](/docs/concepts/messages#role), such as "user", "assistant", "system", or "tool".
+聊天历史是用户和聊天模型之间对话的记录。它用于在对话过程中保持上下文和状态。聊天历史是一系列的[消息](/docs/concepts/messages)，每条消息都与一个特定的[角色](/docs/concepts/messages#role)相关联，例如 "user"（用户）、"assistant"（助手）、"system"（系统）或 "tool"（工具）。
 
-## Conversation patterns
+## 对话模式
 
-![Conversation patterns](/img/conversation_patterns.png)
+![对话模式](/img/conversation_patterns.png)
 
-Most conversations start with a **system message** that sets the context for the conversation. This is followed by a **user message** containing the user's input, and then an **assistant message** containing the model's response.
+大多数对话以一条**系统消息**开始，用于设定对话的上下文。接着是一条包含用户输入的**用户消息**，然后是一条包含模型响应的**助手消息**。
 
-The **assistant** may respond directly to the user or if configured with tools request that a [tool](/docs/concepts/tool_calling) be invoked to perform a specific task.
+**助手**可以直接回复用户，或者在配置了工具的情况下请求调用[工具](/docs/concepts/tool_calling)以执行特定任务。
 
-So a full conversation often involves a combination of two patterns of alternating messages:
+因此，一个完整的对话通常包含两种交替消息模式的组合：
 
-1. The **user** and the **assistant** representing a back-and-forth conversation.
-2. The **assistant** and **tool messages** representing an ["agentic" workflow](/docs/concepts/agents) where the assistant is invoking tools to perform specific tasks.
+1. **用户**和**助手**之间的来回对话。
+2. **助手**和**工具消息**之间的交互，表示一种["代理"工作流程](/docs/concepts/agents)，其中助手调用工具来执行特定任务。
 
-## Managing chat history
+## 管理聊天历史
 
-Since chat models have a maximum limit on input size, it's important to manage chat history and trim it as needed to avoid exceeding the [context window](/docs/concepts/chat_models#context_window).
+由于聊天模型对输入大小有限制，因此管理聊天历史并在需要时进行裁剪非常重要，以避免超出[上下文窗口](/docs/concepts/chat_models#context_window)。
 
-While processing chat history, it's essential to preserve a correct conversation structure.
+在处理聊天历史时，保持正确的对话结构至关重要。
 
-Key guidelines for managing chat history:
+管理聊天历史的关键准则：
 
-- The conversation should follow one of these structures:
-  - The first message is either a "user" message or a "system" message, followed by a "user" and then an "assistant" message.
-  - The last message should be either a "user" message or a "tool" message containing the result of a tool call.
-- When using [tool calling](/docs/concepts/tool_calling), a "tool" message should only follow an "assistant" message that requested the tool invocation.
+- 对话应遵循以下结构之一：
+  - 第一条消息是 "user"（用户）消息或 "system"（系统）消息，然后是 "user"（用户）消息，接着是 "assistant"（助手）消息。
+  - 最后一条消息应是 "user"（用户）消息或包含工具调用结果的 "tool"（工具）消息。
+- 在使用[工具调用](/docs/concepts/tool_calling)时，"tool"（工具）消息只能跟在请求调用该工具的 "assistant"（助手）消息之后。
 
 :::tip
 
-Understanding correct conversation structure is essential for being able to properly implement
-[memory](https://langchain-ai.github.io/langgraphjs/concepts/memory/) in chat models.
+理解正确的对话结构对于在聊天模型中正确实现
+[memory](https://langchain-ai.github.io/langgraphjs/concepts/memory/)（记忆）功能至关重要。
 
 :::
 
-## Related resources
+## 相关资源
 
-- [How to trim messages](/docs/how_to/trim_messages/)
-- [Memory guide](https://langchain-ai.github.io/langgraphjs/concepts/memory/) for information on implementing short-term and long-term memory in chat models using [LangGraph](https://langchain-ai.github.io/langgraphjs/).
+- [如何裁剪消息](/docs/how_to/trim_messages/)
+- [记忆指南](https://langchain-ai.github.io/langgraphjs/concepts/memory/)，介绍如何使用 [LangGraph](https://langchain-ai.github.io/langgraphjs/) 在聊天模型中实现短期和长期记忆。

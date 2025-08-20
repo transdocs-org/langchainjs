@@ -4,12 +4,12 @@ sidebar_class_name: hidden
 hide_table_of_contents: true
 ---
 
-# Chat models
+# 聊天模型
 
-[Chat models](/docs/concepts/chat_models) are language models that use a sequence of [messages](/docs/concepts/messages) as inputs and return messages as outputs (as opposed to using plain text). These are generally newer models.
+[聊天模型](/docs/concepts/chat_models) 是一类语言模型，它们使用一系列 [消息](/docs/concepts/messages) 作为输入，并返回消息作为输出（而不是使用纯文本）。这些模型通常是较新的模型。
 
 :::info
-If you'd like to write your own chat model, see [this how-to](/docs/how_to/custom_chat). If you'd like to contribute an integration, see [Contributing integrations](/docs/contributing).
+如果你想编写自己的聊天模型，请参阅 [本指南](/docs/how_to/custom_chat)。如果你想贡献一个集成，请参阅 [贡献集成](/docs/contributing)。
 :::
 
 import ChatModelTabs from "@theme/ChatModelTabs";
@@ -20,11 +20,11 @@ import ChatModelTabs from "@theme/ChatModelTabs";
 await model.invoke("Hello, world!")
 ```
 
-## Featured providers
+## 推荐提供商
 
-| Model                                                                    | Stream | JSON mode | [Tool Calling](/docs/how_to/tool_calling/) | [`withStructuredOutput()`](/docs/how_to/structured_output/#the-.withstructuredoutput-method) | [Multimodal](/docs/how_to/multimodal_inputs/) |
+| 模型                                                                    | 流式传输 | JSON 模式 | [工具调用](/docs/how_to/tool_calling/) | [`withStructuredOutput()`](/docs/how_to/structured_output/#the-.withstructuredoutput-method) | [多模态](/docs/how_to/multimodal_inputs/) |
 | :----------------------------------------------------------------------- | :----: | :-------: | :----------------------------------------: | :------------------------------------------------------------------------------------------: | :-------------------------------------------: |
-| [BedrockChat](/docs/integrations/chat/bedrock/)                          |   ✅   |    ❌     |        🟡 (Bedrock Anthropic only)         |                                 🟡 (Bedrock Anthropic only)                                  |          🟡 (Bedrock Anthropic only)          |
+| [BedrockChat](/docs/integrations/chat/bedrock/)                          |   ✅   |    ❌     |        🟡 (仅 Bedrock Anthropic)         |                                 🟡 (仅 Bedrock Anthropic)                                  |          🟡 (仅 Bedrock Anthropic)          |
 | [ChatBedrockConverse](/docs/integrations/chat/bedrock_converse/)         |   ✅   |    ❌     |                     ✅                     |                                              ✅                                              |                      ✅                       |
 | [ChatAnthropic](/docs/integrations/chat/anthropic/)                      |   ✅   |    ❌     |                     ✅                     |                                              ✅                                              |                      ✅                       |
 | [ChatCloudflareWorkersAI](/docs/integrations/chat/cloudflare_workersai/) |   ✅   |    ❌     |                     ❌                     |                                              ❌                                              |                      ❌                       |
@@ -39,7 +39,7 @@ await model.invoke("Hello, world!")
 | [ChatTogetherAI](/docs/integrations/chat/togetherai/)                    |   ✅   |    ✅     |                     ✅                     |                                              ✅                                              |                      ✅                       |
 | [ChatXAI](/docs/integrations/chat/xai/)                                  |   ✅   |    ✅     |                     ✅                     |                                              ✅                                              |                      ❌                       |
 
-## All chat models
+## 所有聊天模型
 
 import { IndexTable } from "@theme/FeatureTables";
 

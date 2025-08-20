@@ -1,35 +1,34 @@
-# How to create a time-weighted retriever
+# 如何创建一个时间加权检索器
 
-:::info Prerequisites
+:::info 前提条件
 
-This guide assumes familiarity with the following concepts:
+本指南假定您熟悉以下概念：
 
-- [Retrievers](/docs/concepts/retrievers)
-- [Vector stores](/docs/concepts/#vectorstores)
-- [Retrieval-augmented generation (RAG)](/docs/tutorials/rag)
+- [检索器](/docs/concepts/retrievers)
+- [向量存储](/docs/concepts/#vectorstores)
+- [增强生成检索（RAG）](/docs/tutorials/rag)
 
 :::
 
-This guide covers the [`TimeWeightedVectorStoreRetriever`](https://api.js.langchain.com/classes/langchain.retrievers_time_weighted.TimeWeightedVectorStoreRetriever.html),
-which uses a combination of semantic similarity and a time decay.
+本指南介绍 [`TimeWeightedVectorStoreRetriever`](https://api.js.langchain.com/classes/langchain.retrievers_time_weighted.TimeWeightedVectorStoreRetriever.html)，它结合了语义相似性和时间衰减。
 
-The algorithm for scoring them is:
+评分算法如下：
 
 ```
-semantic_similarity + (1.0 - decay_rate) ^ hours_passed
+语义相似性 + (1.0 - 衰减率) ^ 经过的小时数
 ```
 
-Notably, `hours_passed` refers to the hours passed since the object in the retriever **was last accessed**, not since it was created. This means that frequently accessed objects remain "fresh."
+需要注意的是，`hours_passed` 指的是自检索器中的对象**最后一次被访问**以来经过的小时数，而不是自其创建以来的时间。这意味着频繁访问的对象会保持“新鲜”。
 
 ```typescript
 let score = (1.0 - this.decayRate) ** hoursPassed + vectorRelevance;
 ```
 
-`this.decayRate` is a configurable decimal number between 0 and 1. A lower number means that documents will be "remembered" for longer, while a higher number strongly weights more recently accessed documents.
+其中，`this.decayRate` 是一个在 0 到 1 之间的可配置小数。数值越低，表示文档会被“记住”更长时间；数值越高，则更强调最近访问的文档。
 
-Note that setting a decay rate of exactly 0 or 1 makes `hoursPassed` irrelevant and makes this retriever equivalent to a standard vector lookup.
+请注意，当衰减率设置为精确的 0 或 1 时，`hoursPassed` 将变得无关紧要，并且此检索器将等同于标准的向量查找。
 
-It is important to note that due to required metadata, all documents must be added to the backing vector store using the `addDocuments` method on the **retriever**, not the vector store itself.
+由于需要特定的元数据，所有文档必须使用 **检索器** 上的 `addDocuments` 方法添加到底层向量存储中，而不是直接使用向量存储本身的方法。
 
 import CodeBlock from "@theme/CodeBlock";
 import Example from "@examples/retrievers/time-weighted-retriever.ts";
@@ -44,9 +43,8 @@ npm install @langchain/openai @langchain/core
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-## Next steps
+## 下一步
 
-You've now learned how to use time as a factor when performing retrieval.
+现在您已经了解了如何在执行检索时将时间作为影响因素之一。
 
-Next, check out the [broader tutorial on RAG](/docs/tutorials/rag), or this section to learn how to
-[create your own custom retriever over any data source](/docs/how_to/custom_retriever/).
+接下来，可以查看关于 RAG 的[完整教程](/docs/tutorials/rag)，或者本部分的[如何为任意数据源创建自定义检索器](/docs/how_to/custom_retriever/)。

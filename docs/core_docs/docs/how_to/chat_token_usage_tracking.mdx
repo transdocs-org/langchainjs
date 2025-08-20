@@ -2,23 +2,23 @@
 sidebar_position: 5
 ---
 
-# How to track token usage
+# 如何跟踪 Token 使用情况
 
-:::info Prerequisites
+:::info 前提条件
 
-This guide assumes familiarity with the following concepts:
+本指南假定您已经熟悉以下概念：
 
-- [Chat models](/docs/concepts/chat_models)
+- [聊天模型](/docs/concepts/chat_models)
 
 :::
 
-This notebook goes over how to track your token usage for specific calls.
+本笔记本将介绍如何跟踪特定调用的 Token 使用情况。
 
-## Using `AIMessage.usage_metadata`
+## 使用 `AIMessage.usage_metadata`
 
-A number of model providers return token usage information as part of the chat generation response. When available, this information will be included on the `AIMessage` objects produced by the corresponding model.
+许多模型提供商会将 Token 使用信息作为聊天生成响应的一部分返回。当可用时，这些信息将包含在相应模型生成的 `AIMessage` 对象中。
 
-LangChain `AIMessage` objects include a [`usage_metadata`](https://api.js.langchain.com/classes/langchain_core.messages.AIMessage.html#usage_metadata) attribute for supported providers. When populated, this attribute will be an object with standard keys (e.g., "input_tokens" and "output_tokens").
+LangChain 的 `AIMessage` 对象为支持的提供者包含一个 [`usage_metadata`](https://api.js.langchain.com/classes/langchain_core.messages.AIMessage.html#usage_metadata) 属性。当填充时，该属性将是一个包含标准键的对象（例如，"input_tokens" 和 "output_tokens"）。
 
 #### OpenAI
 
@@ -45,9 +45,9 @@ import UsageMetadataExampleAnthropic from "@examples/models/chat/usage_metadata_
 
 <CodeBlock language="typescript">{UsageMetadataExampleAnthropic}</CodeBlock>
 
-## Using `AIMessage.response_metadata`
+## 使用 `AIMessage.response_metadata`
 
-A number of model providers return token usage information as part of the chat generation response. When available, this is included in the `AIMessage.response_metadata` field.
+许多模型提供商会将 Token 使用信息作为聊天生成响应的一部分返回。当可用时，这些信息将包含在 `AIMessage.response_metadata` 字段中。
 
 #### OpenAI
 
@@ -61,33 +61,33 @@ import AnthropicExample from "@examples/models/chat/token_usage_tracking_anthrop
 
 <CodeBlock language="typescript">{AnthropicExample}</CodeBlock>
 
-## Streaming
+## 流式传输
 
-Some providers support token count metadata in a streaming context.
+某些提供者在流式传输上下文中支持 Token 计数元数据。
 
 #### OpenAI
 
-For example, OpenAI will return a message chunk at the end of a stream with token usage information. This behavior is supported by `@langchain/openai` >= 0.1.0 and can be enabled by passing a `stream_options` parameter when making your call.
+例如，OpenAI 将在流的末尾返回一个包含 Token 使用信息的消息块。此行为由 `@langchain/openai` >= 0.1.0 支持，可以通过在调用时传递 `stream_options` 参数来启用。
 
 :::info
-By default, the last message chunk in a stream will include a `finish_reason` in the message's `response_metadata` attribute. If we include token usage in streaming mode, an additional chunk containing usage metadata will be added to the end of the stream, such that `finish_reason` appears on the second to last message chunk.
+默认情况下，流中的最后一条消息块将在消息的 `response_metadata` 属性中包含一个 `finish_reason`。如果我们在流模式下包含 Token 使用信息，则会在流的末尾添加一个包含使用元数据的额外消息块，这样 `finish_reason` 将出现在倒数第二条消息块上。
 :::
 
 import OpenAIStreamTokens from "@examples/models/chat/integration_openai_stream_tokens.ts";
 
 <CodeBlock language="typescript">{OpenAIStreamTokens}</CodeBlock>
 
-## Using callbacks
+## 使用回调
 
-You can also use the `handleLLMEnd` callback to get the full output from the LLM, including token usage for supported models.
-Here's an example of how you could do that:
+您还可以使用 `handleLLMEnd` 回调来获取 LLM 的完整输出，包括支持模型的 Token 使用情况。
+以下是一个如何实现的示例：
 
 import CallbackExample from "@examples/models/chat/token_usage_tracking_callback.ts";
 
 <CodeBlock language="typescript">{CallbackExample}</CodeBlock>
 
-## Next steps
+## 下一步
 
-You've now seen a few examples of how to track chat model token usage for supported providers.
+您现在已经了解了如何在支持的提供者中跟踪聊天模型 Token 使用情况的一些示例。
 
-Next, check out the other how-to guides on chat models in this section, like [how to get a model to return structured output](/docs/how_to/structured_output) or [how to add caching to your chat models](/docs/how_to/chat_model_caching).
+接下来，请查看本节中有关聊天模型的其他指南，例如 [如何让模型返回结构化输出](/docs/how_to/structured_output) 或 [如何为聊天模型添加缓存](/docs/how_to/chat_model_caching)。

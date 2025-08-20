@@ -4,20 +4,20 @@ hide_table_of_contents: true
 
 import CodeBlock from "@theme/CodeBlock";
 
-# Discord Tool
+# Discord 工具
 
-The Discord Tool gives your agent the ability to search, read, and write messages to discord channels.
-It is useful for when you need to interact with a discord channel.
+Discord 工具使你的智能体具备搜索、读取和向 Discord 频道发送消息的能力。
+当你需要与 Discord 频道进行交互时，该工具将非常有用。
 
-## Setup
+## 准备工作
 
-To use the Discord Tool you need to install the following official peer depencency:
+要使用 Discord 工具，你需要安装以下官方指定的同级依赖：
 
 ```bash npm2yarn
 npm install discord.js
 ```
 
-## Usage, standalone
+## 使用方式，独立使用
 
 import ToolExample from "@examples/tools/discord.ts";
 
@@ -31,13 +31,13 @@ npm install @langchain/openai @langchain/core
 
 <CodeBlock language="typescript">{ToolExample}</CodeBlock>
 
-## Usage, in an Agent
+## 使用方式，在智能体中使用
 
 import AgentExample from "@examples/agents/discord.ts";
 
 <CodeBlock language="typescript">{AgentExample}</CodeBlock>
 
-## Related
+## 相关内容
 
-- Tool [conceptual guide](/docs/concepts/tools)
-- Tool [how-to guides](/docs/how_to/#tools)
+- 工具 [概念指南](/docs/concepts/tools)
+- 工具 [操作指南](/docs/how_to/#tools)

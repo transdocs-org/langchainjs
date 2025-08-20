@@ -1,59 +1,53 @@
-# Callbacks
+# 回调函数
 
-:::note Prerequisites
+:::note 预备知识
 
-- [Runnable interface](/docs/concepts/runnables)
+- [可运行接口](/docs/concepts/runnables)
 
 :::
 
-LangChain provides a callback system that allows you to hook into the various stages of your LLM application. This is useful for logging, monitoring, streaming, and other tasks.
+LangChain 提供了一个回调系统，允许你介入你的 LLM 应用程序的各个阶段。这对于日志记录、监控、流式传输和其他任务非常有用。
 
-You can subscribe to these events by using the `callbacks` argument available throughout the API. This argument is list of handler objects, which are expected to implement one or more of the methods described below in more detail.
+你可以通过 API 中广泛提供的 `callbacks` 参数订阅这些事件。此参数是一个处理程序对象的列表，这些对象需要实现下文详细描述的一个或多个方法。
 
-## Callback events
+## 回调事件
 
-| Event            | Event Trigger                               | Associated Method      |
-| ---------------- | ------------------------------------------- | ---------------------- |
-| Chat model start | When a chat model starts                    | `handleChatModelStart` |
-| LLM start        | When a llm starts                           | `handleLlmStart`       |
-| LLM new token    | When an llm OR chat model emits a new token | `handleLlmNewToken`    |
-| LLM ends         | When an llm OR chat model ends              | `handleLlmEnd`         |
-| LLM errors       | When an llm OR chat model errors            | `handleLlmError`       |
-| Chain start      | When a chain starts running                 | `handleChainStart`     |
-| Chain end        | When a chain ends                           | `handleChainEnd`       |
-| Chain error      | When a chain errors                         | `handleChainError`     |
-| Tool start       | When a tool starts running                  | `handleToolStart`      |
-| Tool end         | When a tool ends                            | `handleToolEnd`        |
-| Tool error       | When a tool errors                          | `handleToolError`      |
-| Retriever start  | When a retriever starts                     | `handleRetrieverStart` |
-| Retriever end    | When a retriever ends                       | `handleRetrieverEnd`   |
-| Retriever error  | When a retriever errors                     | `handleRetrieverError` |
+| 事件             | 触发条件                                  | 相关方法                  |
+| ---------------- | ------------------------------------------ | -------------------------- |
+| 聊天模型启动     | 当聊天模型开始运行时                       | `handleChatModelStart`     |
+| LLM 启动         | 当 LLM 开始运行时                          | `handleLlmStart`           |
+| LLM 新 token     | 当 LLM 或聊天模型生成新 token 时           | `handleLlmNewToken`        |
+| LLM 结束         | 当 LLM 或聊天模型结束时                    | `handleLlmEnd`             |
+| LLM 错误         | 当 LLM 或聊天模型发生错误时                | `handleLlmError`           |
+| 链启动           | 当链开始运行时                             | `handleChainStart`         |
+| 链结束           | 当链结束时                                 | `handleChainEnd`           |
+| 链错误           | 当链发生错误时                             | `handleChainError`         |
+| 工具启动         | 当工具开始运行时                           | `handleToolStart`          |
+| 工具结束         | 当工具结束时                               | `handleToolEnd`            |
+| 工具错误         | 当工具发生错误时                           | `handleToolError`          |
+| 检索器启动       | 当检索器开始运行时                         | `handleRetrieverStart`     |
+| 检索器结束       | 当检索器结束时                             | `handleRetrieverEnd`       |
+| 检索器错误       | 当检索器发生错误时                         | `handleRetrieverError`     |
 
-## Callback handlers
+## 回调处理器
 
-- Callback handlers implement the [BaseCallbackHandler](https://api.js.langchain.com/classes/_langchain_core.callbacks_base.BaseCallbackHandler.html) interface.
+- 回调处理器实现 [BaseCallbackHandler](https://api.js.langchain.com/classes/_langchain_core.callbacks_base.BaseCallbackHandler.html) 接口。
 
-During run-time LangChain configures an appropriate callback manager (e.g., [CallbackManager](https://api.js.langchain.com/classes/_langchain_core.callbacks_manager.BaseCallbackManager.html)) which will be responsible for calling the appropriate method on each "registered" callback handler when the event is triggered.
+在运行时，LangChain 会配置一个适当的回调管理器（例如，[CallbackManager](https://api.js.langchain.com/classes/_langchain_core.callbacks_manager.BaseCallbackManager.html)），它负责在事件触发时调用每个“已注册”回调处理器的相应方法。
 
-## Passing callbacks
+## 传递回调
 
-The `callbacks` property is available on most objects throughout the API (Models, Tools, Agents, etc.) in two different places:
+在 API 的大多数对象（模型、工具、代理等）中，`callbacks` 属性会在两个不同的位置可用：
 
-- **Request time callbacks**: Passed at the time of the request in addition to the input data.
-  Available on all standard `Runnable` objects. These callbacks are INHERITED by all children
-  of the object they are defined on. For example, `await chain.invoke({ number: 25 }, { callbacks: [handler] })`.
-- **Constructor callbacks**: `const chain = new TheNameOfSomeChain({ callbacks: [handler] })`. These callbacks
-  are passed as arguments to the constructor of the object. The callbacks are scoped
-  only to the object they are defined on, and are **not** inherited by any children of the object.
+- **请求时回调**：与输入数据一起在请求时传递。所有标准的 `Runnable` 对象都支持此功能。这些回调会被定义在其上的对象的所有子对象**继承**。例如：`await chain.invoke({ number: 25 }, { callbacks: [handler] })`。
+- **构造时回调**：`const chain = new TheNameOfSomeChain({ callbacks: [handler] })`。这些回调作为参数传递给对象的构造函数。这些回调仅作用于定义它们的对象本身，**不会**传递给该对象的任何子对象。
 
 :::warning
 
-Constructor callbacks are scoped only to the object they are defined on. They are **not** inherited by children
-of the object.
+构造时回调仅作用于定义它们的对象本身。**不会**传递给该对象的子对象。
 
 :::
 
-If you're creating a custom chain or runnable, you need to remember to propagate request time
-callbacks to any child objects.
+如果你正在创建一个自定义链或可运行对象，则需要记得将请求时回调传播到任何子对象。
 
-For specifics on how to use callbacks, see the [relevant how-to guides here](/docs/how_to/#callbacks).
+关于如何使用回调的具体说明，请参阅[此处的相关操作指南](/docs/how_to/#callbacks)。

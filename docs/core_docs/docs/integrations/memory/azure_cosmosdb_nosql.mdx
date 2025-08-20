@@ -4,14 +4,15 @@ hide_table_of_contents: true
 
 import CodeBlock from "@theme/CodeBlock";
 
-# Azure Cosmos DB NoSQL Chat Message History
+# Azure Cosmos DB NoSQL 聊天消息历史记录
 
-The AzureCosmosDBNoSQLChatMessageHistory uses Cosmos DB to store chat message history. For longer-term persistence across chat sessions, you can swap out the default in-memory `chatHistory` that backs chat memory classes like `BufferMemory`.
-If you don't have an Azure account, you can [create a free account](https://azure.microsoft.com/free/) to get started.
+AzureCosmosDBNoSQLChatMessageHistory 使用 Cosmos DB 存储聊天消息历史记录。为了在聊天会话之间实现更长期的持久化，您可以替换默认的内存中 `chatHistory`，该实例支持如 `BufferMemory` 这类聊天内存类。
 
-## Setup
+如果您还没有 Azure 帐户，可以[创建一个免费帐户](https://azure.microsoft.com/free/)来开始使用。
 
-You'll first need to install the [`@langchain/azure-cosmosdb`](https://www.npmjs.com/package/@langchain/azure-cosmosdb) package:
+## 设置
+
+首先，您需要安装 [`@langchain/azure-cosmosdb`](https://www.npmjs.com/package/@langchain/azure-cosmosdb) 包：
 
 ```bash npm2yarn
 npm install @langchain/azure-cosmosdb @langchain/core
@@ -25,17 +26,17 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/openai @langchain/community @langchain/core
 ```
 
-You'll also need to have an Azure Cosmos DB for NoSQL instance running. You can deploy a free version on Azure Portal without any cost, following [this guide](https://learn.microsoft.com/azure/cosmos-db/nosql/quickstart-portal).
+此外，您还需要运行一个 Azure Cosmos DB for NoSQL 实例。您可以按照[此指南](https://learn.microsoft.com/azure/cosmos-db/nosql/quickstart-portal)在 Azure 门户中免费部署一个实例。
 
-Once you have your instance running, make sure you have the connection string. If you are using Managed Identity, you need to have the endpoint. You can find them in the Azure Portal, under the "Settings / Keys" section of your instance.
+一旦实例运行起来，请确保您拥有连接字符串。如果您使用的是托管身份，则需要拥有端点地址。您可以在 Azure 门户中实例的 "设置 / 密钥" 部分找到这些信息。
 
 :::info
 
-When using Azure Managed Identity and role-based access control, you must ensure that the database and container have been created beforehand. RBAC does not provide permissions to create databases and containers. You can get more information about the permission model in the [Azure Cosmos DB documentation](https://learn.microsoft.com/azure/cosmos-db/how-to-setup-rbac#permission-model).
+当使用 Azure 托管身份和基于角色的访问控制（RBAC）时，您必须确保数据库和容器已经预先创建好。RBAC 不提供创建数据库和容器的权限。您可以从 [Azure Cosmos DB 文档](https://learn.microsoft.com/azure/cosmos-db/how-to-setup-rbac#permission-model)中了解更多有关权限模型的信息。
 
 :::
 
-## Usage
+## 使用方法
 
 import Example from "@examples/memory/azure_cosmosdb_nosql.ts";
 

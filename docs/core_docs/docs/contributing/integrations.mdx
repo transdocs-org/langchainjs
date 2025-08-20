@@ -2,24 +2,24 @@
 sidebar_position: 5
 ---
 
-# Contribute Integrations
+# 贡献集成
 
-To begin, make sure you have all the dependencies outlined in guide on [Contributing Code](/docs/contributing/code/).
+首先，请确保你已安装[代码贡献指南](/docs/contributing/code/)中列出的所有依赖项。
 
-There are a few different places you can contribute integrations for LangChain:
+你可以在以下几个位置为 LangChain 贡献集成：
 
-- **Community**: For lighter-weight integrations that are primarily maintained by LangChain and the Open Source Community.
-- **Partner Packages**: For independent packages that are co-maintained by LangChain and a partner.
+- **社区**：适用于主要由 LangChain 和开源社区维护的轻量级集成。
+- **合作伙伴包**：适用于由 LangChain 和合作伙伴共同维护的独立包。
 
-For the most part, new integrations should be added to the Community package. Partner packages require more maintenance as separate packages, so please confirm with the LangChain team before creating a new partner package.
+大多数情况下，新的集成应添加到社区包中。由于合作伙伴包需要作为独立包进行更多维护，请在创建新的合作伙伴包之前与 LangChain 团队确认。
 
-In the following sections, we'll walk through how to contribute to each of these packages from a fake company, `Parrot Link AI`.
+在以下部分中，我们将以虚构公司 `Parrot Link AI` 为例，说明如何为这些包贡献代码。
 
-## Community package
+## 社区包
 
-The `@langchain/community` package is in `libs/langchain-community` and contains most integrations.
+`@langchain/community` 包位于 `libs/langchain-community` 中，包含大部分集成。
 
-It can be installed with e.g. `npm install @langchain/community`, and exported members can be imported with code like
+可以通过如下命令安装：`npm install @langchain/community`，导出的成员可以通过如下代码导入：
 
 ```ts
 import { ChatParrotLink } from "@langchain/community/chat_models/parrot_link";
@@ -27,10 +27,9 @@ import { ParrotLinkLLM } from "@langchain/community/llms/parrot_link";
 import { ParrotLinkVectorStore } from "@langchain/community/vectorstores/parrot_link";
 ```
 
-The `@langchain/community` package relies on manually-installed dependent packages, so you will see errors
-if you try to import a package that is not installed. In our fake example, if you tried to import `ParrotLinkLLM` without installing `parrot-link-sdk`, you would see an error telling you that the package failed to import.
+`@langchain/community` 包依赖于手动安装的依赖包，因此如果你尝试导入一个未安装的包，会看到错误提示。在我们的示例中，如果你没有安装 `parrot-link-sdk` 就尝试导入 `ParrotLinkLLM`，你会看到提示导入失败的错误。
 
-Let's say we wanted to implement a chat model for Parrot Link AI. We would create a new file in `libs/langchain-community/src/chat_models/parrot_link.ts` with something like the following code:
+假设我们想为 Parrot Link AI 实现一个聊天模型。我们需要在 `libs/langchain-community/src/chat_models/parrot_link.ts` 中创建一个新文件，并包含类似以下代码：
 
 ```ts
 import {
@@ -42,90 +41,84 @@ export class ChatParrotLink extends SimpleChatModel {
   ...
 ```
 
-Tests are colocated in the `src/` directory, so you could write them in files like the below:
+测试文件与源码放在一起，位于 `src/` 目录下，你可以在如下文件中编写测试：
 
-- Unit tests: `libs/langchain-community/src/chat_models/tests/parrot_link.test.ts`
-- Integration tests: `libs/langchain-community/src/chat_models/tests/parrot_link.int.test.ts`
+- 单元测试：`libs/langchain-community/src/chat_models/tests/parrot_link.test.ts`
+- 集成测试：`libs/langchain-community/src/chat_models/tests/parrot_link.int.test.ts`
 
-Unit tests should not have any external API calls or require any environment variables.
+单元测试不应包含任何外部 API 调用或依赖任何环境变量。
 
-You should add documentation to:
+你需要将文档添加到以下位置：
 
 - `docs/core_docs/docs/integrations/chat/parrot_link.mdx`
 
-## Partner package in LangChain repo
+## LangChain 仓库中的合作伙伴包
 
-Partner packages can be hosted in the `LangChain` monorepo.
+合作伙伴包可以托管在 `LangChain` 单体仓库中。
 
-Partner packages in the `LangChain` repo should be placed under `libs/langchain-{partner}`
+LangChain 仓库中的合作伙伴包应放在 `libs/langchain-{partner}` 下。
 
-A package is
-installed by users with `npm install @langchain/{partner}`, and the package members
-can be imported with code like:
+用户通过 `npm install @langchain/{partner}` 安装该包，并通过如下方式导入其成员：
 
 ```ts
 import { X } from "@langchain/{partner}";
 ```
 
-### Set up a new package
+### 创建新包
 
-To set up a new partner package, you can use [`create-langchain-integration`](https://github.com/langchain-ai/langchainjs/blob/main/libs/create-langchain-integration/),
-a utility that will automatically scaffold a repo with support for both ESM + CJS entrypoints. You can run it like this within the `libs/` folder:
+要创建新的合作伙伴包，可以使用 [`create-langchain-integration`](https://github.com/langchain-ai/langchainjs/blob/main/libs/create-langchain-integration/) 工具，
+该工具会自动创建支持 ESM + CJS 入口点的项目结构。你可以在 `libs/` 文件夹中运行如下命令：
 
 ```bash
 cd libs/
 npx create-langchain-integration
 ```
 
-Then, follow the prompts to name your package.
-The default package will include stubs for a Chat Model, an LLM, and/or a Vector Store. You should delete any of the files you won't use and remove them from `index.ts`.
+然后按照提示为你的包命名。
+默认的包结构将包含聊天模型、LLM 和/或向量存储的存根文件。你应该删除不需要的文件，并从 `index.ts` 中移除对应的导出。
 
-### Dependencies
+### 依赖项
 
-If your package needs dependencies, such as your company's SDK, you can add them to your package's `package.json` file as normal:
+如果你的包需要依赖项，例如你公司的 SDK，可以像往常一样将其添加到你的包的 `package.json` 文件中：
 
 ```bash
 npm install parrot-link-sdk
 ```
 
-### Write Unit and Integration Tests
+### 编写单元测试和集成测试
 
-Some basic tests are presented in the `src/tests/` directory. You should add more tests to cover your package's functionality.
+基本的测试文件位于 `src/tests/` 目录中。你应该添加更多测试以覆盖你的包的功能。
 
-For information on running and implementing tests, see the [Testing guide](/docs/contributing/testing/).
+关于运行和实现测试的更多信息，请参见[测试指南](/docs/contributing/testing/)。
 
-### Write documentation
+### 编写文档
 
-Please copy and use the appropriate template from here:
+请从以下位置复制并使用合适的模板：
 
 https://github.com/langchain-ai/langchainjs/tree/main/libs/langchain-scripts/src/cli/docs/templates
 
-You should place the notebooks with examples
-in the relevant `docs/core_docs/docs/integrations` directory in the monorepo root.
+你应该将包含示例的笔记本文件放在 monorepo 根目录下的 `docs/core_docs/docs/integrations` 相关目录中。
 
-### (If Necessary) Deprecate community integration
+### （如需要）弃用社区集成
 
-Note: this is only necessary if you're migrating an existing community integration into
-a partner package. If the component you're integrating is net-new to LangChain (i.e.
-not already in the `community` package), you can skip this step.
+注意：只有当你将现有的社区集成迁移到合作伙伴包时才需要此步骤。如果你正在集成的新组件是首次引入 LangChain（即不在 `community` 包中），可以跳过此步骤。
 
-Let's pretend we migrated our `ChatParrotLink` chat model from the community package to
-the partner package. We would need to deprecate the old model in the community package.
-We can do this using a `@deprecated` TSDoc comment.
+我们假设将 `ChatParrotLink` 聊天模型从社区包迁移到了合作伙伴包。我们需要在社区包中弃用旧模型。
+我们可以通过 `@deprecated` TSDoc 注释来实现这一点。
 
-Before our change, our chat model might look like this:
+在修改之前，我们的聊天模型可能如下所示：
 
 ```ts
 class ChatParrotLink extends SimpleChatModel {
   ...
 ```
 
-After our change, it would look like this:
+在修改之后，它将如下所示：
 
 ```ts
-/** @deprecated Install and import from `@langchain/parrot-link` instead. */
+/** @deprecated 请安装并从 `@langchain/parrot-link` 导入。 */
 class ChatParrotLink extends SimpleChatModel {
   ...
 ```
 
-You should do this for _each_ component that you're migrating to the partner package.
+你应该对**每一个**迁移到合作伙伴包中的组件执行此操作。

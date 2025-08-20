@@ -4,13 +4,13 @@ hide_table_of_contents: true
 
 import CodeBlock from "@theme/CodeBlock";
 
-# Firestore Chat Memory
+# Firestore 聊天记忆
 
-For longer-term persistence across chat sessions, you can swap out the default in-memory `chatHistory` that backs chat memory classes like `BufferMemory` for a firestore.
+为了在聊天会话之间实现更长期的持久化，您可以将默认的内存中 `chatHistory` 替换为 Firestore，以支持如 `BufferMemory` 这类聊天记忆类。
 
-## Setup
+## 安装配置
 
-First, install the Firebase admin package in your project:
+首先，在您的项目中安装 Firebase 管理包：
 
 ```bash npm2yarn
 npm install firebase-admin
@@ -24,11 +24,11 @@ import IntegrationInstallTooltip from "@mdx_components/integration_install_toolt
 npm install @langchain/openai @langchain/community @langchain/core
 ```
 
-Visit the `Project Settings` page from your Firebase project and select the `Service accounts` tab.
+从您的 Firebase 项目中访问 `Project Settings` 页面，然后选择 `Service accounts` 标签页。
 
-Inside the `Service accounts` tab, click the `Generate new private key` button inside the `Firebase Admin SDK` section to download a JSON file containing your service account's credentials.
+在 `Service accounts` 标签页中，点击 `Firebase Admin SDK` 部分内的 `Generate new private key` 按钮，下载包含您的服务账户凭据的 JSON 文件。
 
-Using the downloaded JSON file, pass in the `projectId`, `privateKey`, and `clientEmail` to the `config` object of the `FirestoreChatMessageHistory` class, like shown below:
+使用下载的 JSON 文件，将 `projectId`、`privateKey` 和 `clientEmail` 传递给 `FirestoreChatMessageHistory` 类的 `config` 对象，如下所示：
 
 ```typescript
 import { FirestoreChatMessageHistory } from "@langchain/community/stores/message/firestore";
@@ -51,20 +51,20 @@ const messageHistory = new FirestoreChatMessageHistory({
 });
 ```
 
-Here, the `collections` field should match the names and ordering of the `collections` in your database.
-The same goes for `docs`, it should match the names and ordering of the `docs` in your database.
+在此，`collections` 字段应与数据库中的 `collections` 名称和顺序匹配。
+`docs` 字段也是如此，应与数据库中的 `docs` 名称和顺序匹配。
 
-## Usage
+## 使用方法
 
 import Example from "@examples/memory/firestore.ts";
 
 <CodeBlock language="typescript">{Example}</CodeBlock>
 
-### Nested Collections
+### 嵌套集合
 
-The `FirestoreChatMessageHistory` class supports nested collections, and dynamic collection/doc names.
+`FirestoreChatMessageHistory` 类支持嵌套集合以及动态的集合/文档名称。
 
-The example below shows how to add and retrieve messages from a database with the following structure:
+以下示例展示了如何向具有以下结构的数据库添加和检索消息：
 
 ```
 /chats/{chat-id}/bots/{bot-id}/messages/{message-id}
@@ -74,9 +74,9 @@ import NestedExample from "@examples/memory/firestore_nested.ts";
 
 <CodeBlock language="typescript">{NestedExample}</CodeBlock>
 
-## Firestore Rules
+## Firestore 规则
 
-If your collection name is "chathistory," you can configure Firestore rules as follows.
+如果您的集合名称是 "chathistory"，您可以按以下方式配置 Firestore 规则：
 
 ```
       match /chathistory/{sessionId} {
