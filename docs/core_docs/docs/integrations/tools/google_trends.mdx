@@ -1,0 +1,42 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Google Trends 工具
+
+Google Trends 工具允许你的智能代理使用 SerpApi 提供的 Google Trends API 来获取和分析搜索兴趣数据。
+这有助于理解热门话题、地区搜索兴趣以及搜索关键词的历史受欢迎程度。
+
+API 的详细信息请参见[这里](https://serpapi.com/google-trends-api)
+
+SerpApi 会对查询进行缓存，因此首次查询会较慢，而后续相同的查询则会很快。
+有时，相关查询可能无法正常工作，但时间趋势查询不会受影响。你可以在[这里](https://serpapi.com/playground?engine=google_trends&q=monster&data_type=RELATED_QUERIES)检查你的查询。
+
+## 配置
+
+要使用此工具，你需要配置对 SerpApi 提供的 Google Trends API 的访问权限。
+
+从 [SerpApi](https://serpapi.com/users/sign_in) 获取 API 密钥
+
+然后，将 API 密钥设置为 `process.env.SERPAPI_API_KEY`，或者在构造函数参数中以 `apiKey` 形式传入。
+
+## 使用方法
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+import ToolExample from "@examples/tools/google_trends.ts";
+
+<CodeBlock language="typescript">{ToolExample}</CodeBlock>
+
+## 相关内容
+
+- 工具[概念指南](/docs/concepts/tools)
+- 工具[操作指南](/docs/how_to/#tools)

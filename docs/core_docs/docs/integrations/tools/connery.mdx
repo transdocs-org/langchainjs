@@ -1,0 +1,67 @@
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/tools/connery.ts";
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+# Connery Action 工具
+
+使用该工具，您可以将单个 Connery Action 集成到您的 LangChain 代理中。
+
+:::note
+如果要在您的代理中使用多个 Connery Action，
+请参阅 [Connery Toolkit](/docs/integrations/toolkits/connery) 文档。
+:::
+
+## 什么是 Connery？
+
+Connery 是一个面向 AI 的开源插件基础设施。
+
+通过 Connery，您可以轻松创建一个包含一组动作的自定义插件，并无缝集成到您的 LangChain 代理中。
+Connery 将负责运行时、授权、密钥管理、访问管理、审计日志以及其他关键功能等重要方面。
+
+此外，Connery 得益于我们社区的支持，提供了多种现成的开源插件，以增加便利性。
+
+了解更多关于 Connery 的信息：
+
+- GitHub：https://github.com/connery-io/connery
+- 文档：https://docs.connery.io
+
+## 前提条件
+
+要在您的 LangChain 代理中使用 Connery Actions，您需要进行一些准备工作：
+
+1. 使用 [快速入门](https://docs.connery.io/docs/runner/quick-start/) 指南设置 Connery 运行器。
+2. 安装所有您希望在代理中使用的动作对应的插件。
+3. 设置环境变量 `CONNERY_RUNNER_URL` 和 `CONNERY_RUNNER_API_KEY`，以便工具包可以与 Connery Runner 进行通信。
+
+## 使用 Connery Action 工具的示例
+
+### 安装
+
+要使用 Connery Action 工具，您需要安装以下官方对等依赖项：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+### 使用方法
+
+在下面的示例中，我们通过其 ID 从 Connery Runner 获取一个动作，然后使用指定的参数调用它。
+
+这里我们使用了 [Gmail](https://github.com/connery-io/gmail) 插件中 **发送邮件** 动作的 ID。
+
+:::info
+您可以在 [此处](https://smith.langchain.com/public/c4b6723d-f91c-440c-8682-16ec8297a602/r) 查看该示例的 LangSmith 跟踪。
+:::
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+:::note
+Connery Action 是一个结构化工具，因此只能在支持结构化工具的代理中使用它。
+:::
+
+## 相关内容
+
+- 工具[概念指南](/docs/concepts/tools)
+- 工具[操作指南](/docs/how_to/#tools)

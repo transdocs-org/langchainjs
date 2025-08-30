@@ -1,0 +1,36 @@
+# 如何编写自定义文档加载器
+
+如果你想实现自己的文档加载器，有几种选项可供选择。
+
+### 继承 `BaseDocumentLoader`
+
+你可以直接继承 `BaseDocumentLoader` 类。该类提供了一些便捷的方法，用于从多种来源加载文档。
+
+```typescript
+abstract class BaseDocumentLoader implements DocumentLoader {
+  abstract load(): Promise<Document[]>;
+}
+```
+
+### 继承 `TextLoader`
+
+如果你想从文本文件加载文档，可以继承 `TextLoader` 类。`TextLoader` 类会负责读取文件，你只需实现一个解析方法即可。
+
+```typescript
+abstract class TextLoader extends BaseDocumentLoader {
+  abstract parse(raw: string): Promise<string[]>;
+}
+```
+
+### 继承 `BufferLoader`
+
+如果你想从二进制文件加载文档，可以继承 `BufferLoader` 类。`BufferLoader` 类会负责读取文件，你只需实现一个解析方法即可。
+
+```typescript
+abstract class BufferLoader extends BaseDocumentLoader {
+  abstract parse(
+    raw: Buffer,
+    metadata: Document["metadata"]
+  ): Promise<Document[]>;
+}
+```

@@ -1,0 +1,119 @@
+---
+sidebar_label: ChromeAI
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# ChromeAI
+
+:::info
+此功能为**实验性**功能，可能会发生变化。
+:::
+
+:::note
+Google 的 `内置 AI 早期预览计划` 目前处于 Beta 阶段。如需申请访问权限或获取更多信息，请访问[此链接](https://developer.chrome.com/docs/ai/built-in)。
+:::
+
+ChromeAI 利用 Gemini Nano 在浏览器中或 [worker](https://developer.mozilla.org/en-US/docs/Web/API/Worker) 中直接运行大语言模型（LLM），而无需连接互联网。这使得模型运行更快且更私密，数据也无需离开用户的设备。
+
+## 开始使用
+
+在您获得该计划的访问权限后，请按照 Google 提供的说明下载模型。
+
+下载完成后，您可以按照以下方式在浏览器中开始使用 `ChromeAI`：
+
+```typescript
+import { ChromeAI } from "@langchain/community/experimental/llms/chrome_ai";
+
+const model = new ChromeAI({
+  temperature: 0.5, // 可选，默认为 0.5
+  topK: 40, // 可选，默认为 40
+});
+
+const response = await model.invoke("请为我写一首简短的诗歌");
+
+/*
+  在月光编织色彩的领域，
+  梦想与秘密轻柔交织的地方，
+  有一片宁静与优雅之地，
+  夜晚的低语找到了归属。
+
+  在繁星点点的天幕之下，
+  梦想腾飞，烦恼止息，
+  一个宁静、真实而纯净的避风港，
+  心灵在此找到慰藉，如露珠般清新。
+
+  在这个梦想得以释放的领域，
+  灵魂在此找到安宁，
+  让我们漫步其中，沉浸于它的怀抱，
+  在这片宁静之地找到慰藉。
+*/
+```
+
+### 流式输出
+
+`ChromeAI` 同样支持流式输出：
+
+```typescript
+import { ChromeAI } from "@langchain/community/experimental/llms/chrome_ai";
+
+const model = new ChromeAI({
+  temperature: 0.5, // 可选，默认为 0.5
+  topK: 40, // 可选，默认为 40
+});
+
+for await (const chunk of await model.stream("How are you?")) {
+  console.log(chunk);
+}
+
+/*
+  As
+   an
+   AI
+   language
+   model
+  ,
+   I
+   don
+  '
+  t
+   have
+   personal
+   experiences
+   or
+   the
+   ability
+   to
+   experience
+   emotions
+  .
+   Therefore
+  ,
+   I
+   cannot
+   directly
+   answer
+   the
+   question
+   "
+  How
+   are
+   you
+  ?".
+  
+  
+  
+  May
+   I
+   suggest
+   answering
+   something
+   else
+  ?
+*/
+```
+
+## 相关内容
+
+- LLM [概念指南](/docs/concepts/text_llms)
+- LLM [操作指南](/docs/how_to/#llms)

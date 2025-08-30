@@ -1,0 +1,204 @@
+# Upstash 限速回调
+
+在本指南中，我们将介绍如何基于请求数量或令牌数量使用 `UpstashRatelimitHandler` 添加速率限制。该处理器使用 [Upstash 的限速库](https://github.com/upstash/ratelimit-js/)，其依赖于 [Upstash Redis](https://upstash.com/docs/redis/overall/getstarted)。
+
+每次调用 `limit` 方法时，Upstash 限速机制会通过向 Upstash Redis 发送 HTTP 请求来检查并更新用户的剩余令牌/请求数量。根据剩余的令牌数量，我们可以停止执行代价高昂的操作，例如调用 LLM 或查询向量存储：
+
+```tsx
+const response = await ratelimit.limit();
+if (response.success) {
+  execute_costly_operation();
+}
+```
+
+`UpstashRatelimitHandler` 让您可以轻松地将这种限速逻辑集成到您的链中。
+
+## 环境准备
+
+首先，您需要前往 [Upstash 控制台](https://console.upstash.com/login) 并创建一个 Redis 数据库（[参见我们的文档](https://upstash.com/docs/redis/overall/getstarted)）。创建数据库后，您需要设置环境变量：
+
+```
+UPSTASH_REDIS_REST_URL="****"
+UPSTASH_REDIS_REST_TOKEN="****"
+```
+
+接下来，您需要安装 Upstash 限速库和 `@langchain/community`：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @upstash/ratelimit @langchain/community @langchain/core
+```
+
+现在，您已经准备好为您的链添加速率限制功能！
+
+## 按请求限速
+
+假设我们希望允许用户每分钟调用我们的链 10 次，实现方式如下：
+
+```tsx
+const UPSTASH_REDIS_REST_URL = "****";
+const UPSTASH_REDIS_REST_TOKEN = "****";
+
+import {
+  UpstashRatelimitHandler,
+  UpstashRatelimitError,
+} from "@langchain/community/callbacks/handlers/upstash_ratelimit";
+import { RunnableLambda } from "@langchain/core/runnables";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
+// 创建限速器
+const ratelimit = new Ratelimit({
+  redis: new Redis({
+    url: UPSTASH_REDIS_REST_URL,
+    token: UPSTASH_REDIS_REST_TOKEN,
+  }),
+  // 每 60 秒窗口允许 10 次请求：
+  limiter: Ratelimit.fixedWindow(10, "60 s"),
+});
+
+// 创建处理器
+const user_id = "user_id"; // 应该是一个获取用户 ID 的方法
+const handler = new UpstashRatelimitHandler(user_id, {
+  requestRatelimit: ratelimit,
+});
+
+// 创建模拟链
+const chain = new RunnableLambda({ func: (str: string): string => str });
+
+try {
+  const response = await chain.invoke("hello world", {
+    callbacks: [handler],
+  });
+  console.log(response);
+} catch (err) {
+  if (err instanceof UpstashRatelimitError) {
+    console.log("处理限速情况。");
+  }
+}
+```
+
+请注意，我们将处理器传递给 `invoke` 方法，而不是在定义链时传递。
+
+如需使用除 `FixedWindow` 之外的限速算法，请参阅 [upstash-ratelimit 文档](https://upstash.com/docs/oss/sdks/ts/ratelimit/algorithms)。
+
+在执行我们链中的任何步骤之前，限速器将检查用户是否已超出请求限制。如果是，则会抛出 `UpstashRatelimitError`。
+
+## 按令牌限速
+
+另一个选项是根据以下内容对链调用进行限速：
+
+1. 提示中的令牌数量
+2. 提示和 LLM 生成中的令牌总数
+
+这仅在您的链中包含 LLM 时有效。另一个要求是所使用的 LLM 必须在其 `LLMOutput` 中返回令牌使用情况。返回的令牌使用情况字典格式取决于具体的 LLM。如何根据您的 LLM 配置处理器，请参见配置部分末尾的说明。
+
+### 工作原理
+
+处理器将在调用 LLM 之前获取剩余的令牌数。如果剩余令牌数大于 0，则调用 LLM；否则抛出 `UpstashRatelimitError`。
+
+LLM 调用后，将使用令牌使用信息从用户的剩余令牌中扣除。在链的此阶段不会抛出错误。
+
+### 配置
+
+对于第一种配置，只需如下初始化处理器：
+
+```tsx
+const user_id = "user_id"; // 应该是一个获取用户 ID 的方法
+const handler = new UpstashRatelimitHandler(user_id, {
+  requestRatelimit: ratelimit,
+});
+```
+
+对于第二种配置，请这样初始化处理器：
+
+```tsx
+const user_id = "user_id"; // 应该是一个获取用户 ID 的方法
+const handler = new UpstashRatelimitHandler(user_id, {
+  tokenRatelimit: ratelimit,
+});
+```
+
+您也可以通过同时传递 `requestRatelimit` 和 `tokenRatelimit` 参数来同时基于请求和令牌进行限速。
+
+为了使令牌使用功能正常工作，LangChain.js 中的 LLM 步骤应返回如下格式的令牌使用字段：
+
+```json
+{
+  "tokenUsage": {
+    "totalTokens": 123,
+    "promptTokens": 456,
+    "otherFields: "..."
+  },
+  "otherFields: "..."
+}
+```
+
+然而，并非 LangChain.js 中的所有 LLM 都遵循此格式。如果您的 LLM 使用不同的键返回相同值，您可以通过向处理器传递参数 `llmOutputTokenUsageField`、`llmOutputTotalTokenField` 和 `llmOutputPromptTokenField` 来指定：
+
+```tsx
+const handler = new UpstashRatelimitHandler(
+  user_id,
+  {
+    requestRatelimit: ratelimit
+    llmOutputTokenUsageField: "usage",
+    llmOutputTotalTokenField: "total",
+    llmOutputPromptTokenField: "prompt"
+  }
+)
+```
+
+以下是使用 LLM 的链示例：
+
+```tsx
+const UPSTASH_REDIS_REST_URL = "****";
+const UPSTASH_REDIS_REST_TOKEN = "****";
+const OPENAI_API_KEY = "****";
+
+import {
+  UpstashRatelimitHandler,
+  UpstashRatelimitError,
+} from "@langchain/community/callbacks/handlers/upstash_ratelimit";
+import { RunnableLambda, RunnableSequence } from "@langchain/core/runnables";
+import { OpenAI } from "@langchain/openai";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
+// 创建限速器
+const ratelimit = new Ratelimit({
+  redis: new Redis({
+    url: UPSTASH_REDIS_REST_URL,
+    token: UPSTASH_REDIS_REST_TOKEN,
+  }),
+  // 每 60 秒窗口允许 500 个令牌：
+  limiter: Ratelimit.fixedWindow(500, "60 s"),
+});
+
+// 创建处理器
+const user_id = "user_id"; // 应该是一个获取用户 ID 的方法
+const handler = new UpstashRatelimitHandler(user_id, {
+  tokenRatelimit: ratelimit,
+});
+
+// 创建模拟链
+const asStr = new RunnableLambda({ func: (str: string): string => str });
+const model = new OpenAI({
+  apiKey: OPENAI_API_KEY,
+});
+const chain = RunnableSequence.from([asStr, model]);
+
+// 使用处理器调用链：
+try {
+  const response = await chain.invoke("hello world", {
+    callbacks: [handler],
+  });
+  console.log(response);
+} catch (err) {
+  if (err instanceof UpstashRatelimitError) {
+    console.log("处理限速情况。");
+  }
+}
+```

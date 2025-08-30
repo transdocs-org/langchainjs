@@ -1,0 +1,139 @@
+---
+sidebar_label: Stagehand AI 网页自动化工具包
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/agents/stagehand_ai_web_browser.ts";
+import { StagehandToolkit } from "@langchain/community/agents/toolkits/stagehand";
+
+# Stagehand 工具包
+
+Stagehand 工具包为你的 AI 代理提供了以下能力：
+
+- **navigate()**: 导航到特定的 URL。
+- **act()**: 执行浏览器自动化操作，如点击、输入和导航。
+- **extract()**: 使用 Zod 模式从网页中提取结构化数据。
+- **observe()**: 获取当前页面上可能的操作和元素列表。
+
+## 安装配置
+
+1. 安装所需的包：
+
+```bash
+npm install @langchain/langgraph @langchain/community @langchain/core
+```
+
+2. 创建一个 Stagehand 实例  
+   如果你计划在本地运行浏览器，还需要安装 Playwright 的浏览器依赖项。
+
+```bash
+npx playwright install
+```
+
+3. 设置你的模型提供商凭证：
+
+对于 OpenAI：
+
+```bash
+export OPENAI_API_KEY="your-openai-api-key"
+```
+
+对于 Anthropic：
+
+```bash
+export ANTHROPIC_API_KEY="your-anthropic-api-key"
+```
+
+## 使用方法，独立运行，本地浏览器
+
+```typescript
+import { StagehandToolkit } from "langchain/community/agents/toolkits/stagehand";
+import { ChatOpenAI } from "@langchain/openai";
+import { Stagehand } from "@browserbasehq/stagehand";
+
+// 指定你的 Browserbase 凭证。
+process.env.BROWSERBASE_API_KEY = "";
+process.env.BROWSERBASE_PROJECT_ID = "";
+
+// 指定 OpenAI API 密钥。
+process.env.OPENAI_API_KEY = "";
+
+const stagehand = new Stagehand({
+  env: "LOCAL",
+  headless: false,
+  verbose: 2,
+  debugDom: true,
+  enableCaching: false,
+});
+
+// 创建一个包含 Stagehand 所有可用操作的 Stagehand 工具包。
+const stagehandToolkit = await StagehandToolkit.fromStagehand(stagehand);
+
+const navigateTool = stagehandToolkit.tools.find(
+  (t) => t.name === "stagehand_navigate"
+);
+if (!navigateTool) {
+  throw new Error("未找到导航工具");
+}
+await navigateTool.invoke("https://www.google.com");
+
+const actionTool = stagehandToolkit.tools.find(
+  (t) => t.name === "stagehand_act"
+);
+if (!actionTool) {
+  throw new Error("未找到操作工具");
+}
+await actionTool.invoke('搜索 "OpenAI"');
+
+const observeTool = stagehandToolkit.tools.find(
+  (t) => t.name === "stagehand_observe"
+);
+if (!observeTool) {
+  throw new Error("未找到观察工具");
+}
+const result = await observeTool.invoke(
+  "在当前页面上可以执行哪些操作？"
+);
+const observations = JSON.parse(result);
+
+// 根据需要处理观察结果
+console.log(observations);
+
+const currentUrl = stagehand.page.url();
+expect(currentUrl).toContain("google.com/search?q=OpenAI");
+```
+
+## 在 LangGraph 代理中使用
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 在 Browserbase 上使用 - 远程无头浏览器
+
+如果你想远程运行浏览器，可以使用 Browserbase 平台。
+
+你需要将 `BROWSERBASE_API_KEY` 环境变量设置为你的 Browserbase API 密钥。
+
+```bash
+export BROWSERBASE_API_KEY="your-browserbase-api-key"
+```
+
+你还需要将 `BROWSERBASE_PROJECT_ID` 设置为你的 Browserbase 项目 ID。
+
+```bash
+export BROWSERBASE_PROJECT_ID="your-browserbase-project-id"
+```
+
+然后使用 `BROWSERBASE` 环境初始化 Stagehand 实例。
+
+```typescript
+const stagehand = new Stagehand({
+  env: "BROWSERBASE",
+});
+```
+
+## 相关内容
+
+- 工具 [概念指南](/docs/concepts/tools)
+- 工具 [操作指南](/docs/how_to/#tools)
+- [Stagehand 文档](https://github.com/browserbase/stagehand#readme)

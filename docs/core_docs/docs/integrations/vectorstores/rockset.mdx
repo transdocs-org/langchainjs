@@ -1,0 +1,39 @@
+---
+sidebar_class_name: node-only
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Rockset
+
+Rockset（已被 OpenAI 收购）是一个在云端运行的实时分析型 SQL 数据库。
+Rockset 提供以 SQL 函数形式实现的向量搜索功能，用于支持依赖文本相似性的 AI 应用程序。
+
+## 安装配置
+
+安装 rockset 客户端。
+
+```bash
+yarn add @rockset/client
+```
+
+### 使用方法
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core @langchain/community
+```
+
+import UsageExample from "@examples/indexes/vector_stores/rockset.ts";
+
+以下是一个示例，展示如何使用 OpenAI 和 Rockset 来回答有关文本文件的问题：
+
+<CodeBlock language="typescript">{UsageExample}</CodeBlock>
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

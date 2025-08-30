@@ -1,0 +1,26 @@
+import CodeBlock from "@theme/CodeBlock";
+
+# 复制（Replicate）
+
+以下是一个将 Replicate 模型作为 LLM 调用的示例：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install replicate@1 @langchain/community @langchain/core
+```
+
+import ReplicateLlama2 from "@examples/models/llm/replicate_llama2.ts";
+
+<CodeBlock language="typescript">{ReplicateLlama2}</CodeBlock>
+
+您可以通过更改 `model` 参数，使用 Replicate 运行其他模型。
+
+您可以在 [Replicate 官网](https://replicate.com/explore) 上找到完整的模型列表。
+
+## 相关内容
+
+- LLM [概念指南](/docs/concepts/text_llms)
+- LLM [操作指南](/docs/how_to/#llms)

@@ -1,0 +1,49 @@
+# 📕 包版本控制
+
+截至目前，LangChain 使用临时的发布流程：由维护人员高频发布版本，并上传至 [PyPI](https://pypi.org/)。
+不同的包版本控制方式略有不同。
+
+## `@langchain/core`
+
+`@langchain/core` 当前版本为 `0.1.x`。
+
+由于 `@langchain/core` 包含了整个 LangChain 生态系统的基础抽象和运行时，我们将提前通知任何破坏性变更，并通过版本升级来体现。唯一的例外是标记为 `beta` 的功能（你可以在 API 文档中看到此标记，并且使用这些功能时会收到警告信息）。之所以将部分功能标记为 beta，是因为考虑到该领域技术的快速演进，保持灵活性和快速迭代仍然是优先事项。
+
+**次版本升级**（Minor version）将用于：
+
+- 所有标记为 `beta` 的公共接口的破坏性变更。
+
+**补丁版本升级**（Patch version）将用于：
+
+- Bug 修复
+- 新功能
+- 对私有接口的任何更改
+- 对 `beta` 功能的任何更改
+
+## `langchain`
+
+`langchain` 当前版本为 `0.1.x`
+
+**次版本升级**（Minor version）将用于：
+
+- 所有**未**标记为 `beta` 的公共接口的破坏性变更。
+
+**补丁版本升级**（Patch version）将用于：
+
+- Bug 修复
+- 新功能
+- 对私有接口的任何更改
+- 对 `beta` 功能的任何更改
+
+我们正在开发 `langchain` 的 v0.2 版本，该版本将对旧版 Chains 和 Agents 进行一些破坏性更改。
+此外，我们将移除 `@langchain/community` 作为依赖项，并停止导出那些已迁移到 `@langchain/community` 的集成模块。
+
+## `@langchain/community`
+
+`@langchain/community` 当前版本为 `0.0.x`
+
+所有更改都将伴随补丁版本升级。
+
+## 合作伙伴包
+
+合作伙伴包（Partner Packages）采用独立的版本控制。

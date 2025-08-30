@@ -1,0 +1,79 @@
+---
+sidebar_label: Minimax
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Minimax
+
+[Minimax](https://api.minimax.chat) 是一家中国初创公司，为企业和个人提供自然语言处理模型。
+
+此示例演示了如何使用 LangChain.js 与 Minimax 进行交互。
+
+## 准备工作
+
+要使用 Minimax 模型，你需要一个 Minimax 账号、API 密钥以及 Group ID。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+import UnifiedModelParamsTooltip from "@mdx_components/unified_model_params_tooltip.mdx";
+
+<UnifiedModelParamsTooltip></UnifiedModelParamsTooltip>
+
+## 基本用法
+
+import Minimax from "@examples/models/chat/integration_minimax.ts";
+
+<CodeBlock language="typescript">{Minimax}</CodeBlock>
+
+## 链式模型调用
+
+import MinimaxChain from "@examples/models/chat/minimax_chain.ts";
+
+<CodeBlock language="typescript">{MinimaxChain}</CodeBlock>
+
+## 使用函数调用
+
+import MinimaxFunctions from "@examples/models/chat/minimax_functions.ts";
+import MinimaxFunctionsZod from "@examples/models/chat/minimax_functions_zod.ts";
+
+<CodeBlock language="typescript">{MinimaxFunctions}</CodeBlock>
+
+## 使用 Zod 的函数
+
+<CodeBlock language="typescript">{MinimaxFunctionsZod}</CodeBlock>
+
+## 使用 glyph
+
+此功能可以帮助用户强制模型以指定格式返回内容。
+
+import MinimaxGlyph from "@examples/models/chat/minimax_glyph.ts";
+
+<CodeBlock language="typescript">{MinimaxGlyph}</CodeBlock>
+
+## 使用示例消息
+
+此功能可以帮助模型更好地理解用户希望获取的返回信息，包括但不限于信息的内容、格式和响应方式。
+
+import MinimaxSampleMessages from "@examples/models/chat/minimax_sample_messages.ts";
+
+<CodeBlock language="typescript">{MinimaxSampleMessages}</CodeBlock>
+
+## 使用插件
+
+此功能支持调用如搜索引擎等工具来获取额外的数据，以辅助模型完成任务。
+
+import MinimaxPlugins from "@examples/models/chat/minimax_plugins.ts";
+
+<CodeBlock language="typescript">{MinimaxPlugins}</CodeBlock>
+
+## 相关内容
+
+- 聊天模型 [概念指南](/docs/concepts/chat_models)
+- 聊天模型 [操作指南](/docs/how_to/#chat-models)

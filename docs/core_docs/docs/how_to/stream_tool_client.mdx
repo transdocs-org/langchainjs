@@ -1,0 +1,132 @@
+# 如何将结构化输出流式传输到客户端
+
+本指南将带您了解我们在此目录中如何使用 [React Server Components](https://react.dev/reference/rsc/server-components) 将 Agent 数据流式传输到客户端。
+本文中的代码来自该目录下的 `page.tsx` 和 `action.ts` 文件。要查看完整、未中断的代码，请点击 [此处查看 actions 文件](https://github.com/langchain-ai/langchain-nextjs-template/blob/main/app/ai_sdk/tools/action.ts)
+和 [此处查看客户端文件](https://github.com/langchain-ai/langchain-nextjs-template/blob/main/app/ai_sdk/tools/page.tsx)。
+
+:::info 前提条件
+
+本指南假定您已熟悉以下概念：
+
+> - [LangChain 表达式语言 (LCEL)](/docs/concepts/lcel)
+> - [聊天模型](/docs/concepts/chat_models)
+> - [工具调用](/docs/concepts/tool_calling)
+
+:::
+
+## 准备工作
+
+首先，安装必要的 LangChain 和 AI SDK 包：
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core ai zod zod-to-json-schema
+```
+
+接下来，我们将创建服务器文件。  
+该文件将包含用于进行工具调用并将数据发送回客户端的所有逻辑。
+
+首先添加必要的导入语句以及 `"use server"` 指令：
+
+```typescript
+"use server";
+
+import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { createStreamableValue } from "ai/rsc";
+import { z } from "zod";
+import { zodToJsonSchema } from "zod-to-json-schema";
+import { JsonOutputKeyToolsParser } from "@langchain/core/output_parsers/openai_tools";
+```
+
+之后，我们将定义工具的 Schema。在本例中，我们使用一个简单的天气查询 Schema：
+
+```typescript
+const Weather = z
+  .object({
+    city: z.string().describe("要查询天气的城市"),
+    state: z.string().describe("要查询天气的州简称"),
+  })
+  .describe("天气查询参数");
+```
+
+定义好 Schema 后，我们可以实现 `executeTool` 函数。  
+该函数接收一个 `string` 类型的输入，并包含我们工具的所有逻辑以及将数据流式传输回客户端的功能：
+
+```typescript
+export async function executeTool(
+  input: string,
+) {
+  "use server";
+
+  const stream = createStreamableValue();
+```
+
+`createStreamableValue` 函数非常重要，因为我们将使用它将所有数据流式传输回客户端。
+
+对于主要逻辑，我们将它封装在一个异步函数中。首先定义我们的提示词模板和聊天模型：
+
+```typescript
+  (async () => {
+    const prompt = ChatPromptTemplate.fromMessages([
+      [
+        "system",
+        `你是一个有用的助手。请使用提供的工具来更好地帮助用户。`,
+      ],
+      ["human", "{input}"],
+    ]);
+
+    const llm = new ChatOpenAI({
+      model: "gpt-4o-2024-05-13",
+      temperature: 0,
+    });
+
+```
+
+定义好聊天模型后，我们将使用 LCEL 定义一个可运行的链。
+
+首先将之前定义的 `weather` 工具绑定到模型：
+
+```typescript
+const modelWithTools = llm.bind({
+  tools: [
+    {
+      type: "function" as const,
+      function: {
+        name: "get_weather",
+        description: Weather.description,
+        parameters: zodToJsonSchema(Weather),
+      },
+    },
+  ],
+});
+```
+
+接下来，我们将使用 LCEL 来将每个组件连接在一起，从提示词模板开始，然后是带有工具的模型，最后是输出解析器：
+
+```typescript
+const chain = prompt.pipe(modelWithTools).pipe(
+  new JsonOutputKeyToolsParser<z.infer<typeof Weather>>({
+    keyName: "get_weather",
+    zodSchema: Weather,
+  })
+);
+```
+
+最后，我们将在链上调用 `.stream`，与 [流式传输 Agent 到客户端](/docs/how_to/stream_agent_client)
+的示例类似，我们将遍历流，并对数据进行 stringify 和 parse，然后更新流的值：
+
+```typescript
+    const streamResult = await chain.stream({
+      input,
+    });
+
+    for await (const item of streamResult) {
+      stream.update(JSON.parse(JSON.stringify(item, null, 2)));
+    }
+
+    stream.done();
+  })();
+
+  return { streamData: stream.value };
+}
+```

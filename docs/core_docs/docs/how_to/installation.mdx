@@ -1,0 +1,280 @@
+---
+sidebar_position: 1
+---
+
+# 安装
+
+## 支持的环境
+
+LangChain 是用 TypeScript 编写的，可以在以下环境中使用：
+
+- Node.js (ESM 和 CommonJS) - 18.x, 19.x, 20.x
+- Cloudflare Workers
+- Vercel / Next.js（浏览器、无服务器和边缘函数）
+- Supabase 边缘函数
+- 浏览器
+- Deno
+- Bun
+
+不过请注意，某些特定的集成可能在所有环境中都不被支持。
+
+## 安装
+
+要安装主 `langchain` 包，请运行以下命令：
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import CodeBlock from "@theme/CodeBlock";
+
+```bash npm2yarn
+npm install langchain @langchain/core
+```
+
+虽然这个包可以作为使用 LangChain 的合理起点，但 LangChain 的大部分价值体现在与各种模型提供商、数据存储等的集成上。
+默认情况下，执行这些集成所需的依赖项 **不会** 被安装。你需要单独安装特定集成的依赖项。
+我们将在本指南的后续部分展示如何操作。
+
+请参阅有关 [安装集成包](/docs/how_to/installation/#installing-integration-packages) 的章节，了解安装 LangChain 包时的一些特殊注意事项。
+
+## 生态系统包
+
+除了 `langsmith` SDK 之外，LangChain 生态系统中的所有包都依赖 `@langchain/core`，它包含其他包使用的基类和抽象。
+下面的依赖关系图展示了不同包之间的关系。箭头表示源包依赖于目标包：
+
+![](/img/ecosystem_packages.png)
+
+**注意：** 你的应用应仅使用一个版本的 `@langchain/core`。常见的包管理器在解析直接依赖时可能会引入额外的版本，即使你并不希望如此。
+请参阅 [安装集成包](/docs/how_to/installation/#installing-integration-packages) 部分了解更多详细信息以及解决方法。
+
+### @langchain/community
+
+[@langchain/community](https://www.npmjs.com/package/@langchain/community) 包含一系列第三方集成。
+安装命令如下：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+此外，还有一些更细粒度的包，包含针对特定提供商的 LangChain 集成。
+
+### @langchain/core
+
+[@langchain/core](https://www.npmjs.com/package/@langchain/core) 包含 LangChain 生态系统其余部分使用的基类和抽象，以及 LangChain 表达式语言。
+应单独安装：
+
+```bash npm2yarn
+npm install @langchain/core
+```
+
+### LangGraph
+
+[LangGraph.js](https://langchain-ai.github.io/langgraphjs/) 是一个用于构建具有状态、多角色的 LLM 应用程序的库。
+它可以与 LangChain 无缝集成，也可以在不使用 LangChain 的情况下使用。
+
+安装命令如下：
+
+```bash npm2yarn
+npm install @langchain/langgraph @langchain/core
+```
+
+### LangSmith SDK
+
+LangSmith SDK 会由 LangChain 自动安装。
+如果你不与 LangChain 一起使用，可以单独安装：
+
+```bash npm2yarn
+npm install langsmith
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+## 安装集成包
+
+LangChain 支持包含与各个第三方提供商模块集成的包。
+它们可以像 [`@langchain/anthropic`](/docs/integrations/platforms/anthropic/) 一样具体，仅包含对 Anthropic 模型的集成；
+也可以像 [`@langchain/community`](https://www.npmjs.com/package/@langchain/community) 一样广泛，包含各种社区贡献的集成。
+
+这些包以及主 LangChain 包都将 [`@langchain/core`](https://www.npmjs.com/package/@langchain/core) 作为 peer dependency，
+以避免包管理器安装同一包的多个版本。它包含这些集成包所扩展的基类和抽象。
+
+为确保所有集成及其类型之间能正确交互，它们必须都使用相同版本的 `@langchain/core`。
+如果你遇到与基类相关的类型错误，可能需要确保你的包管理器解析出唯一一个版本的 `@langchain/core`。为此，
+你可以在项目中的 `package.json` 中添加 `"resolutions"` 或 `"overrides"` 字段，如下所示。具体字段名取决于你使用的包管理器：
+
+:::tip
+对于 `yarn` 或 `pnpm`，`resolutions` 或 `pnpm.overrides` 字段必须设置在根 `package.json` 文件中。
+:::
+
+如果你使用的是 `yarn`：
+
+```json title="yarn package.json"
+{
+  "name": "your-project",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@langchain/anthropic": "^0.0.2",
+    "@langchain/core": "^0.3.0",
+    "langchain": "0.0.207"
+  },
+  "resolutions": {
+    "@langchain/core": "0.3.0"
+  }
+}
+```
+
+如果你使用的是 `yarn` 且版本为 2 或更高，也可以尝试运行 [`yarn dedupe`](https://yarnpkg.com/cli/dedupe) 命令。
+
+如果你使用的是 `npm`：
+
+```json title="npm package.json"
+{
+  "name": "your-project",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@langchain/anthropic": "^0.0.2",
+    "@langchain/core": "^0.3.0",
+    "langchain": "0.0.207"
+  },
+  "overrides": {
+    "@langchain/core": "0.3.0"
+  }
+}
+```
+
+你也可以尝试运行 [`npm dedupe`](https://docs.npmjs.com/cli/commands/npm-dedupe) 命令。
+
+如果你使用的是 `pnpm`：
+
+```json title="pnpm package.json"
+{
+  "name": "your-project",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@langchain/anthropic": "^0.0.2",
+    "@langchain/core": "^0.3.0",
+    "langchain": "0.0.207"
+  },
+  "pnpm": {
+    "overrides": {
+      "@langchain/core": "0.3.0"
+    }
+  }
+}
+```
+
+你也可以尝试运行 [`pnpm dedupe`](https://pnpm.io/cli/dedupe) 命令。
+
+## 加载库
+
+### TypeScript
+
+LangChain 是用 TypeScript 编写的，并为其所有公共 API 提供了类型定义。
+
+### ESM
+
+LangChain 提供了面向 Node.js 环境的 ESM 构建版本。你可以使用以下语法导入：
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+```
+
+如果你在 ESM 项目中使用 TypeScript，我们建议你在 `tsconfig.json` 中包含以下设置：
+
+```json title="tsconfig.json"
+{
+  "compilerOptions": {
+    ...
+    "target": "ES2020", // 或更高版本
+    "module": "nodenext",
+  }
+}
+```
+
+### CommonJS
+
+LangChain 提供了面向 Node.js 环境的 CommonJS 构建版本。你可以使用以下语法导入：
+
+```typescript
+const { ChatOpenAI } = require("@langchain/openai");
+```
+
+### Cloudflare Workers
+
+LangChain 可以在 Cloudflare Workers 中使用。你可以使用以下语法导入：
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+```
+
+### Vercel / Next.js
+
+LangChain 可以在 Vercel / Next.js 中使用。我们支持在前端组件、无服务器函数和边缘函数中使用 LangChain。你可以使用以下语法导入：
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+```
+
+### Deno / Supabase Edge Functions
+
+LangChain 可以在 Deno / Supabase Edge Functions 中使用。你可以使用以下语法导入：
+
+```typescript
+import { ChatOpenAI } from "https://esm.sh/@langchain/openai";
+```
+
+或者：
+
+```typescript
+import { ChatOpenAI } from "npm:@langchain/openai";
+```
+
+### 浏览器
+
+LangChain 可以在浏览器中使用。在我们的 CI 中测试了使用 Webpack 和 Vite 打包 LangChain，但其他打包工具也应适用。你可以使用以下语法导入：
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+```
+
+## 不支持：Node.js 16
+
+我们不再支持 Node.js 16，但如果你仍希望在 Node.js 16 上运行 LangChain，则需要按照本节中的说明操作。我们不保证这些说明在未来仍能正常工作。
+
+你需要让 `fetch` 在全局可用，可以通过以下方式之一：
+
+- 使用 `NODE_OPTIONS='--experimental-fetch' node ...` 运行你的应用，或
+- 安装 `node-fetch` 并按照 [此处](https://github.com/node-fetch/node-fetch#providing-global-access) 的说明操作
+
+你还需要 [polyfill `ReadableStream`](https://www.npmjs.com/package/web-streams-polyfill)，安装方法如下：
+
+```bash npm2yarn
+npm i web-streams-polyfill@4
+```
+
+然后在你的主入口文件中将其添加到全局命名空间中：
+
+```typescript
+import "web-streams-polyfill/polyfill";
+```
+
+此外，你还必须 polyfill `structuredClone`，例如安装 `core-js` 并按照 [此处](https://github.com/zloirock/core-js) 的说明操作。
+
+如果你使用的是 Node.js 18 或更高版本，则无需进行上述操作。

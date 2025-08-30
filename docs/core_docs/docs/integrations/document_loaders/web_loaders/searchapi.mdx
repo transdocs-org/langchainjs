@@ -1,0 +1,38 @@
+---
+hide_table_of_contents: true
+---
+
+# SearchApi 加载器
+
+本指南展示了如何在 LangChain 中使用 SearchApi 加载网页搜索结果。
+
+## 概览
+
+[SearchApi](https://www.searchapi.io/) 是一个实时 API，为开发者提供多种搜索引擎的结果访问能力，包括 [Google 搜索](https://www.searchapi.io/docs/google)、
+[Google 新闻](https://www.searchapi.io/docs/google-news)、[Google 学术](https://www.searchapi.io/docs/google-scholar)、[YouTube 字幕](https://www.searchapi.io/docs/youtube-transcripts) 等，具体可在文档中查看支持的引擎列表。
+该 API 使开发者和企业能够直接从这些搜索引擎的结果页面中抓取和提取有意义的数据，为各种用例提供有价值的洞察。
+
+本指南展示了如何在 LangChain 中使用 `SearchApiLoader` 加载网页搜索结果。`SearchApiLoader` 简化了从 SearchApi 获取和处理网页搜索结果的过程。
+
+## 准备工作
+
+你需要注册并获取你的 [SearchApi API 密钥](https://www.searchapi.io/)。
+
+## 使用方法
+
+以下是如何使用 `SearchApiLoader` 的示例：
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/searchapi.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core @langchain/openai
+```
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+在此示例中，`SearchApiLoader` 用于加载网页搜索结果，并使用 `MemoryVectorStore` 将结果存储在内存中。然后使用一个检索链从内存中检索最相关的文档，并基于这些文档回答问题。这展示了 `SearchApiLoader` 如何简化加载和处理网页搜索结果的过程。

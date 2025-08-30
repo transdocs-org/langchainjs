@@ -1,0 +1,20 @@
+---
+sidebar_position: 6
+sidebar_label: 常见问题
+---
+
+# 常见问题
+
+## 拉取请求（PR）
+
+### 如何允许维护者编辑我的 PR？
+
+当你提交一个拉取请求时，在合并之前可能还需要进行一些额外的修改。通常情况下，维护者会直接自行进行这些修改然后合并，而不是在代码评审中要求你进行修改，这样会更加高效。
+
+默认情况下，大多数拉取请求在右侧边栏中都会显示一个
+`✅ 维护者被允许编辑此拉取请求。`
+标签。
+
+如果你没有看到这个标签，可能是你发起拉取请求的 fork 分支禁用了此设置。更多信息请参阅 [GitHub 文档页面](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork)。
+
+需要注意的是，GitHub 不允许为属于 **组织** 的 fork 启用此设置（[问题](https://github.com/orgs/community/discussions/5634)）。如果你在一个组织中工作，我们建议你从个人的 fork 提交 PR，以便启用此设置。

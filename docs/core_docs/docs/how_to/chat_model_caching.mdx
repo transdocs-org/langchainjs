@@ -1,0 +1,176 @@
+---
+sidebar_position: 3
+---
+
+# 如何缓存聊天模型的响应
+
+:::info 前提条件
+
+本指南假定您熟悉以下概念：
+
+- [聊天模型](/docs/concepts/chat_models)
+- [LLMs](/docs/concepts/text_llms)
+
+:::
+
+LangChain 为聊天模型提供了一个可选的缓存层。这有两个好处：
+
+如果经常多次请求相同的补全结果，可以通过减少向 LLM 提供商发起的 API 调用次数来节省费用。
+可以通过减少向 LLM 提供商发起的 API 调用次数来加快应用程序的速度。
+
+import CodeBlock from "@theme/CodeBlock";
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+
+// 为了使缓存效果更加明显，我们使用一个较慢的模型。
+const model = new ChatOpenAI({
+  model: "gpt-4",
+  cache: true,
+});
+```
+
+## 内存缓存
+
+默认的缓存是存储在内存中的。这意味着如果你重启你的应用程序，缓存将被清除。
+
+```typescript
+console.time();
+
+// 第一次调用时，尚未缓存，因此应该较慢
+const res = await model.invoke("给我讲个笑话！");
+console.log(res);
+
+console.timeEnd();
+
+/*
+  AIMessage {
+    lc_serializable: true,
+    lc_kwargs: {
+      content: "为什么科学家不相信原子？\\n\\n因为它们构成了一切！",
+      additional_kwargs: { function_call: undefined, tool_calls: undefined }
+    },
+    lc_namespace: [ 'langchain_core', 'messages' ],
+    content: "为什么科学家不相信原子？\\n\\n因为它们构成了一切！",
+    name: undefined,
+    additional_kwargs: { function_call: undefined, tool_calls: undefined }
+  }
+  default: 2.224s
+*/
+```
+
+```typescript
+console.time();
+
+// 第二次调用时已缓存，因此更快
+const res2 = await model.invoke("给我讲个笑话！");
+console.log(res2);
+
+console.timeEnd();
+/*
+  AIMessage {
+    lc_serializable: true,
+    lc_kwargs: {
+      content: "为什么科学家不相信原子？\\n\\n因为它们构成了一切！",
+      additional_kwargs: { function_call: undefined, tool_calls: undefined }
+    },
+    lc_namespace: [ 'langchain_core', 'messages' ],
+    content: "为什么科学家不相信原子？\\n\\n因为它们构成了一切！",
+    name: undefined,
+    additional_kwargs: { function_call: undefined, tool_calls: undefined }
+  }
+  default: 181.98ms
+*/
+```
+
+## 使用 Redis 缓存
+
+LangChain 还提供了基于 Redis 的缓存。如果你想在多个进程或服务器之间共享缓存，这非常有用。
+要使用它，你需要安装 `redis` 包：
+
+```bash npm2yarn
+npm install ioredis @langchain/community @langchain/core
+```
+
+然后，当实例化 LLM 时，可以传递一个 `cache` 选项。例如：
+
+import RedisCacheExample from "@examples/cache/chat_models/redis.ts";
+
+<CodeBlock language="typescript">{RedisCacheExample}</CodeBlock>
+
+## 使用 Upstash Redis 缓存
+
+LangChain 提供了基于 Upstash Redis 的缓存。与基于 Redis 的缓存一样，这种缓存对于在多个进程或服务器之间共享缓存也很有用。Upstash Redis 客户端使用 HTTP，并支持边缘环境。要使用它，你需要安装 `@upstash/redis` 包：
+
+```bash npm2yarn
+npm install @upstash/redis
+```
+
+你还需要一个 [Upstash 账号](https://docs.upstash.com/redis#create-account) 和一个 [Redis 数据库](https://docs.upstash.com/redis#create-a-database) 来连接。完成之后，获取你的 REST URL 和 REST Token。
+
+然后，当实例化 LLM 时，可以传递一个 `cache` 选项。例如：
+
+import UpstashRedisCacheExample from "@examples/cache/chat_models/upstash_redis.ts";
+
+<CodeBlock language="typescript">{UpstashRedisCacheExample}</CodeBlock>
+
+你也可以直接传入一个之前创建的 [@upstash/redis](https://docs.upstash.com/redis/sdks/javascriptsdk/overview) 客户端实例：
+
+import AdvancedUpstashRedisCacheExample from "@examples/cache/chat_models/upstash_redis_advanced.ts";
+
+<CodeBlock language="typescript">{AdvancedUpstashRedisCacheExample}</CodeBlock>
+
+## 使用 Vercel KV 缓存
+
+LangChain 提供了基于 Vercel KV 的缓存。与基于 Redis 的缓存一样，这种缓存在多个进程或服务器之间共享缓存也很有用。Vercel KV 客户端使用 HTTP，并支持边缘环境。要使用它，你需要安装 `@vercel/kv` 包：
+
+```bash npm2yarn
+npm install @vercel/kv
+```
+
+你还需要一个 Vercel 账号和一个 [KV 数据库](https://vercel.com/docs/storage/vercel-kv/kv-reference) 来连接。完成之后，获取你的 REST URL 和 REST Token。
+
+然后，当实例化 LLM 时，可以传递一个 `cache` 选项。例如：
+
+import VercelKVCacheExample from "@examples/cache/chat_models/vercel_kv.ts";
+
+<CodeBlock language="typescript">{VercelKVCacheExample}</CodeBlock>
+
+## 使用 Cloudflare KV 缓存
+
+:::info
+该集成仅支持在 Cloudflare Workers 中使用。
+:::
+
+如果你将项目部署为 Cloudflare Worker，你可以使用 LangChain 提供的基于 Cloudflare KV 的 LLM 缓存。
+
+关于如何在 Cloudflare 中设置 KV，请参见 [官方文档](https://developers.cloudflare.com/kv/)。
+
+**注意：** 如果你使用的是 TypeScript，可能需要安装类型定义文件（如果尚未安装）：
+
+```bash npm2yarn
+npm install -S @cloudflare/workers-types
+```
+
+import CloudflareExample from "@examples/cache/chat_models/cloudflare_kv.ts";
+
+<CodeBlock language="typescript">{CloudflareExample}</CodeBlock>
+
+## 文件系统缓存
+
+:::warning
+不建议在生产环境中使用此缓存。它仅用于本地开发。
+:::
+
+LangChain 提供了一个简单的文件系统缓存。
+默认情况下，缓存存储在一个临时目录中，但你也可以指定一个自定义目录。
+
+```typescript
+const cache = await LocalFileCache.create();
+```
+
+## 下一步
+
+现在你已经学会了如何缓存模型响应以节省时间和费用。
+
+接下来，查看其他关于聊天模型的指南，例如 [如何让模型返回结构化输出](/docs/how_to/structured_output) 或 [如何创建自己的自定义聊天模型](/docs/how_to/custom_chat)。

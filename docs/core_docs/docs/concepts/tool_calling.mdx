@@ -1,0 +1,177 @@
+# 工具调用
+
+:::info[前提条件]
+
+- [工具](/docs/concepts/tools)
+- [聊天模型](/docs/concepts/chat_models)
+
+:::
+
+## 概述
+
+许多人工智能应用会直接与人类进行交互。在这种情况下，模型以自然语言进行响应是合适的。但如果我们希望模型也能直接与系统（如数据库或API）进行交互时，应该怎么做呢？这些系统通常有特定的输入模式；例如，API通常需要特定的负载结构。这种需求催生了**工具调用**的概念。你可以使用[工具调用](https://platform.openai.com/docs/guides/function-calling/example-use-cases)来请求模型生成符合特定模式的响应。
+
+:::info
+你有时会听到术语`函数调用（function calling）`。我们将其与`工具调用（tool calling）`视为同义词。
+:::
+
+![工具调用概念图](/img/tool_calling_concept.png)
+
+## 关键概念
+
+**(1) 创建工具：** 使用 [tool](https://api.js.langchain.com/functions/_langchain_core.tools.tool-1.html) 函数来创建一个 [tool](/docs/concepts/tools)。工具是函数与其模式之间的关联。
+
+**(2) 绑定工具：** 需要将工具连接到支持工具调用的模型上。这使得模型能够感知到该工具及其所需的输入模式。
+
+**(3) 调用工具：** 在适当的时候，模型可以决定调用一个工具，并确保其响应符合该工具的输入模式。
+
+**(4) 执行工具：** 可以使用模型提供的参数执行该工具。
+
+![工具调用的组成部分](/img/tool_calling_components.png)
+
+## 推荐用法
+
+以下伪代码说明了使用工具调用的推荐工作流程。创建的工具将以列表形式传递给`.bindTools()`方法。这个模型可以像往常一样被调用。如果进行了工具调用，模型的响应将包含工具调用的参数。这些参数可以直接传递给工具。
+
+```typescript
+// 创建工具
+const tools = [myTool];
+// 绑定工具
+const modelWithTools = model.bindTools(tools);
+// 调用工具
+const response = await modelWithTools.invoke(userInput);
+```
+
+## 创建工具
+
+创建工具的推荐方式是使用`tool`函数。
+
+```typescript
+import { tool } from "@langchain/core/tools";
+
+const multiply = tool(
+  ({ a, b }: { a: number; b: number }): number => {
+    /**
+     * 将a和b相乘。
+     */
+    return a * b;
+  },
+  {
+    name: "multiply",
+    description: "将两个数字相乘",
+    schema: z.object({
+      a: z.number(),
+      b: z.number(),
+    }),
+  }
+);
+```
+
+:::info[进一步阅读]
+
+- 有关详细信息，请参阅我们的[工具概念指南](/docs/concepts/tools/)。
+- 请查看支持工具调用的[模型集成](/docs/integrations/chat/)。
+- 请查看我们的[工具调用操作指南](/docs/how_to/tool_calling/)。
+
+:::
+
+对于不需要执行函数的工具调用，你也可以只定义工具的模式：
+
+```typescript
+const multiplyTool = {
+  name: "multiply",
+  description: "将两个数字相乘",
+  schema: z.object({
+    a: z.number(),
+    b: z.number(),
+  }),
+};
+```
+
+## 绑定工具
+
+许多[模型提供商](https://platform.openai.com/docs/guides/function-calling)支持工具调用。
+
+:::tip
+请参阅我们的[模型集成页面](/docs/integrations/chat/)，了解支持工具调用的提供商列表。
+:::
+
+需要理解的核心概念是LangChain提供了一个标准化接口，用于将工具连接到模型。可以使用`.bindTools()`方法指定模型可以调用哪些工具。
+
+```typescript
+const modelWithTools = model.bindTools([toolsList]);
+```
+
+举个具体例子，假设我们有一个`multiply`函数，并将其绑定为一个工具到支持工具调用的模型上。
+
+```typescript
+const multiply = tool(
+  ({ a, b }: { a: number; b: number }): number => {
+    /**
+     * 将a和b相乘。
+     *
+     * @param a - 第一个数字
+     * @param b - 第二个数字
+     * @returns a和b的乘积
+     */
+    return a * b;
+  },
+  {
+    name: "multiply",
+    description: "将两个数字相乘",
+    schema: z.object({
+      a: z.number(),
+      b: z.number(),
+    }),
+  }
+);
+
+const llmWithTools = toolCallingModel.bindTools([multiply]);
+```
+
+## 调用工具
+
+![模型调用工具的示意图](/img/tool_call_example.png)
+
+工具调用的一个关键原则是模型根据输入的相关性决定是否使用某个工具。模型并不总是需要调用工具。例如，对于一个不相关的输入，模型不会调用工具：
+
+```typescript
+const result = await llmWithTools.invoke("Hello world!");
+```
+
+结果将是一个包含模型自然语言响应的`AIMessage`（例如："Hello!"）。然而，如果我们传递一个与工具相关的输入，模型应该选择调用它：
+
+```typescript
+const result = await llmWithTools.invoke("What is 2 multiplied by 3?");
+```
+
+和之前一样，输出`result`将是一个`AIMessage`。但如果调用了工具，`result`将包含一个`tool_calls`属性。该属性包含执行工具所需的所有信息，包括工具名称和输入参数：
+
+```
+result.tool_calls
+{'name': 'multiply', 'args': {'a': 2, 'b': 3}, 'id': 'xxx', 'type': 'tool_call'}
+```
+
+有关更多使用细节，请参阅我们的[操作指南](/docs/how_to/#tools)！
+
+## 执行工具
+
+[工具](/docs/concepts/tools/)实现了[Runnable](/docs/concepts/runnables/)接口，这意味着可以直接调用它们（例如，`tool.invoke(args)`）。
+
+[LangGraph](https://langchain-ai.github.io/langgraphjs/) 提供了预构建的组件（例如 [`ToolNode`](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph_prebuilt.ToolNode.html)），通常会代表用户调用工具。
+
+:::info[进一步阅读]
+
+- 请参阅我们的[工具调用操作指南](/docs/how_to/tool_calling/)。
+- 请参阅 [LangGraph 文档中关于使用 ToolNode 的内容](https://langchain-ai.github.io/langgraphjs/how-tos/tool-calling/)。
+
+:::
+
+## 最佳实践
+
+在设计供模型使用的[工具](/docs/concepts/tools/)时，需要牢记以下几点：
+
+- 具有显式[工具调用API](/docs/concepts/tool_calling)的模型在工具调用方面会优于未经过微调的模型。
+- 如果工具具有精心选择的名称和描述，模型的表现会更好。
+- 简单、功能范围明确的工具比复杂的工具更容易被模型使用。
+- 要求模型从大量工具列表中进行选择，会给模型带来挑战。

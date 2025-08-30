@@ -1,0 +1,28 @@
+---
+sidebar_class_name: node-only
+---
+
+# Confluence
+
+:::tip 兼容性
+仅适用于 Node.js。
+:::
+
+本文介绍如何从 Confluence 空间中的页面加载文档对象。
+
+## 凭证
+
+- 您需要设置一个访问令牌，并将其与您的 Confluence 用户名一起提供，以便对请求进行身份验证
+- 您还需要包含要加载为文档的页面所在空间的 `space key`（空间密钥）。您可以在导航到您的空间时从 URL 中找到它，例如：`https://example.atlassian.net/wiki/spaces/{SPACE_KEY}`
+- 您还需要安装 `html-to-text` 以将页面解析为纯文本
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core html-to-text
+```
+
+## 使用方法
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/confluence.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

@@ -1,0 +1,233 @@
+# Runnable 接口
+
+Runnable 接口是使用 LangChain 组件的基础，许多组件都实现了该接口，例如 [语言模型](/docs/concepts/chat_models)、[输出解析器](/docs/concepts/output_parsers)、[检索器](/docs/concepts/retrievers)、[编译后的 LangGraph 图](https://langchain-ai.github.io/langgraphjs/concepts/low_level/#compiling-your-graph) 等。
+
+本指南介绍了 Runnable 接口的主要概念和方法，它允许开发者以一致且可预测的方式与各种 LangChain 组件进行交互。
+
+:::info 相关资源
+
+- [“Runnable” 接口 API 参考文档](https://api.js.langchain.com/classes/_langchain_core.runnables.Runnable.html) 提供了 Runnable 接口及其方法的详细概述。
+- 内置 `Runnables` 列表可在 [LangChain Core API Reference](https://api.js.langchain.com/modules/_langchain_core.runnables.html) 中找到。在使用 [LangChain 表达式语言 (LCEL)](/docs/concepts/lcel) 构建自定义“链”时，这些 Runnables 中的许多都非常有用。
+
+:::
+
+## Runnable 接口概述
+
+Runnable 的设计定义了一个标准接口，使得一个 Runnable 组件可以：
+
+- [调用](/docs/how_to/lcel_cheatsheet/#invoke-a-runnable)：将单个输入转换为输出。
+- [批量处理](/docs/how_to/lcel_cheatsheet/#batch-a-runnable/)：高效地将多个输入转换为输出。
+- [流式传输](/docs/how_to/lcel_cheatsheet/#stream-a-runnable)：在输出生成时进行流式传输。
+- 检查：可以访问 Runnable 的输入、输出和配置的示意图信息。
+- 组合：可以使用 [LangChain 表达式语言 (LCEL)](/docs/concepts/lcel) 将多个 Runnables 组合在一起，创建复杂的流水线。
+
+请查看 [LCEL 速查表](/docs/how_to/lcel_cheatsheet)，了解涉及 Runnable 接口和 LCEL 表达式的常见模式。
+
+### 优化的并行执行（批量）
+
+LangChain Runnables 提供了一个内置的 `batch` API，允许你并行处理多个输入。
+
+当需要处理多个独立输入时，使用此方法可以显著提高性能，因为处理可以并行执行而不是顺序执行。
+
+批量处理的方法是：
+
+- `batch`：并行处理多个输入，并按输入的相同顺序返回结果。
+
+`batch` 的默认实现是并行执行 `invoke` 方法。
+
+某些 Runnables 可能会为其特定用例提供自己的 `batch` 实现（例如，依赖模型提供商提供的 `batch` API）。
+
+:::tip
+在使用 `batch` 处理大量输入时，用户可能希望控制最大并行调用数。这可以通过在 `RunnableConfig` 对象中设置 `maxConcurrency` 属性来实现。更多信息请参见 [RunnableConfig](/docs/concepts/runnables#RunnableConfig)。
+:::
+
+## 流式传输 API
+
+<span data-heading-keywords="streaming-api"></span>
+
+流式传输对于使基于 LLM 的应用程序对最终用户响应迅速至关重要。
+
+Runnables 提供了以下三个流式传输 API：
+
+1. [`stream`](https://api.js.langchain.com/classes/_langchain_core.runnables.Runnable.html#stream)：在输出生成时逐步返回 Runnable 的输出。
+2. [`streamEvents`](https://v03.api.js.langchain.com/classes/_langchain_core.runnables.Runnable.html#streamEvents)：一个更高级的流式传输 API，允许流式传输中间步骤和最终输出。
+3. **旧版** `streamLog`：一个旧版的流式传输 API，用于流式传输中间步骤和最终输出。
+
+更多关于在 LangChain 中进行流式传输的信息，请参考 [流式传输概念指南](/docs/concepts/streaming)。
+
+## 输入和输出类型
+
+每个 `Runnable` 都具有输入和输出类型。这些输入和输出类型可以是任何 TypeScript 对象，由 Runnable 自身定义。
+
+导致 Runnable 执行的方法（例如 `invoke`、`batch`、`stream`、`streamEvents`）都基于这些输入和输出类型工作。
+
+- `invoke`：接受一个输入并返回一个输出。
+- `batch`：接受一个输入列表并返回一个输出列表。
+- `stream`：接受一个输入并返回一个生成器，该生成器逐步返回输出。
+
+**输入类型** 和 **输出类型** 因组件而异：
+
+| 组件         | 输入类型                                           | 输出类型           |
+| ------------ | -------------------------------------------------- | ------------------ |
+| Prompt       | `object`                                           | `PromptValue`      |
+| ChatModel    | 一个 `string`、聊天消息列表或一个 `PromptValue`   | `ChatMessage`      |
+| LLM          | 一个 `string`、聊天消息列表或一个 `PromptValue`   | `string`           |
+| OutputParser | LLM 或 ChatModel 的输出                           | 依解析器而定       |
+| Retriever    | 一个 `string`                                      | `Document` 列表    |
+| Tool         | 一个 `string` 或 `object`，取决于工具              | 依工具而定         |
+
+有关输入和输出类型的更多信息以及如何使用它们，请参考各个组件的文档。
+
+## RunnableConfig
+
+任何用于执行 Runnable 的方法（例如 `invoke`、`batch`、`stream`、`streamEvents`）都接受一个名为 `RunnableConfig` 的第二个参数 ([API 参考](https://api.js.langchain.com/interfaces/_langchain_core.runnables.RunnableConfig.html))。该参数是一个对象，包含在运行时执行 Runnable 时使用的配置。
+
+`RunnableConfig` 可以包含以下任意属性：
+
+| 属性             | 描述                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------- |
+| `runName`        | 用于给定 Runnable 的名称（不会被继承）。                                               |
+| `runId`          | 此调用的唯一标识符。子调用将获得自己的唯一 run id。                                    |
+| `tags`           | 此调用及所有子调用的标签。                                                             |
+| `metadata`       | 此调用及所有子调用的元数据。                                                           |
+| `callbacks`      | 此调用及所有子调用的回调。                                                             |
+| `maxConcurrency` | 最大并行调用数（例如，用于 `batch`）。                                                 |
+| `recursionLimit` | 调用递归的最大次数（例如，用于返回 Runnables 的 Runnables）。                          |
+| `configurable`   | 用于 Runnable 可配置属性的运行时值。                                                   |
+
+将 `config` 传递给 `invoke` 方法如下所示：
+
+```typescript
+await someRunnable.invoke(someInput, {
+  runName: "myRun",
+  tags: ["tag1", "tag2"],
+  metadata: { key: "value" },
+});
+```
+
+### RunnableConfig 的传播
+
+许多 `Runnables` 由其他 Runnables 组成，重要的是 `RunnableConfig` 能传播到 Runnable 所做的所有子调用中。这允许向父级 Runnable 提供运行时配置值，并由所有子调用继承。
+
+如果不是这样，就无法设置和传播 [回调](/docs/concepts/callbacks) 或 `tags` 和 `metadata` 等配置值，而这些值是期望被所有子调用继承的。
+
+创建新 `Runnables` 有两种主要模式：
+
+1. 使用 [LangChain 表达式语言 (LCEL)](/docs/concepts/lcel) 声明式创建：
+
+   ```typescript
+   const chain = prompt.pipe(chatModel).pipe(outputParser);
+   ```
+
+2. 使用 [自定义 Runnable](#custom-runnables)（例如 `RunnableLambda`）或使用 `tool` 函数：
+
+   ```typescript
+   const foo = (input) => {
+     // 注意这里直接使用了 .invoke()
+     // highlight-next-line
+     return barRunnable.invoke(input);
+   };
+   const fooRunnable = RunnableLambda.from(foo);
+   ```
+
+LangChain 会尝试为这两种模式自动传播 `RunnableConfig`。
+
+手动传播 `RunnableConfig` 如下所示：
+
+```typescript
+// 注意 config 参数
+// highlight-next-line
+const foo = (input, config) => {
+  return barRunnable.invoke(input, config);
+};
+const fooRunnable = RunnableLambda.from(foo);
+```
+
+### 设置自定义运行名称、标签和元数据
+
+`RunnableConfig` 对象中的 `runName`、`tags` 和 `metadata` 属性可用于为给定的 Runnable 设置自定义的运行名称、标签和元数据。
+
+`runName` 是一个字符串，可用于为运行设置自定义名称。该名称将在日志和其他地方用于标识运行。它不会被子调用继承。
+
+`tags` 和 `metadata` 分别是数组和对象，可用于为运行设置自定义标签和元数据。这些值将被子调用继承。
+
+使用这些属性对于跟踪和调试运行非常有用，因为它们将在 [LangSmith](https://docs.smith.langchain.com/) 中作为可过滤和搜索的 trace 属性呈现。
+
+这些属性也会传播到 [回调](/docs/concepts/callbacks)，并作为每个事件的一部分出现在流式传输 API（如 [streamEvents](/docs/concepts/streaming)）中。
+
+:::note 相关
+
+- [如何使用 LangChain 进行追踪](https://docs.smith.langchain.com/how_to_guides/tracing/trace_with_langchain)
+
+:::
+
+### 设置运行 ID
+
+:::note
+这是一个高级功能，大多数用户不需要使用。
+:::
+
+如果你希望稍后引用某个运行或将其与其他系统关联，可能需要为该运行设置自定义 `runId`。
+
+`runId` 必须是一个有效的 UUID 字符串，并且 **每个运行必须唯一**。它用于标识父运行，子调用将自动获得自己的唯一 run id。
+
+要设置自定义 `runId`，可以在调用 Runnable 时将它作为键值对传递到 `config` 对象中：
+
+```typescript
+import { v4 as uuidv4 } from "uuid";
+
+const runId = uuidv4();
+
+await someRunnable.invoke(someInput, {
+  runId,
+});
+
+// 对 runId 做一些操作
+```
+
+### 设置递归限制
+
+:::note
+这是一个高级功能，大多数用户不需要使用。
+:::
+
+某些 Runnables 可能会返回其他 Runnables，如果处理不当，可能导致无限递归。为防止这种情况，可以在 `RunnableConfig` 对象中设置 `recursion_limit` 来限制 Runnable 可以递归的次数。
+
+### 设置最大并发数
+
+如果使用 `batch` 方法，可以在 `RunnableConfig` 对象中设置 `maxConcurrency` 属性，以控制最大并行调用数。当你希望限制并行调用数以防止服务器或 API 过载时，这非常有用。
+
+### 设置可配置项
+
+`configurable` 字段用于传递 Runnable 可配置属性的运行时值。
+
+它在 [LangGraph](/docs/concepts/architecture#langgraph) 中与 [LangGraph 持久化](https://langchain-ai.github.io/langgraphjs/concepts/persistence/) 和 [内存](https://langchain-ai.github.io/langgraphjs/concepts/memory/) 经常使用。
+
+它在 [RunnableWithMessageHistory](https://api.js.langchain.com/classes/_langchain_core.runnables.RunnableWithMessageHistory.html) 中也用于类似目的，以指定 `session_id` 来跟踪对话历史。
+
+### 设置回调
+
+使用此选项可在运行时为 Runnable 配置 [回调](/docs/concepts/callbacks)。这些回调将传递给 Runnable 所做的所有子调用。
+
+```typescript
+await someRunnable.invoke(someInput, {
+  callbacks: [SomeCallbackHandler(), AnotherCallbackHandler()],
+});
+```
+
+有关如何在 LangChain 中使用回调的更多信息，请阅读 [回调概念指南](/docs/concepts/callbacks)。
+
+## 从函数创建 Runnable
+
+你可能需要创建一个运行任意逻辑的自定义 Runnable。这在使用 [LangChain 表达式语言 (LCEL)](/docs/concepts/lcel) 组合多个 Runnables 并需要在某个步骤中添加自定义处理逻辑时特别有用。
+
+从函数创建自定义 Runnable 有两种方式：
+
+- `RunnableLambda`：用于不需要流式传输的简单转换。
+- `RunnableGenerator`：用于需要流式传输的更复杂转换。
+
+更多信息请参考 [如何运行自定义函数](/docs/how_to/functions) 指南，了解如何使用 `RunnableLambda` 和 `RunnableGenerator`。
+
+:::important
+用户不应尝试通过继承 Runnables 来创建新的自定义 Runnable。这种方式比使用 `RunnableLambda` 或 `RunnableGenerator` 更复杂且容易出错。
+:::

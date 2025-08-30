@@ -1,0 +1,116 @@
+---
+hide_table_of_contents: true
+---
+
+# GOAT
+
+[GOAT](https://github.com/goat-sdk/goat) 是面向 AI 代理的金融工具包。
+
+:::warning
+此工具位于主 LangChain 仓库之外，地址为 [这里](https://github.com/goat-sdk/goat/)。
+将钱包链接到外部提供方时请务必谨慎，并确保它们是可信的。
+:::
+
+## 概览
+
+创建能够以下操作的代理：
+
+- 发送和接收付款
+- 购买实物和数字商品及服务
+- 参与多种投资策略：
+  - 获取收益
+  - 参与预测市场
+- 购买加密资产
+- 将任何资产代币化
+- 获取财务洞察
+
+### 工作原理
+
+GOAT 利用区块链、加密货币（如稳定币）和钱包作为基础设施，使代理能够成为经济参与者：
+
+1. 为你的代理提供一个 [钱包](https://github.com/goat-sdk/goat/tree/main#chains-and-wallets)
+2. 允许它在[任何地方](https://github.com/goat-sdk/goat/tree/main#chains-and-wallets) 进行交易
+3. 使用超过 [+200 个工具](https://github.com/goat-sdk/goat/tree/main#tools)
+
+查看 GOAT 支持的所有功能 [这里](https://github.com/goat-sdk/goat/tree/main#chains-and-wallets)。
+
+**轻量且可扩展**
+与其他工具包不同，GOAT 的设计初衷是保持核心最小化，仅安装你所需的工具，从而实现轻量和可扩展。
+
+如果你在我们的 200 多个集成中找不到所需功能，你可以轻松地：
+
+- 创建自己的插件
+- 集成新的链
+- 集成新的钱包
+- 集成新的代理框架
+
+查看如何操作 [这里](https://github.com/goat-sdk/goat/tree/main#-contributing)。
+
+## 安装配置
+
+1. 安装核心包和 langchain 适配器：
+
+```bash
+npm i @goat-sdk/core @goat-sdk/adapter-langchain
+```
+
+2. 安装你想使用的钱包类型（例如 solana）：
+
+```bash
+npm i @goat-sdk/wallet-evm @goat-sdk/wallet-viem
+```
+
+3. 安装你想在该链上使用的插件：
+
+```bash
+npm i @goat-sdk/plugin-erc20
+```
+
+## 实例化
+
+现在我们可以实例化我们的工具包：
+
+```typescript
+import { http } from "viem";
+import { createWalletClient } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { baseSepolia } from "viem/chains";
+
+import { getOnChainTools } from "@goat-sdk/adapter-langchain";
+import { PEPE, USDC, erc20 } from "@goat-sdk/plugin-erc20";
+
+import { sendETH } from "@goat-sdk/wallet-evm";
+import { viem } from "@goat-sdk/wallet-viem";
+
+import { ChatOpenAI } from "@langchain/openai";
+import { createReactAgent } from "@langchain/langgraph/prebuilt";
+
+// 1. 创建一个钱包客户端
+const account = privateKeyToAccount(
+  process.env.WALLET_PRIVATE_KEY as `0x${string}`
+);
+
+const walletClient = createWalletClient({
+  account: account,
+  transport: http(process.env.RPC_PROVIDER_URL),
+  chain: baseSepolia,
+});
+
+// 2. 设置工具
+const tools = await getOnChainTools({
+  wallet: viem(walletClient),
+  plugins: [sendETH(), erc20({ tokens: [USDC, PEPE] })],
+});
+
+// 3. 创建代理
+const model = new ChatOpenAI({
+  model: "gpt-4o-mini",
+});
+
+const agent = createReactAgent({ llm: model, tools: tools });
+```
+
+## 相关内容
+
+- 工具 [概念指南](/docs/concepts/#tools)
+- 工具 [操作指南](/docs/how_to/#tools)

@@ -1,0 +1,99 @@
+# 如何构建一个由大语言模型生成的 UI
+
+本指南将介绍一些高层次的概念以及代码片段，用于使用 LangChain.js 构建生成式 UI。要查看生成式 UI 的完整代码，[请点击此处访问我们官方的 LangChain Next.js 模板](https://github.com/langchain-ai/langchain-nextjs-template/blob/7f764d558682214d50b064f4293667123a31e6fe/app/generative_ui/README.md)。
+
+该示例实现了一个工具调用代理，它在将工具调用的中间输出流式传输到客户端时，输出一个交互式 UI 元素。
+
+我们引入了两个工具，用于封装 AI SDK，以便在可运行对象和工具调用中更轻松地生成 React 元素：[`createRunnableUI`](https://github.com/langchain-ai/langchain-nextjs-template/blob/7f764d558682214d50b064f4293667123a31e6fe/app/generative_ui/utils/server.tsx#L89) 和 [`streamRunnableUI`](https://github.com/langchain-ai/langchain-nextjs-template/blob/7f764d558682214d50b064f4293667123a31e6fe/app/generative_ui/utils/server.tsx#L126)。
+
+- `streamRunnableUI` 使用 `streamEvents` 方法执行提供的 Runnable，并通过 React Server Components 的流将每个 `stream` 事件发送到客户端。
+- `createRunnableUI` 封装了 AI SDK 中的 `createStreamableUI` 函数，以便正确接入 Runnable 的事件流。
+
+其使用方式如下所示：
+
+```tsx ai/chain.tsx
+"use server";
+
+const tool = tool(
+  async (input, config) => {
+    const stream = await createRunnableUI(config);
+    stream.update(<div>搜索中...</div>);
+
+    const result = await images(input);
+    stream.done(
+      <Images
+        images={result.images_results
+          .map((image) => image.thumbnail)
+          .slice(0, input.limit)}
+      />
+    );
+
+    return `[返回了 ${result.images_results.length} 张图片]`;
+  },
+  {
+    name: "Images",
+    description: "一个用于搜索图片的工具。输入应为一个搜索查询。",
+    schema: z.object({
+      query: z.string().describe("用于搜索猫的搜索查询"),
+      limit: z.number().describe("向用户显示的图片数量"),
+    }),
+  }
+);
+
+// 添加 LLM、prompt 等...
+
+const tools = [tool];
+
+export const agentExecutor = new AgentExecutor({
+  agent: createToolCallingAgent({ llm, tools, prompt }),
+  tools,
+});
+```
+
+:::tip
+从 `langchain` 版本 `0.2.8` 开始，`createToolCallingAgent` 函数现在支持 [OpenAI 格式的工具](https://api.js.langchain.com/interfaces/langchain_core.language_models_base.ToolDefinition.html)。
+:::
+
+```tsx agent.tsx
+async function agent(inputs: {
+  input: string;
+  chat_history: [role: string, content: string][];
+}) {
+  "use server";
+
+  return streamRunnableUI(agentExecutor, {
+    input: inputs.input,
+    chat_history: inputs.chat_history.map(
+      ([role, content]) => new ChatMessage(content, role)
+    ),
+  });
+}
+
+export const EndpointsContext = exposeEndpoints({ agent });
+```
+
+为了确保所有客户端组件都被包含在打包文件中，我们需要将所有的 Server Actions 包装进 `exposeEndpoints` 方法中。这些端点将可以通过 Context API 从客户端访问，如 `useActions` 钩子中所示。
+
+```tsx
+"use client";
+import type { EndpointsContext } from "./agent";
+
+export default function Page() {
+  const actions = useActions<typeof EndpointsContext>();
+  const [node, setNode] = useState();
+
+  return (
+    <div>
+      {node}
+
+      <button
+        onClick={async () => {
+          setNode(await actions.agent({ input: "cats" }));
+        }}
+      >
+        获取猫的图片
+      </button>
+    </div>
+  );
+}
+```

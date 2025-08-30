@@ -1,0 +1,63 @@
+# 如何进行查询验证
+
+:::info 前置条件
+
+本指南假设您熟悉以下内容：
+
+- [SQL数据的问答](/docs/tutorials/sql_qa)
+
+:::
+
+也许任何SQL链或代理中最具错误倾向的部分是编写有效且安全的SQL查询。  
+在本指南中，我们将介绍一些用于验证查询和处理无效查询的策略。
+
+## 准备工作
+
+首先，获取所需的包并设置环境变量：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash
+npm install @langchain/community @langchain/openai typeorm sqlite3
+```
+
+```bash
+export OPENAI_API_KEY="你的API密钥"
+# 取消注释以下内容以使用LangSmith（非必需）
+# export LANGSMITH_API_KEY="你的API密钥"
+# export LANGSMITH_TRACING=true
+
+# 如果你不在无服务器环境中，可以减少追踪延迟
+# export LANGCHAIN_CALLBACKS_BACKGROUND=true
+```
+
+以下示例将使用带有Chinook数据库的SQLite连接。按照这些[安装步骤](https://database.guide/2-sample-databases-sqlite/)在本笔记本的同一目录中创建`Chinook.db`：
+
+- 将[此文件](https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sql)保存为`Chinook_Sqlite.sql`
+- 运行sqlite3 `Chinook.db`
+- 运行 `.read Chinook_Sqlite.sql`
+- 测试 `SELECT * FROM Artist LIMIT 10;`
+
+现在，`Chinook.db`已经在我们的目录中，我们可以使用基于Typeorm的`SqlDatabase`类与其交互：
+
+import CodeBlock from "@theme/CodeBlock";
+import DbCheck from "@examples/use_cases/sql/db_check.ts";
+
+<CodeBlock language="typescript">{DbCheck}</CodeBlock>
+
+## 查询检查器
+
+或许最简单的策略是让模型本身检查原始查询中的常见错误。  
+假设我们有以下SQL查询链：
+
+import FullExample from "@examples/use_cases/sql/query_checking.ts";
+
+<CodeBlock language="typescript">{FullExample}</CodeBlock>
+
+## 下一步
+
+现在你已经了解了一些用于验证生成的SQL查询的策略。
+
+接下来，请查看本部分中的其他指南，例如[如何查询大型数据库](/docs/how_to/sql_large_db)。

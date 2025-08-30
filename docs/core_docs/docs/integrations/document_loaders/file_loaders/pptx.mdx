@@ -1,0 +1,19 @@
+# PPTX 文件
+
+此示例演示了如何从 PPTX 文件加载数据。默认情况下，PPTX 文件中的每个页面都会生成一个文档。
+
+## 安装
+
+```bash npm2yarn
+npm install officeparser
+```
+
+## 使用方法，每页生成一个文档
+
+```typescript
+import { PPTXLoader } from "@langchain/community/document_loaders/fs/pptx";
+
+const loader = new PPTXLoader("src/document_loaders/example_data/example.pptx");
+
+const docs = await loader.load();
+```

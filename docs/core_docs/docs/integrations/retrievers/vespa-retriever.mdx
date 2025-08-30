@@ -1,0 +1,30 @@
+# Vespa 检索器
+
+这展示了如何将 [Vespa.ai](https://vespa.ai) 用作 LangChain 检索器。
+Vespa.ai 是一个用于高效结构化文本和向量搜索的平台。
+更多信息请参考 [Vespa.ai](https://vespa.ai)。
+
+以下代码设置了一个从 Vespa 文档搜索中获取结果的检索器：
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/retrievers/vespa.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+此处，最多从 `paragraph` 文档类型中的 `content` 字段中检索出 5 个结果，
+使用 `documentation` 作为排序方法。`userQuery()` 将被 LangChain 传入的实际查询所替换。
+
+更多信息请参考 [pyvespa 文档](https://pyvespa.readthedocs.io/en/latest/getting-started-pyvespa.html#Query)。
+
+URL 是 Vespa 应用程序的端点地址。
+你可以连接到任意 Vespa 端点，无论是远程服务还是使用 Docker 的本地实例。
+不过，大多数 Vespa Cloud 实例都受到 mTLS 保护。
+如果遇到这种情况，例如你可以设置一个 [CloudFlare Worker](https://cloud.vespa.ai/en/security/cloudflare-workers)，
+其中包含连接到实例所需的凭据。
+
+现在你可以返回结果，并继续在 LangChain 中使用它们。
+
+## 相关内容
+
+- 检索器 [概念指南](/docs/concepts/retrievers)
+- 检索器 [操作指南](/docs/how_to/#retrievers)

@@ -1,0 +1,40 @@
+# 文档加载器
+
+<span data-heading-keywords="document loader,document loaders"></span>
+
+:::info[前提条件]
+
+- [文档加载器 API 参考](/docs/how_to/#document-loaders)
+
+:::
+
+文档加载器用于加载文档对象。LangChain 集成了数百种不同的数据源，可从诸如 Slack、Notion、Google Drive 等来源加载数据。
+
+## 集成
+
+你可以在 [文档加载器集成页面](/docs/integrations/document_loaders/) 查看可用的集成。
+
+## 接口
+
+文档加载器实现了 [BaseLoader 接口](https://api.js.langchain.com/classes/_langchain_core.document_loaders_base.BaseDocumentLoader.html)。
+
+每个 DocumentLoader 都有其特定的参数，但都可以通过 `.load` 方法或 `.lazy_load` 以相同的方式调用。
+
+以下是一个简单示例：
+
+```typescript
+import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
+
+const loader = new CSVLoader(
+  ...  // <-- 此处为集成特定的参数
+);
+const data = await loader.load();
+```
+
+## 相关资源
+
+请参考以下资源以获取更多信息：
+
+- [文档加载器使用指南](/docs/how_to/#document-loaders)
+- [文档 API 参考](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html)
+- [文档加载器集成](/docs/integrations/document_loaders/)

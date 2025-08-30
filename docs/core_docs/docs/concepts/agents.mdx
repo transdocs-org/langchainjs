@@ -1,0 +1,22 @@
+# 代理（Agents）
+
+仅凭自身，语言模型无法执行操作——它们仅输出文本。代理是一种系统，它接收一个高层任务，并使用一个大语言模型（LLM）作为推理引擎来决定需要执行哪些操作，并实际执行这些操作。
+
+[LangGraph](/docs/concepts/architecture#langgraph) 是 LangChain 的一个扩展，专门用于构建高度可控和可定制的代理。我们建议你使用 LangGraph 来构建代理。
+
+更多信息，请参考以下资源：
+
+- LangGraph 文档中的 [常见代理架构](https://langchain-ai.github.io/langgraphjs/concepts/agentic_concepts/)
+- [LangGraph 中的预构建代理](https://langchain-ai.github.io/langgraphjs/reference/functions/langgraph_prebuilt.createReactAgent.html)
+
+## 旧版代理概念：AgentExecutor
+
+LangChain 之前引入了 `AgentExecutor` 作为代理的运行时。虽然它是一个很好的起点，但在处理更复杂和定制化的代理时，它的局限性逐渐显现。因此，我们正逐步淘汰 `AgentExecutor`，转而采用 LangGraph 中更为灵活的解决方案。
+
+### 从 AgentExecutor 迁移到 LangGraph
+
+如果你目前正在使用 `AgentExecutor`，请不要担心！我们准备了相关资源来帮助你：
+
+1. 对于仍需使用 `AgentExecutor` 的用户，我们提供了关于 [如何使用 AgentExecutor](/docs/how_to/agent_executor) 的完整指南。
+
+2. 然而，我们强烈建议你迁移到 LangGraph，以获得更高的灵活性和控制能力。为此，我们还编写了详细的 [迁移指南](/docs/how_to/migrate_agent)，帮助你无缝地从 `AgentExecutor` 迁移到 LangGraph。

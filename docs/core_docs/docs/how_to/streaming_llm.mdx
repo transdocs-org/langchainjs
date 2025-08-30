@@ -1,0 +1,49 @@
+---
+sidebar_position: 1
+---
+
+# 如何从LLM流式传输响应
+
+所有 [`LLM`](https://api.js.langchain.com/classes/langchain_core.language_models_llms.BaseLLM.html) 都实现了 [Runnable接口](https://api.js.langchain.com/classes/langchain_core.runnables.Runnable.html)，它提供了标准Runnable方法的**默认**实现（例如 `ainvoke`、`batch`、`abatch`、`stream`、`astream`、`astream_events`）。
+
+这些**默认**流式传输实现提供了一个 `AsyncGenerator`，它只产生一个值：来自底层聊天模型提供者的最终输出。
+
+逐token流式传输的能力取决于提供者是否实现了正确的流式传输支持。
+
+查看哪些[集成支持逐token流式传输](/docs/integrations/llms/)。
+
+:::{.callout-note}
+
+**默认**实现**不**提供逐token流式传输支持，但它确保了模型可以替换为任何其他模型，因为它支持相同的标准化接口。
+
+:::
+
+## 使用 `.stream()`
+
+import CodeBlock from "@theme/CodeBlock";
+
+流式传输的最简单方法是使用 `.stream()` 方法。这将返回一个可读取的流，你可以对其进行迭代：
+
+import StreamMethodExample from "@examples/models/llm/llm_streaming_stream_method.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+<CodeBlock language="typescript">{StreamMethodExample}</CodeBlock>
+
+对于不支持流式传输的模型，整个响应将作为单个数据块返回。
+
+## 使用回调处理器
+
+你还可以像这样使用 [`CallbackHandler`](https://api.js.langchain.com/classes/langchain_core.callbacks_base.BaseCallbackHandler.html)：
+
+import StreamingExample from "@examples/models/llm/llm_streaming.ts";
+
+<CodeBlock language="typescript">{StreamingExample}</CodeBlock>
+
+即使使用 `generate`，我们仍然可以访问最终的 `LLMResult`。然而，在流式传输时，可能并非所有模型提供者都支持 `tokenUsage`。

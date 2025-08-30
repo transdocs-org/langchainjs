@@ -1,0 +1,129 @@
+# Google Cloud SQL for PostgreSQL
+
+[Cloud SQL](https://cloud.google.com/sql) 是一项完全托管的关系型数据库服务，提供高性能、无缝集成以及出色的可扩展性，支持 PostgreSQL 等数据库引擎。
+
+本指南简要介绍了如何使用 Cloud SQL for PostgreSQL 存储消息，并通过 `PostgresChatMessageHistory` 类实现对话。
+
+## 概览
+
+### 开始之前
+
+要使用此包，您首先需要完成以下步骤：
+
+1.  [选择或创建一个 Cloud Platform 项目。](https://developers.google.com/workspace/guides/create-project)
+2.  [为您的项目启用计费。](https://cloud.google.com/billing/docs/how-to/modify-project#enable_billing_for_a_project)
+3.  [启用 Cloud SQL 管理 API。](https://console.cloud.google.com/flows/enableapi?apiid=sqladmin.googleapis.com)
+4.  [设置身份验证。](https://cloud.google.com/docs/authentication)
+5.  [创建一个 CloudSQL 实例](https://cloud.google.com/sql/docs/postgres/connect-instance-auth-proxy#create-instance)
+6.  [创建一个 CloudSQL 数据库](https://cloud.google.com/sql/docs/postgres/create-manage-databases)
+7.  [向数据库添加用户](https://cloud.google.com/sql/docs/postgres/create-manage-users)
+
+### 身份验证
+
+使用 `gcloud auth login` 命令对本地 Google Cloud 账户进行身份验证。
+
+### 设置您的 Google Cloud 项目
+
+将您的 Google Cloud 项目 ID 设置为在本地使用 Google Cloud 资源：
+
+```bash
+gcloud config set project YOUR-PROJECT-ID
+```
+
+如果您不知道您的项目 ID，请尝试以下方法：
+
+- 运行 `gcloud config list`。
+- 运行 `gcloud projects list`。
+- 查看支持页面：[查找项目 ID](https://support.google.com/googleapi/answer/7014113)。
+
+## 设置 PostgresChatMessageHistory 实例
+
+要使用 `PostgresChatMessageHistory` 类，您需要先安装 [`@langchain/google-cloud-sql-pg`](https://www.npmjs.com/package/@langchain/google-cloud-sql-pg)
+包，然后按照以下步骤操作。
+
+首先，您需要登录到 Google Cloud 账户，并根据您的 Google Cloud 项目设置以下环境变量；这些变量将根据您希望配置（fromInstance、fromEngine、fromEngineArgs）PostgresEngine 实例的方式进行定义：
+
+```bash
+PROJECT_ID="your-project-id"
+REGION="your-project-region" // 示例："us-central1"
+INSTANCE_NAME="your-instance"
+DB_NAME="your-database-name"
+DB_USER="your-database-user"
+PASSWORD="your-database-password"
+```
+
+### 设置实例
+
+要实例化 `PostgresChatMessageHistory`，您首先需要通过 `PostgresEngine` 创建数据库连接，然后初始化聊天历史记录表，最后调用 `.initialize()` 方法来实例化聊天消息历史记录。
+
+```typescript
+import {
+  PostgresChatMessageHistory,
+  PostgresEngine,
+  PostgresEngineArgs,
+} from "@langchain/google-cloud-sql-pg";
+import * as dotenv from "dotenv";
+
+dotenv.config();
+
+const peArgs: PostgresEngineArgs = {
+  user: process.env.DB_USER ?? "",
+  password: process.env.PASSWORD ?? "",
+};
+
+// PostgresEngine 实例化
+const engine: PostgresEngine = await PostgresEngine.fromInstance(
+  process.env.PROJECT_ID ?? "",
+  process.env.REGION ?? "",
+  process.env.INSTANCE_NAME ?? "",
+  process.env.DB_NAME ?? "",
+  peArgs
+);
+
+// 聊天历史记录表初始化
+await engine.initChatHistoryTable("my_chat_history_table");
+
+// PostgresChatMessageHistory 实例化
+const historyInstance: PostgresChatMessageHistory =
+  await PostgresChatMessageHistory.initialize(
+    engine,
+    "test",
+    "my_chat_history_table"
+  );
+```
+
+## 管理聊天消息历史记录
+
+### 将消息添加到聊天历史记录中
+
+您可以使用 `addMessage` 方法添加一条消息，或者使用 `addMessages` 方法传递消息数组。
+
+```typescript
+import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
+
+// 添加一条消息
+const msg = new HumanMessage("Hi!");
+await historyInstance.addMessage(msg);
+
+// 添加多条消息
+const msg1: HumanMessage = new HumanMessage("Hi!");
+const msg2: AIMessage = new AIMessage("what's up?");
+const msg3: HumanMessage = new HumanMessage("How are you?");
+const messages: BaseMessage[] = [msg1, msg2, msg3];
+await historyInstance.addMessages(messages);
+```
+
+### 获取聊天历史记录中的消息
+
+```typescript
+const messagesSaved: BaseMessage[] = await historyInstance.getMessages();
+console.log(messagesSaved);
+```
+
+### 从聊天历史记录中清除消息
+
+要从聊天历史记录中删除所有消息，只需调用 `PostgresChatMessageHistory` 类的 `clear` 方法。
+
+```typescript
+await historyInstance.clear();
+```

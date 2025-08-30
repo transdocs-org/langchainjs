@@ -1,0 +1,81 @@
+# 如何编写一个自定义检索器类
+
+:::info 前提条件
+
+本指南假定您已熟悉以下概念：
+
+- [检索器](/docs/concepts/retrievers)
+
+:::
+
+要创建您自己的检索器，您需要继承 [`BaseRetriever`](https://api.js.langchain.com/classes/langchain_core.retrievers.BaseRetriever.html) 类，
+并实现一个 `_getRelevantDocuments` 方法，该方法以 `string` 作为其第一个参数（以及一个用于追踪的可选参数 `runManager`）。
+此方法应返回从某个源获取的 `Document` 数组。此过程可能涉及调用数据库、使用 `fetch` 从网络获取或其他来源的数据。
+请注意 `_getRelevantDocuments()` 方法名前的下划线。基类会封装未带前缀的方法，以便自动处理原始调用的追踪。
+
+以下是一个返回静态文档的自定义检索器示例：
+
+```ts
+import {
+  BaseRetriever,
+  type BaseRetrieverInput,
+} from "@langchain/core/retrievers";
+import type { CallbackManagerForRetrieverRun } from "@langchain/core/callbacks/manager";
+import { Document } from "@langchain/core/documents";
+
+export interface CustomRetrieverInput extends BaseRetrieverInput {}
+
+export class CustomRetriever extends BaseRetriever {
+  lc_namespace = ["langchain", "retrievers"];
+
+  constructor(fields?: CustomRetrieverInput) {
+    super(fields);
+  }
+
+  async _getRelevantDocuments(
+    query: string,
+    runManager?: CallbackManagerForRetrieverRun
+  ): Promise<Document[]> {
+    // 调用内部可运行对象时传递 `runManager?.getChild()` 以启用追踪
+    // const additionalDocs = await someOtherRunnable.invoke(params, runManager?.getChild());
+    return [
+      // ...additionalDocs,
+      new Document({
+        pageContent: `Some document pertaining to ${query}`,
+        metadata: {},
+      }),
+      new Document({
+        pageContent: `Some other document pertaining to ${query}`,
+        metadata: {},
+      }),
+    ];
+  }
+}
+```
+
+然后，您可以如下调用 `.invoke()` 方法：
+
+```ts
+const retriever = new CustomRetriever({});
+
+await retriever.invoke("LangChain docs");
+```
+
+```
+[
+  Document {
+    pageContent: 'Some document pertaining to LangChain docs',
+    metadata: {}
+  },
+  Document {
+    pageContent: 'Some other document pertaining to LangChain docs',
+    metadata: {}
+  }
+]
+```
+
+## 后续步骤
+
+现在您已经看到了如何实现自己的自定义检索器。
+
+接下来，可以查看各个检索器的具体章节以深入了解，或者阅读关于 RAG 的[更全面的教程](/docs/tutorials/rag)。

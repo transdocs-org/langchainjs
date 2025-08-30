@@ -1,0 +1,22 @@
+---
+hide_table_of_contents: true
+---
+
+# 区块链数据
+
+此示例展示了如何通过 sort.xyz SQL API 加载区块链数据，包括 NFT 元数据和合约地址的交易信息。
+
+你需要一个免费的 Sort API 密钥，访问 sort.xyz 获取。
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/sort_xyz_blockchain.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core @langchain/openai
+```
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

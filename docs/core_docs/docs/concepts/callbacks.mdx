@@ -1,0 +1,53 @@
+# 回调函数
+
+:::note 预备知识
+
+- [可运行接口](/docs/concepts/runnables)
+
+:::
+
+LangChain 提供了一个回调系统，允许你介入你的 LLM 应用程序的各个阶段。这对于日志记录、监控、流式传输和其他任务非常有用。
+
+你可以通过 API 中广泛提供的 `callbacks` 参数订阅这些事件。此参数是一个处理程序对象的列表，这些对象需要实现下文详细描述的一个或多个方法。
+
+## 回调事件
+
+| 事件             | 触发条件                                  | 相关方法                  |
+| ---------------- | ------------------------------------------ | -------------------------- |
+| 聊天模型启动     | 当聊天模型开始运行时                       | `handleChatModelStart`     |
+| LLM 启动         | 当 LLM 开始运行时                          | `handleLlmStart`           |
+| LLM 新 token     | 当 LLM 或聊天模型生成新 token 时           | `handleLlmNewToken`        |
+| LLM 结束         | 当 LLM 或聊天模型结束时                    | `handleLlmEnd`             |
+| LLM 错误         | 当 LLM 或聊天模型发生错误时                | `handleLlmError`           |
+| 链启动           | 当链开始运行时                             | `handleChainStart`         |
+| 链结束           | 当链结束时                                 | `handleChainEnd`           |
+| 链错误           | 当链发生错误时                             | `handleChainError`         |
+| 工具启动         | 当工具开始运行时                           | `handleToolStart`          |
+| 工具结束         | 当工具结束时                               | `handleToolEnd`            |
+| 工具错误         | 当工具发生错误时                           | `handleToolError`          |
+| 检索器启动       | 当检索器开始运行时                         | `handleRetrieverStart`     |
+| 检索器结束       | 当检索器结束时                             | `handleRetrieverEnd`       |
+| 检索器错误       | 当检索器发生错误时                         | `handleRetrieverError`     |
+
+## 回调处理器
+
+- 回调处理器实现 [BaseCallbackHandler](https://api.js.langchain.com/classes/_langchain_core.callbacks_base.BaseCallbackHandler.html) 接口。
+
+在运行时，LangChain 会配置一个适当的回调管理器（例如，[CallbackManager](https://api.js.langchain.com/classes/_langchain_core.callbacks_manager.BaseCallbackManager.html)），它负责在事件触发时调用每个“已注册”回调处理器的相应方法。
+
+## 传递回调
+
+在 API 的大多数对象（模型、工具、代理等）中，`callbacks` 属性会在两个不同的位置可用：
+
+- **请求时回调**：与输入数据一起在请求时传递。所有标准的 `Runnable` 对象都支持此功能。这些回调会被定义在其上的对象的所有子对象**继承**。例如：`await chain.invoke({ number: 25 }, { callbacks: [handler] })`。
+- **构造时回调**：`const chain = new TheNameOfSomeChain({ callbacks: [handler] })`。这些回调作为参数传递给对象的构造函数。这些回调仅作用于定义它们的对象本身，**不会**传递给该对象的任何子对象。
+
+:::warning
+
+构造时回调仅作用于定义它们的对象本身。**不会**传递给该对象的子对象。
+
+:::
+
+如果你正在创建一个自定义链或可运行对象，则需要记得将请求时回调传播到任何子对象。
+
+关于如何使用回调的具体说明，请参阅[此处的相关操作指南](/docs/how_to/#callbacks)。

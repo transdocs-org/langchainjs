@@ -1,0 +1,63 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Cassandra 聊天记忆
+
+为了在聊天会话中实现更长期的持久化，您可以将默认的内存中 `chatHistory`（为 `BufferMemory` 等聊天记忆类提供支持）替换为 Cassandra 集群。
+
+## 准备工作
+
+首先，安装 Cassandra Node.js 驱动程序：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install cassandra-driver @langchain/openai @langchain/community @langchain/core
+```
+
+根据您的数据库提供商不同，连接数据库的具体方式也会有所不同。我们将创建一个 `configConnection` 文档，该文档将用于向量存储配置的一部分。
+
+### Apache Cassandra®
+
+```typescript
+const configConnection = {
+  contactPoints: ['h1', 'h2'],
+  localDataCenter: 'datacenter1',
+  credentials: {
+    username: <...> as string,
+    password: <...> as string,
+  },
+};
+```
+
+### Astra DB
+
+Astra DB 是一个云原生的 Cassandra 即服务（Cassandra-as-a-Service）平台。
+
+1. 创建一个 [Astra DB 账户](https://astra.datastax.com/register)。
+2. 创建一个 [启用向量功能的数据库](https://astra.datastax.com/createDatabase)。
+3. 为您的数据库创建一个 [Token](https://docs.datastax.com/en/astra/docs/manage-application-tokens.html)。
+
+```typescript
+const configConnection = {
+  serviceProviderArgs: {
+    astra: {
+      token: <...> as string,
+      endpoint: <...> as string,
+    },
+  },
+};
+```
+
+除了使用 `endpoint:` 属性，您也可以提供 `datacenterID:` 属性，以及可选的 `regionName:` 属性。
+
+## 使用方法
+
+import Example from "@examples/memory/cassandra-store.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

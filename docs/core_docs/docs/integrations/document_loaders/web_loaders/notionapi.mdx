@@ -1,0 +1,41 @@
+---
+sidebar_class_name: node-only
+hide_table_of_contents: true
+---
+
+# Notion API
+
+本指南将带您了解如何通过 Notion API 从 Notion 页面和数据库加载文档。
+
+## 概述
+
+Notion 是一个多功能的生产力平台，将笔记记录、任务管理和数据组织工具整合到一个界面中。
+
+此文档加载器能够将完整的 Notion 页面和数据库转换为 LangChain 文档，以便集成到您的项目中。
+
+## 准备工作
+
+1. 首先需要安装官方 Notion 客户端和 [notion-to-md](https://www.npmjs.com/package/notion-to-md) 包作为对等依赖项：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core @notionhq/client notion-to-md
+```
+
+2. 创建一个 [Notion 集成](https://www.notion.so/my-integrations)，并安全地记录下内部集成密钥（也称为 `NOTION_INTEGRATION_TOKEN`）。
+3. 在您的页面或数据库上添加与新集成的连接。为此，请打开您的 Notion 页面，点击右上角的设置按钮，向下滚动到 `Add connections` 并选择您的新集成。
+4. 获取您要加载的页面或数据库的 `PAGE_ID` 或 `DATABASE_ID`。
+
+> URL 路径中的 32 位十六进制字符串代表 `ID`。例如：
+
+> PAGE_ID: [https://www.notion.so/skarard/LangChain-Notion-API-`b34ca03f219c4420a6046fc4bdfdf7b4`](https://www.notion.so/skarard/LangChain-Notion-API-b34ca03f219c4420a6046fc4bdfdf7b4)
+
+> DATABASE_ID: [https://www.notion.so/skarard/`c393f19c3903440da0d34bf9c6c12ff2`?v=9c70a0f4e174498aa0f9021e0a9d52de](https://www.notion.so/skarard/c393f19c3903440da0d34bf9c6c12ff2?v=9c70a0f4e174498aa0f9021e0a9d52de)
+
+> 正则表达式：`/(?<!=)[0-9a-f]{32}/`
+
+## 示例用法
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/notionapi.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

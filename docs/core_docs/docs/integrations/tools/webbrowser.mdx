@@ -1,0 +1,51 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# 网络浏览器工具
+
+网络浏览器工具使你的Agent能够访问网站并提取信息。该工具对Agent的描述如下：
+
+```
+适用于你需要在网页上查找内容或对网页进行摘要时使用。输入应为以逗号分隔的列表，包含“包含协议的有效URL”和“你希望在页面上查找的内容，或留空以进行摘要”。
+```
+
+它提供了两种操作模式：
+
+- 当Agent仅提供URL调用它时，它将生成网站内容的摘要
+- 当Agent提供URL以及需要查找内容的描述时，它将使用内存中的向量存储来查找最相关的片段并对其摘要
+
+## 安装设置
+
+要使用网络浏览器工具，你需要安装依赖项：
+
+```bash npm2yarn
+npm install cheerio axios
+```
+
+## 使用方式，独立使用
+
+import ToolExample from "@examples/tools/webbrowser.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+<CodeBlock language="typescript">{ToolExample}</CodeBlock>
+
+## 使用方式，在Agent中使用
+
+import AgentExample from "@examples/agents/mrkl_browser.ts";
+
+<CodeBlock language="typescript">{AgentExample}</CodeBlock>
+
+## 相关内容
+
+- 工具 [概念指南](/docs/concepts/tools)
+- 工具 [操作指南](/docs/how_to/#tools)

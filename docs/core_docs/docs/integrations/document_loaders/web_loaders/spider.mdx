@@ -1,0 +1,36 @@
+---
+hide_table_of_contents: true
+---
+
+# Spider
+
+[Spider](https://spider.cloud/?ref=langchainjs) 是[速度最快](https://github.com/spider-rs/spider/blob/main/benches/BENCHMARKS.md#benchmark-results)的网络爬虫。它可以将任意网站转换为纯 HTML、Markdown、元数据或文本，同时允许你使用 AI 执行自定义操作进行爬取。
+
+## 概述
+
+Spider 支持使用高性能代理防止被检测到，缓存 AI 操作，提供用于爬取状态的 Webhook、定时爬取等功能。
+
+本指南展示了如何使用 [Spider](https://spider.cloud/) 爬取网站，并通过 LangChain 中的 `SpiderLoader` 加载适用于 LLM 的文档。
+
+## 准备工作
+
+在 [spider.cloud](https://spider.cloud/) 上获取你自己的 Spider API 密钥。
+
+## 使用方法
+
+以下是如何使用 `SpiderLoader` 的示例：
+
+Spider 提供了两种爬取模式：`scrape` 和 `crawl`。`scrape` 仅获取提供的 URL 内容，而 `crawl` 会获取提供的 URL 内容并继续爬取相关的子页面。
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/spider.ts";
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core @spider-cloud/spider-client
+```
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+### 附加参数
+
+有关所有可用的 `params` 参数，请参考 [Spider 文档](https://spider.cloud/docs/api)。

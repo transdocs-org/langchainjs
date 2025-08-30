@@ -1,0 +1,98 @@
+# 如何使用提示词优化结果
+
+:::info 前提条件
+
+本指南假设您熟悉以下内容：
+
+- [SQL数据上的问答](/docs/tutorials/sql_qa)
+
+:::
+
+在本指南中，我们将讨论优化SQL查询生成的提示词策略。
+重点将放在将相关数据库特定信息包含在提示词中的方法上。
+
+## 环境设置
+
+首先，安装所需的包并设置环境变量。此示例将使用OpenAI作为LLM。
+
+```bash
+npm install @langchain/community @langchain/openai typeorm sqlite3
+```
+
+```bash
+export OPENAI_API_KEY="your api key"
+# 取消注释以下内容以使用LangSmith（非必需）
+# export LANGSMITH_API_KEY="your api key"
+# export LANGSMITH_TRACING=true
+
+# 如果不在无服务器环境中，可以减少跟踪延迟
+# export LANGCHAIN_CALLBACKS_BACKGROUND=true
+```
+
+以下示例将使用Chinook数据库的SQLite连接。请按照这些[安装步骤](https://database.guide/2-sample-databases-sqlite/)在同一目录下创建`Chinook.db`文件：
+
+- 将[this](https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sql)文件保存为`Chinook_Sqlite.sql`
+- 运行sqlite3 `Chinook.db`
+- 运行 `.read Chinook_Sqlite.sql`
+- 测试 `SELECT * FROM Artist LIMIT 10;`
+
+现在，`Chinhook.db`已经在我们的目录中，我们可以使用基于Typeorm的`SqlDatabase`类与之交互：
+
+import CodeBlock from "@theme/CodeBlock";
+import DbCheck from "@examples/use_cases/sql/db_check.ts";
+
+<CodeBlock language="typescript">{DbCheck}</CodeBlock>
+
+## 特定方言的提示词
+
+我们可以做的最简单的事情之一就是使提示词针对我们使用的SQL方言。
+当使用内置的 [`createSqlQueryChain`](https://api.js.langchain.com/functions/langchain.chains_sql_db.createSqlQueryChain.html) 和 [`SqlDatabase`](https://api.js.langchain.com/classes/langchain.sql_db.SqlDatabase.html) 时，对于以下任何方言都会自动处理：
+
+import DialectExample from "@examples/use_cases/sql/prompting/list_dialects.ts";
+
+<CodeBlock language="typescript">{DialectExample}</CodeBlock>
+
+## 表定义和示例行
+
+基本上在任何SQL链中，我们都至少需要将部分数据库模式提供给模型。
+没有这些信息，它就无法编写有效的查询。我们的数据库带有一些方便的方法，可以为我们提供相关的上下文。
+具体来说，我们可以获取表名、它们的模式以及每个表的示例行：
+
+import TableDefinitionsExample from "@examples/use_cases/sql/prompting/table_definitions.ts";
+
+<CodeBlock language="typescript">{TableDefinitionsExample}</CodeBlock>
+
+## 少量示例
+
+在提示词中包含将自然语言问题转换为针对我们数据库的有效SQL查询的示例通常会提高模型性能，特别是对于复杂查询。
+
+假设我们有以下示例：
+
+import ExampleList from "@examples/use_cases/sql/prompting/examples.ts";
+
+<CodeBlock language="typescript">{ExampleList}</CodeBlock>
+
+我们可以像这样使用它们创建一个少量示例提示词：
+
+import FewShotExample from "@examples/use_cases/sql/prompting/few_shot.ts";
+
+<CodeBlock language="typescript">{FewShotExample}</CodeBlock>
+
+## 动态少量示例
+
+如果我们有足够的示例，可能希望只在提示词中包含最相关的那些，可能是因为它们无法适应模型的上下文窗口，或者因为示例的长尾分散了模型的注意力。
+特别是，对于任何给定的输入，我们希望包含与该输入最相关的示例。
+
+我们可以使用ExampleSelector来实现这一点。在这种情况下，我们将使用 [`SemanticSimilarityExampleSelector`](https://api.js.langchain.com/classes/langchain_core.example_selectors.SemanticSimilarityExampleSelector.html)，
+它会将示例存储在我们选择的向量数据库中。
+在运行时，它将在输入和我们的示例之间执行相似性搜索，并返回语义上最相似的示例：
+
+import DynamicFewShotExample from "@examples/use_cases/sql/prompting/dynamic_few_shot.ts";
+
+<CodeBlock language="typescript">{DynamicFewShotExample}</CodeBlock>
+
+## 下一步
+
+您现在已经了解了一些优化SQL生成的提示词策略。
+
+接下来，查看本节中的其他指南，例如[如何查询大型数据库](/docs/how_to/sql_large_db)。

@@ -1,0 +1,72 @@
+---
+hide_table_of_contents: true
+sidebar_class_name: hidden
+---
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/agents/aiplugin-tool.ts";
+
+# ChatGPT 插件
+
+:::warning
+OpenAI 已[弃用插件](https://openai.com/index/chatgpt-plugins/)。
+:::
+
+此示例展示了如何在 LangChain 抽象中使用 ChatGPT 插件。
+
+注意 1：这目前仅适用于无需身份验证的插件。
+
+注意 2：几乎可以肯定还有其他更好的实现方式，这只是一个初步尝试。如果您有更好的想法，请提交 PR！
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+```
+Entering new agent_executor chain...
+Thought: Klarna 是一家支付提供商，而不是商店。我需要检查是否存在 Klarna 购物 API，我可以使用它来搜索 T 恤。
+Action:
+```
+
+{
+"action": "KlarnaProducts",
+"action_input": ""
+}
+
+```
+
+使用指南：使用 Klarna 插件获取任何购物或研究用途的相关产品建议。发送的查询不应包含停用词，如冠词、介词和限定词。当搜索与产品相关的词（如产品名称、品牌、型号或类别）时，API 的效果最佳。始终会返回链接，并应展示给用户。
+
+OpenAPI 规范: {"openapi":"3.0.1","info":{"version":"v0","title":"Open AI Klarna product Api"},"servers":[{"url":"https://www.klarna.com/us/shopping"}],"tags":[{"name":"open-ai-product-endpoint","description":"Open AI 产品端点。用于产品查询。"}],"paths":{"/public/openai/v0/products":{"get":{"tags":["open-ai-product-endpoint"],"summary":"用于获取 Klarna 产品信息的 API","operationId":"productsUsingGET","parameters":[{"name":"q","in":"query","description":"查询，必须在 2 到 100 个字符之间","required":true,"schema":{"type":"string"}},{"name":"size","in":"query","description":"返回的产品数量","required":false,"schema":{"type":"integer"}},{"name":"budget","in":"query","description":"匹配产品的本地货币最大价格，用于过滤结果","required":false,"schema":{"type":"integer"}}],"responses":{"200":{"description":"找到的产品","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProductResponse"}}}},"503":{"description":"一个或多个服务不可用"}},"deprecated":false}}},"components":{"schemas":{"Product":{"type":"object","properties":{"attributes":{"type":"array","items":{"type":"string"}},"name":{"type":"string"},"price":{"type":"string"},"url":{"type":"string"}},"title":"Product"},"ProductResponse":{"type":"object","properties":{"products":{"type":"array","items":{"$ref":"#/components/schemas/Product"}}},"title":"ProductResponse"}}}}
+既然我知道存在 Klarna 购物 API，就可以使用它来搜索 T 恤。我将使用查询参数 "t-shirt" 向 API 发起 GET 请求。
+Action:
+```
+
+{
+"action": "requests_get",
+"action_input": "https://www.klarna.com/us/shopping/public/openai/v0/products?q=t-shirt"
+}
+
+```
+
+
+{"products":[{"name":"Psycho Bunny 男士 Copa Gradient Logo 图案 T 恤","url":"https://www.klarna.com/us/shopping/pl/cl10001/3203663222/Clothing/Psycho-Bunny-Mens-Copa-Gradient-Logo-Graphic-Tee/?source=openai","price":"$35.00","attributes":["材质:棉","目标人群:男士","颜色:白、蓝、黑、橙"]},{"name":"T恤","url":"https://www.klarna.com/us/shopping/pl/cl10001/3203506327/Clothing/T-shirt/?source=openai","price":"$20.45","attributes":["材质:棉","目标人群:男士","颜色:灰、白、蓝、黑、橙"]},{"name":"Palm Angels 熊图案 T 恤 - 黑色","url":"https://www.klarna.com/us/shopping/pl/cl10001/3201090513/Clothing/Palm-Angels-Bear-T-shirt-Black/?source=openai","price":"$168.36","attributes":["材质:棉","目标人群:男士","颜色:黑色"]},{"name":"Tommy Hilfiger 标志性旗帜 Logo T 恤","url":"https://www.klarna.com/us/shopping/pl/cl10001/3201840629/Clothing/Tommy-Hilfiger-Essential-Flag-Logo-T-shirt/?source=openai","price":"$22.52","attributes":["材质:棉","目标人群:男士","颜色:红、灰、白、蓝、黑","图案:纯色","环保属性:有机棉"]},{"name":"Coach Outlet 标志 T 恤","url":"https://www.klarna.com/us/shopping/pl/cl10001/3203005573/Clothing/Coach-Outlet-Signature-T-Shirt/?source=openai","price":"$75.00","attributes":["材质:棉","目标人群:男士","颜色:灰色"]}]}
+Finished chain.
+{
+  result: {
+    output: 'Klarna 上的可用 T 恤包括 Psycho Bunny 男士 Copa Gradient Logo 图案 T 恤、T 恤、Palm Angels 熊图案 T 恤 - 黑色、Tommy Hilfiger 标志性旗帜 Logo T 恤，以及 Coach Outlet 标志 T 恤。',
+    intermediateSteps: [ [Object], [Object] ]
+  }
+}
+```
+
+## 相关内容
+
+- 工具 [概念指南](/docs/concepts/tools)
+- 工具 [操作指南](/docs/how_to/#tools)

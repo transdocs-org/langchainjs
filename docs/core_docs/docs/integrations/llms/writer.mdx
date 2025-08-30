@@ -1,0 +1,33 @@
+# Writer
+
+LangChain.js 支持调用 [Writer](https://writer.com/) 的大语言模型（LLM）。
+
+## 准备工作
+
+首先，你需要在 https://writer.com/ 注册一个账户。创建一个服务账户并记录下你的 API 密钥。
+
+接下来，你需要将官方包作为对等依赖安装：
+
+```bash npm2yarn
+yarn add @writerai/writer-sdk
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+## 使用方法
+
+import CodeBlock from "@theme/CodeBlock";
+import WriterExample from "@examples/models/llm/writer.ts";
+
+<CodeBlock language="typescript">{WriterExample}</CodeBlock>
+
+## 相关内容
+
+- LLM [概念指南](/docs/concepts/text_llms)
+- LLM [操作指南](/docs/how_to/#llms)

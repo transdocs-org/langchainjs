@@ -1,0 +1,9 @@
+# 字符串输入、字符串输出的 LLM
+
+:::tip
+您可能正在寻找[聊天模型概念指南](/docs/concepts/chat_models)，以获取更多信息。
+:::
+
+LangChain 提供了一些较旧语言模型的实现，这些模型以字符串作为输入并返回字符串作为输出。这些模型通常名称中没有 "Chat" 前缀（例如，`Ollama`、`Anthropic`、`OpenAI` 等），并且可能包含 "LLM" 后缀（例如，`OpenAILLM` 等）。这些模型实现了 [`BaseLLM`](https://api.js.langchain.com/classes/_langchain_core.language_models_llms.BaseLLM.html) 接口。
+
+用户几乎应该完全使用较新的 [聊天模型](/docs/concepts/chat_models)，因为大多数模型提供商已经采用类似聊天的接口来与语言模型进行交互。

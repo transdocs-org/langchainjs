@@ -1,0 +1,31 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# 文件系统聊天消息历史
+
+`FileSystemChatMessageHistory` 使用一个 JSON 文件来存储聊天消息历史。如果你需要在多个聊天会话之间持久化保存聊天记录，可以替换默认的内存中的 `chatHistory`，例如用于聊天记忆类（如 `BufferMemory`）的后端存储。
+
+## 准备工作
+
+首先你需要安装 [`@langchain/community`](https://www.npmjs.com/package/@langchain/community) 包：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+## 使用方法
+
+import Example from "@examples/memory/file.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

@@ -1,0 +1,41 @@
+# Azure Cosmos DB for MongoDB vCore
+
+> [Azure Cosmos DB for MongoDB vCore](https://learn.microsoft.com/azure/cosmos-db/mongodb/vcore/) 让你可以轻松创建一个完全原生支持 MongoDB 的数据库。你可以继续使用自己熟悉的 MongoDB 驱动程序、SDK 和工具，只需将应用程序指向 MongoDB vCore 账户的连接字符串即可。通过在 Azure Cosmos DB for MongoDB vCore 中使用向量搜索功能，可以无缝地将基于 AI 的应用程序与存储在 Azure Cosmos DB 中的数据集成。
+
+Azure Cosmos DB for MongoDB vCore 为开发人员提供了一个完全托管的 MongoDB 兼容数据库服务，用于构建具有熟悉架构的现代应用程序。
+
+了解如何利用 Azure Cosmos DB for MongoDB vCore 的向量搜索能力，请访问[此页面](https://learn.microsoft.com/azure/cosmos-db/mongodb/vcore/vector-search)。如果你还没有 Azure 账户，可以[创建一个免费账户](https://azure.microsoft.com/free/)开始使用。
+
+## 安装配置
+
+首先，你需要安装 [`@langchain/azure-cosmosdb`](https://www.npmjs.com/package/@langchain/azure-cosmosdb) 包：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/azure-cosmosdb @langchain/core
+```
+
+你还需要运行一个 Azure Cosmos DB for MongoDB vCore 实例。你可以按照[此指南](https://learn.microsoft.com/azure/cosmos-db/mongodb/vcore/quickstart-portal)，在 Azure 门户中免费部署一个实例。
+
+实例运行后，请确保你拥有连接字符串和管理员密钥。你可以在 Azure 门户中实例的“连接字符串”部分找到它们。然后你需要设置以下环境变量：
+
+import CodeBlock from "@theme/CodeBlock";
+import EnvVars from "@examples/indexes/vector_stores/azure_cosmosdb_mongodb/.env.example";
+
+<CodeBlock language="text">{EnvVars}</CodeBlock>
+
+## 示例
+
+下面是一个示例，它从文件中将文档索引到 Azure Cosmos DB for MongoDB vCore 中，执行一个向量搜索查询，最后使用一个链来基于检索到的文档回答自然语言问题。
+
+import Example from "@examples/indexes/vector_stores/azure_cosmosdb_mongodb/azure_cosmosdb_mongodb.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

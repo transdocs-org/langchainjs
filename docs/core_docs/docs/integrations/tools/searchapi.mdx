@@ -1,0 +1,32 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# SearchApi 工具
+
+`SearchApi` 工具可以将你的智能体（agents）和链（chains）连接到互联网。
+
+这是对搜索API的一个封装。当你需要回答与时事相关的问题时，这个工具会非常有用。
+
+## 使用方法
+
+输入应为一个搜索查询。
+
+import ToolExample from "@examples/tools/searchapi_google_news.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+<CodeBlock language="typescript">{ToolExample}</CodeBlock>
+
+## 相关内容
+
+- 工具 [概念指南](/docs/concepts/tools)
+- 工具 [操作指南](/docs/how_to/#tools)

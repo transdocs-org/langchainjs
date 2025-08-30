@@ -1,0 +1,27 @@
+# HuggingFaceInference
+
+以下是如何将 HuggingFaceInference 模型用作 LLM 的示例：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core @huggingface/inference@4
+```
+
+import UnifiedModelParamsTooltip from "@mdx_components/unified_model_params_tooltip.mdx";
+
+<UnifiedModelParamsTooltip></UnifiedModelParamsTooltip>
+
+```typescript
+import { HuggingFaceInference } from "@langchain/community/llms/hf";
+
+const model = new HuggingFaceInference({
+  model: "gpt2",
+  apiKey: "YOUR-API-KEY", // 在 Node.js 中默认使用 process.env.HUGGINGFACEHUB_API_KEY
+});
+const res = await model.invoke("1 + 1 =");
+console.log({ res });
+```
+
+## 相关内容
+
+- LLM [概念指南](/docs/concepts/text_llms)
+- LLM [操作指南](/docs/how_to/#llms)

@@ -1,0 +1,39 @@
+# html-to-text
+
+在摄入 HTML 文档以供后续检索时，我们通常只关注网页的实际内容，而非其语义结构。使用 `HtmlToTextTransformer` 剥离 HTML 标签可以使内容分块更加丰富，从而提高检索的有效性。
+
+## 安装配置
+
+你需要安装 [`html-to-text`](https://www.npmjs.com/package/html-to-text) npm 包：
+
+```bash npm2yarn
+npm install html-to-text
+```
+
+虽然 `HtmlToTextTransformer` 本身不需要额外依赖，但以下示例代码需要使用 [`cheerio`](https://www.npmjs.com/package/cheerio) 进行网页抓取：
+
+```bash npm2yarn
+npm install cheerio
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+## 使用方法
+
+以下示例抓取 Hacker News 的一个讨论帖，根据 HTML 标签对内容进行分块，从而基于标签的语义信息对内容进行分组，然后从各个内容块中提取内容：
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_transformers/html_to_text.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 自定义配置
+
+你可以向该转换器传入任何 `html-to-text` 包所支持的参数，以自定义其行为：
+[参考 `html-to-text` 支持的参数](https://www.npmjs.com/package/html-to-text)。

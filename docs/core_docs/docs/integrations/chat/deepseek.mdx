@@ -1,0 +1,282 @@
+---
+sidebar_label: DeepSeek
+title: ChatDeepSeek
+---
+
+export const quartoRawHtml = [
+  `
+<table style="width:100%;">
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">类</th>
+<th style="text-align: left;">包</th>
+<th style="text-align: center;">本地</th>
+<th style="text-align: center;">可序列化</th>
+<th style="text-align: center;"><a href="https://python.langchain.com/docs/integrations/chat/deepseek">PY 支持</a></th>
+<th style="text-align: center;">包下载量</th>
+<th style="text-align: center;">包最新版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a href="https://api.js.langchain.com/classes/_langchain_deepseek.ChatDeepSeek.html"><code>ChatDeepSeek</code></a></td>
+<td style="text-align: left;"><a href="https://npmjs.com/@langchain/deepseek"><code>@langchain/deepseek</code></a></td>
+<td style="text-align: center;">❌（见 <a href="../../../docs/integrations/chat/ollama">Ollama</a>）</td>
+<td style="text-align: center;">beta</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;"><img src="https://img.shields.io/npm/dm/@langchain/deepseek?style=flat-square&amp;label=%20&amp;.png" alt="NPM - 下载量" /></td>
+<td style="text-align: center;"><img src="https://img.shields.io/npm/v/@langchain/deepseek?style=flat-square&amp;label=%20&amp;.png" alt="NPM - 版本" /></td>
+</tr>
+</tbody>
+</table>
+`,
+  `
+<table style="width:100%;">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><a href="../../../docs/how_to/tool_calling">工具调用</a></th>
+<th style="text-align: center;"><a href="../../../docs/how_to/structured_output/">结构化输出</a></th>
+<th style="text-align: center;">JSON 模式</th>
+<th style="text-align: center;"><a href="../../../docs/how_to/multimodal_inputs/">图像输入</a></th>
+<th style="text-align: center;">音频输入</th>
+<th style="text-align: center;">视频输入</th>
+<th style="text-align: center;"><a href="../../../docs/how_to/chat_streaming/">逐 token 流式传输</a></th>
+<th style="text-align: center;"><a href="../../../docs/how_to/chat_token_usage_tracking/">token 使用情况</a></th>
+<th style="text-align: center;"><a href="../../../docs/how_to/logprobs/">logprobs</a></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+</tr>
+</tbody>
+</table>
+`,
+  `<!-- ## 调用 -->`,
+];
+
+这将帮助你开始使用 DeepSeek [聊天模型](../../../docs/concepts/#chat-models)。关于 `ChatDeepSeek` 所有功能和配置的详细文档，请前往 [API 参考](https://api.js.langchain.com/classes/_langchain_deepseek.ChatDeepSeek.html)。
+
+## 概述
+
+### 集成细节
+
+<div dangerouslySetInnerHTML={{ __html: quartoRawHtml[0] }} />
+
+### 模型特性
+
+有关如何使用特定功能的指南，请参见下表标题中的链接。
+
+<div dangerouslySetInnerHTML={{ __html: quartoRawHtml[1] }} />
+
+注意，截至 2025 年 1 月 27 日，`deepseek-reasoner` 当前不支持工具调用和结构化输出。
+
+## 安装配置
+
+要访问 DeepSeek 模型，你需要创建一个 DeepSeek 账户，获取一个 API 密钥，并安装 `@langchain/deepseek` 集成包。
+
+你也可以通过 [Together AI](../../../docs/integrations/chat/togetherai) 或 [Ollama](../../../docs/integrations/chat/ollama) 等提供商访问 DeepSeek API。
+
+### 凭证
+
+前往 https://deepseek.com/ 注册 DeepSeek 并生成一个 API 密钥。完成之后，请设置 `DEEPSEEK_API_KEY` 环境变量：
+
+```bash
+export DEEPSEEK_API_KEY="your-api-key"
+```
+
+如果你想获得模型调用的自动追踪，还可以取消注释下面的内容并设置你的 [LangSmith](https://docs.smith.langchain.com/) API 密钥：
+
+```bash
+# export LANGSMITH_TRACING="true"
+# export LANGSMITH_API_KEY="your-api-key"
+```
+
+### 安装
+
+LangChain 的 ChatDeepSeek 集成位于 `@langchain/deepseek` 包中：
+
+```mdx-code-block
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+import Npm2Yarn from "@theme/Npm2Yarn";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+<Npm2Yarn>
+  @langchain/deepseek @langchain/core
+</Npm2Yarn>
+
+```
+
+## 实例化
+
+现在我们可以实例化我们的模型对象并生成聊天补全：
+
+```typescript
+import { ChatDeepSeek } from "@langchain/deepseek";
+
+const llm = new ChatDeepSeek({
+  model: "deepseek-reasoner",
+  temperature: 0,
+  // 其他参数...
+});
+```
+
+<div dangerouslySetInnerHTML={{ __html: quartoRawHtml[2] }} />
+
+```typescript
+const aiMsg = await llm.invoke([
+  [
+    "system",
+    "你是一个能将英文翻译成法文的有用助手。请翻译用户的句子。",
+  ],
+  ["human", "I love programming."],
+]);
+aiMsg;
+```
+
+```text
+AIMessage {
+  "id": "e2874482-68a7-4552-8154-b6a245bab429",
+  "content": "J'adore la programmation.",
+  "additional_kwargs": {,
+    "reasoning_content": "...",
+  },
+  "response_metadata": {
+    "tokenUsage": {
+      "promptTokens": 23,
+      "completionTokens": 7,
+      "totalTokens": 30
+    },
+    "finish_reason": "stop",
+    "model_name": "deepseek-reasoner",
+    "usage": {
+      "prompt_tokens": 23,
+      "completion_tokens": 7,
+      "total_tokens": 30,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 23
+    },
+    "system_fingerprint": "fp_3a5770e1b4"
+  },
+  "tool_calls": [],
+  "invalid_tool_calls": [],
+  "usage_metadata": {
+    "output_tokens": 7,
+    "input_tokens": 23,
+    "total_tokens": 30,
+    "input_token_details": {
+      "cache_read": 0
+    },
+    "output_token_details": {}
+  }
+}
+```
+
+```typescript
+console.log(aiMsg.content);
+```
+
+```text
+J'adore la programmation.
+```
+
+## 链式调用
+
+我们可以将模型与提示模板进行[链式调用](../../../docs/how_to/sequence/)，如下所示：
+
+```typescript
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+
+const prompt = ChatPromptTemplate.fromMessages([
+  [
+    "system",
+    "你是一个能将 {input_language} 翻译为 {output_language} 的有用助手。",
+  ],
+  ["human", "{input}"],
+]);
+
+const chain = prompt.pipe(llm);
+await chain.invoke({
+  input_language: "English",
+  output_language: "German",
+  input: "I love programming.",
+});
+```
+
+```text
+AIMessage {
+  "id": "6e7f6f8c-8d7a-4dad-be07-425384038fd4",
+  "content": "Ich liebe es zu programmieren.",
+  "additional_kwargs": {,
+    "reasoning_content": "...",
+  },
+  "response_metadata": {
+    "tokenUsage": {
+      "promptTokens": 18,
+      "completionTokens": 9,
+      "totalTokens": 27
+    },
+    "finish_reason": "stop",
+    "model_name": "deepseek-reasoner",
+    "usage": {
+      "prompt_tokens": 18,
+      "completion_tokens": 9,
+      "total_tokens": 27,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 18
+    },
+    "system_fingerprint": "fp_3a5770e1b4"
+  },
+  "tool_calls": [],
+  "invalid_tool_calls": [],
+  "usage_metadata": {
+    "output_tokens": 9,
+    "input_tokens": 18,
+    "total_tokens": 27,
+    "input_token_details": {
+      "cache_read": 0
+    },
+    "output_token_details": {}
+  }
+}
+```
+
+## API 参考
+
+关于 `ChatDeepSeek` 所有功能和配置的详细文档，请前往 API 参考：
+https://api.js.langchain.com/classes/\_langchain_deepseek.ChatDeepSeek.html

@@ -1,0 +1,36 @@
+---
+hide_table_of_contents: true
+---
+
+# SerpAPI 加载器
+
+本指南展示了如何在 LangChain 中使用 SerpAPI 加载网页搜索结果。
+
+## 概览
+
+[SerpAPI](https://serpapi.com/) 是一个实时 API，可提供来自多个搜索引擎的搜索结果。它通常用于竞争对手分析和排名跟踪等任务。它使企业能够从所有搜索引擎的结果页面中抓取、提取和分析数据。
+
+本指南展示了如何使用 LangChain 中的 `SerpAPILoader` 加载网页搜索结果。`SerpAPILoader` 简化了从 SerpAPI 加载和处理网页搜索结果的过程。
+
+## 准备工作
+
+你需要注册并获取你的 [SerpAPI API 密钥](https://serpapi.com/dashboard)。
+
+## 使用方法
+
+以下是如何使用 `SerpAPILoader` 的示例：
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/serpapi.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core @langchain/openai
+```
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+在此示例中，`SerpAPILoader` 用于加载网页搜索结果，然后使用 `MemoryVectorStore` 将其存储在内存中。然后使用检索链从内存中检索最相关的文档，并基于这些文档回答问题。这展示了 `SerpAPILoader` 如何简化加载和处理网页搜索结果的过程。

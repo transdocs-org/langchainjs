@@ -1,0 +1,35 @@
+# 键值存储
+
+## 概述
+
+LangChain 提供了一个键值存储接口，用于数据的存储和检索。
+
+LangChain 包含一个 [`BaseStore`](https://api.js.langchain.com/classes/_langchain_core.stores.BaseStore.html) 接口，该接口允许存储任意数据。然而，LangChain 中需要使用键值存储（KV-storage）的组件接受一个更具体的 `BaseStore<string, Uint8Array>` 实例，用于存储二进制数据（称为 `ByteStore`），并在内部自行处理数据的编码和解码。
+
+这意味着作为用户，你只需要考虑一种类型的存储，而不需要为不同类型的数据分别考虑不同的存储方式。
+
+## 使用方法
+
+LangChain 中的键值存储接口主要用于以下场景：
+
+1. 通过 [CachedBackedEmbeddings](https://api.js.langchain.com/classes/langchain.embeddings_cache_backed.CacheBackedEmbeddings.html) [缓存嵌入向量（embeddings）](/docs/concepts/embedding_models)，以避免对重复查询或重新索引内容时重复计算嵌入向量。
+
+2. 在某些检索器中作为简单的 [Document](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html) 持久化层。
+
+更多信息请参阅以下指南：
+
+- [如何缓存嵌入向量指南](/docs/how_to/caching_embeddings/)
+- [如何实现每个文档使用多个向量的检索器](/docs/how_to/custom_retriever/)
+
+## 接口说明
+
+所有 [`BaseStore`](https://api.js.langchain.com/classes/_langchain_core.stores.BaseStore.html) 都支持以下接口。请注意，该接口支持一次修改**多个**键值对：
+
+- `mget(keys: string[]): Promise<(Uint8Array | undefined)[]>`：获取多个键的值，如果键不存在则返回 `undefined`
+- `mset(keyValuePairs: [string, Uint8Array][]): Promise<void>`：设置多个键的值
+- `mdelete(keys: string[]): Promise<void>`：删除多个键
+- `yieldKeys(prefix?: string): AsyncIterator<string>`：遍历存储中的所有键，可选择性地通过前缀进行过滤
+
+## 集成支持
+
+有关可用的键值存储集成列表，请参阅[存储集成页面](/docs/integrations/stores/)。

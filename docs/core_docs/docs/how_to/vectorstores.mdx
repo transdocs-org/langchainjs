@@ -1,0 +1,74 @@
+---
+keywords: [similaritySearchWithScore]
+---
+
+# 如何创建和查询向量存储
+
+:::info
+有关与向量存储提供商集成的文档，请参阅[集成](/docs/integrations/vectorstores)。
+:::
+
+:::info 前提条件
+
+本指南假定您已熟悉以下概念：
+
+- [向量存储](/docs/concepts/#vectorstores)
+- [嵌入模型](/docs/concepts/embedding_models)
+- [文档加载器](/docs/concepts/document_loaders)
+
+:::
+
+存储和搜索非结构化数据的最常见方式之一是对其进行嵌入并存储生成的嵌入向量，然后在查询时嵌入非结构化查询并检索与嵌入查询“最相似”的嵌入向量。向量存储会为您处理嵌入数据的存储和向量搜索。
+
+本演练使用了一个名为 [`MemoryVectorStore`](https://api.js.langchain.com/classes/langchain.vectorstores_memory.MemoryVectorStore.html) 的基础、未优化的实现，它将嵌入存储在内存中，并对最相似的嵌入执行精确的线性搜索。LangChain 包含许多内置集成 - 请参阅[此部分](/docs/how_to/vectorstores/#which-one-to-pick)了解更多信息，或查看[完整集成列表](/docs/integrations/vectorstores/)。
+
+## 创建新索引
+
+大多数情况下，您需要加载并准备要搜索的数据。以下示例从文件加载最近的演讲：
+
+import ExampleLoader from "@examples/indexes/vector_stores/memory_fromdocs.ts";
+
+<CodeBlock language="typescript">{ExampleLoader}</CodeBlock>
+
+大多数情况下，您需要将加载的文本拆分为准备步骤。请参阅[此部分](/docs/concepts/text_splitters)了解有关文本拆分器的更多信息。
+
+## 从文本创建新索引
+
+如果您已经准备好要搜索的数据，则可以直接从文本块初始化向量存储：
+
+import CodeBlock from "@theme/CodeBlock";
+import ExampleTexts from "@examples/indexes/vector_stores/memory.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+<CodeBlock language="typescript">{ExampleTexts}</CodeBlock>
+
+## 如何选择？
+
+以下是一个快速指南，帮助您为使用场景选择合适的向量存储：
+
+- 如果您需要一个可以在 Node.js 应用程序内部运行、无需其他服务器的内存内解决方案，请选择 [HNSWLib](/docs/integrations/vectorstores/hnswlib)、[Faiss](/docs/integrations/vectorstores/faiss)、[LanceDB](/docs/integrations/vectorstores/lancedb) 或 [CloseVector](/docs/integrations/vectorstores/closevector)
+- 如果您需要一个可以在类浏览器环境中在内存中运行的解决方案，请选择 [MemoryVectorStore](/docs/integrations/vectorstores/memory) 或 [CloseVector](/docs/integrations/vectorstores/closevector)
+- 如果您来自 Python 并且在寻找类似于 FAISS 的东西，请尝试 [HNSWLib](/docs/integrations/vectorstores/hnswlib) 或 [Faiss](/docs/integrations/vectorstores/faiss)
+- 如果您在寻找一个开源的、功能齐全的向量数据库，可以使用 docker 容器在本地运行，请选择 [Chroma](/docs/integrations/vectorstores/chroma)
+- 如果您在寻找一个开源的向量数据库，提供低延迟、本地文档嵌入并支持边缘设备上的应用，请选择 [Zep](/docs/integrations/vectorstores/zep)
+- 如果您在寻找一个开源的、生产就绪的向量数据库，可以在本地（docker 容器中）或云端托管运行，请选择 [Weaviate](/docs/integrations/vectorstores/weaviate)
+- 如果您已经在使用 Supabase，请查看 [Supabase](/docs/integrations/vectorstores/supabase) 向量存储，以使用相同的 Postgres 数据库存储您的嵌入
+- 如果您在寻找一个无需自行托管的生产就绪向量存储，请选择 [Pinecone](/docs/integrations/vectorstores/pinecone)
+- 如果您已经在使用 SingleStore，或者需要一个分布式、高性能数据库，则可以考虑 [SingleStore](/docs/integrations/vectorstores/singlestore) 向量存储
+- 如果您在寻找一个在线的 MPP（大规模并行处理）数据仓库服务，可以考虑 [AnalyticDB](/docs/integrations/vectorstores/analyticdb) 向量存储
+- 如果您在寻找一个成本效益高、支持使用 SQL 进行向量搜索的向量数据库，请选择 [MyScale](/docs/integrations/vectorstores/myscale)
+- 如果您在寻找一个可以从浏览器端和服务器端加载的向量数据库，请查看 [CloseVector](/docs/integrations/vectorstores/closevector)，这是一个旨在跨平台的向量数据库
+- 如果您在寻找一个可扩展的、开源的列式数据库，并且在分析查询方面表现出色，请考虑 [ClickHouse](/docs/integrations/vectorstores/clickhouse)
+
+## 下一步
+
+您现在已经了解了如何将数据加载到向量存储中。
+
+接下来，请查看完整的[检索增强生成教程](/docs/tutorials/rag)。

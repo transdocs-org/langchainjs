@@ -1,0 +1,31 @@
+---
+sidebar_class_name: beta
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Datadog LLM 可观测性
+
+:::warning
+LLM 可观测性目前处于公开测试阶段，其 API 可能会发生变更。
+:::
+
+通过 [Datadog LLM 可观测性](https://docs.datadoghq.com/llm_observability/)，您可以监控、调试和评估基于 LLM 的应用程序（例如聊天机器人）。您可以调查问题的根本原因、监控运行性能，并评估 LLM 应用程序的质量、隐私性和安全性。
+
+这是一个实验性的社区实现，不由 Datadog 官方提供支持。它基于 [Datadog LLM 可观测性 API](https://docs.datadoghq.com/llm_observability/api)。
+
+## 安装配置
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+## 使用方法
+
+import UsageExample from "@examples/callbacks/datadog.ts";
+
+<CodeBlock language="typescript">{UsageExample}</CodeBlock>

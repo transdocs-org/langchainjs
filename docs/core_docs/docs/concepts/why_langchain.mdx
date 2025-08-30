@@ -1,0 +1,122 @@
+# 为什么选择 LangChain？
+
+`langchain` 包和 LangChain 公司的目标是让开发者尽可能轻松地构建具有推理能力的应用程序。  
+虽然 LangChain 最初只是一个开源包，但它现在已经发展成为一家公司，并形成了一个完整的生态系统。  
+本页将整体介绍 LangChain 生态系统。  
+生态系统中的大多数组件都可以单独使用——因此，如果你特别倾向于某些组件而对其他组件不感兴趣，这完全没问题！你可以自由选择最喜爱的组件。
+
+## 特性
+
+LangChain 致力于解决以下几个主要需求：
+
+1. **标准化的组件接口：** 随着 AI 应用中使用的 [模型](/docs/integrations/chat/) 和 [相关组件](/docs/integrations/vectorstores/) 越来越多，开发者需要学习和使用的 API 也变得多样化。
+   这种多样性使得开发者在构建应用时切换供应商或组合组件变得困难。
+   LangChain 为关键组件提供标准接口，使开发者能够轻松地在不同供应商之间切换。
+
+2. **编排（Orchestration）：** 随着应用变得越来越复杂，需要组合多个组件和模型，因此需要高效地将这些元素连接成控制流来完成各种任务。
+   [编排](<https://en.wikipedia.org/wiki/Orchestration_(computing)>) 对于构建此类应用至关重要。
+
+3. **可观测性与评估：** 随着应用复杂度的增加，理解其内部运行变得愈发困难。
+   此外，开发速度可能会受到 [选择悖论](https://en.wikipedia.org/wiki/Paradox_of_choice) 的限制：
+   例如，开发者常常会思考如何设计提示词（prompt）或选择哪个 LLM 能在准确性、延迟和成本之间取得最佳平衡。
+   [可观测性](https://en.wikipedia.org/wiki/Observability) 和评估功能可以帮助开发者监控其应用，并自信地快速回答这些问题。
+
+## 标准化组件接口
+
+LangChain 为许多 AI 应用中核心组件提供通用接口。  
+例如，所有 [聊天模型](/docs/concepts/chat_models/) 都实现了 [BaseChatModel](https://api.js.langchain.com/classes/_langchain_core.language_models_chat_models.BaseChatModel.html) 接口。  
+该接口提供了一种标准方式与聊天模型交互，并支持如 [工具调用](/docs/concepts/tool_calling/) 和 [结构化输出](/docs/concepts/structured_outputs/) 等重要但通常依赖于供应商的功能。
+
+### 示例：聊天模型
+
+许多 [模型供应商](/docs/concepts/chat_models/) 支持 [工具调用](/docs/concepts/tool_calling/)，这对于许多应用（例如 [代理（agents）](https://langchain-ai.github.io/langgraphjs/concepts/agentic_concepts/)）来说是一项关键功能，它允许开发者请求符合特定结构的模型响应。  
+每个供应商的 API 各不相同。  
+LangChain 的 [聊天模型](/docs/concepts/chat_models/) 接口提供了一种通用方式，将 [工具](/docs/concepts/tools) 绑定到模型以支持 [工具调用](/docs/concepts/tool_calling/)：
+
+```typescript
+// 创建工具
+const tools = [myTool];
+// 绑定工具
+const modelWithTools = model.bindTools(tools);
+```
+
+同样，让模型生成 [结构化输出](/docs/concepts/structured_outputs/) 是一个非常常见的使用场景。  
+不同供应商对此支持方式不同，包括 [JSON 模式或工具调用](https://platform.openai.com/docs/guides/structured-outputs)，并提供不同的 API。  
+LangChain 的 [聊天模型](/docs/concepts/chat_models/) 接口提供了一种通用方式，通过 `withStructuredOutput()` 方法生成结构化输出：
+
+```typescript
+// 使用 Zod 定义结构
+const schema = z.object({ ... });
+// 绑定结构到模型
+const modelWithStructure = model.withStructuredOutput(schema)
+```
+
+### 示例：检索器
+
+在 [RAG](/docs/concepts/rag/) 和 LLM 应用组件的背景下，LangChain 的 [检索器](/docs/concepts/retrievers/) 接口提供了一种标准方式来连接各种数据服务或数据库（例如 [向量存储](/docs/concepts/vectorstores) 或数据库）。  
+检索器的底层实现取决于你连接的数据存储或数据库类型，但所有检索器都实现了 [可运行接口](/docs/concepts/runnables/)，这意味着它们可以通过统一的方式调用。
+
+```typescript
+const documents = await myRetriever.invoke("生命的意义是什么？");
+```
+
+```text
+[
+   Document({
+      pageContent: "生命的意义是 42。",
+      metadata: { ... },
+   }),
+   Document({
+      pageContent: "生命的意义是使用 LangChain。",
+      metadata: { ... },
+   }),
+   ...
+]
+```
+
+## 编排（Orchestration）
+
+虽然单个组件的标准化非常有用，但我们越来越发现开发者希望将组件 _组合_ 成更复杂的应用程序。  
+这促使了对 [编排](<https://en.wikipedia.org/wiki/Orchestration_(computing)>) 的需求。  
+LLM 应用程序的编排层应支持以下一些常见特性：
+
+- **复杂控制流：** 应用程序需要复杂的模式，例如循环（例如，循环直到满足某个条件）。
+- **[持久化（Persistence）](https://langchain-ai.github.io/langgraphjs/concepts/persistence/)：** 应用程序需要维护 [短期和/或长期记忆](https://langchain-ai.github.io/langgraphjs/concepts/memory/)。
+- **[人工参与（Human-in-the-loop）](https://langchain-ai.github.io/langgraphjs/concepts/human_in_the_loop/)：** 应用程序需要人工交互，例如暂停、审查、编辑、批准某些步骤。
+
+对于这些复杂应用程序的编排，推荐使用 [LangGraph](https://langchain-ai.github.io/langgraphjs/concepts/high_level/)。  
+LangGraph 是一个库，通过将应用程序的流程表示为节点和边的集合，赋予开发者高度控制权。  
+LangGraph 内置支持 [持久化](https://langchain-ai.github.io/langgraphjs/concepts/persistence/)、[人工参与](https://langchain-ai.github.io/langgraphjs/concepts/human_in_the_loop/)、[内存](https://langchain-ai.github.io/langgraphjs/concepts/memory/) 和其他特性。  
+它特别适合构建 [代理（agents）](https://langchain-ai.github.io/langgraphjs/concepts/agentic_concepts/) 或 [多代理（multi-agent）](https://langchain-ai.github.io/langgraphjs/concepts/multi_agent/) 应用程序。  
+重要的是，你可以在 LangGraph 节点中使用单独的 LangChain 组件，但你也可以在不使用 LangChain 组件的情况下使用 LangGraph。
+
+:::info[进一步阅读]
+
+查看我们的免费课程 [LangGraph 入门](https://academy.langchain.com/courses/intro-to-langgraph)，了解更多如何使用 LangGraph 构建复杂应用程序的内容。
+
+:::
+
+## 可观测性与评估
+
+AI 应用程序的开发速度常常受限于高质量的评估，因为存在选择悖论。  
+开发者常常会思考如何设计提示词（prompt）或选择哪个 LLM 能在准确性、延迟和成本之间取得最佳平衡。  
+高质量的追踪（tracing）和评估可以帮助你自信地快速回答这些问题。  
+[LangSmith](https://docs.smith.langchain.com/) 是我们提供 AI 应用程序可观测性和评估的平台。  
+更多细节请参阅我们的概念指南：[评估](https://docs.smith.langchain.com/concepts/evaluation) 和 [追踪（tracing）](https://docs.smith.langchain.com/concepts/tracing)。
+
+:::info[进一步阅读]
+
+查看我们的视频播放列表 [LangSmith 追踪与评估](https://youtube.com/playlist?list=PLfaIDFEXuae0um8Fj0V4dHG37fGFU8Q5S&feature=shared) 了解更多信息。
+
+:::
+
+## 结论
+
+LangChain 为许多 AI 应用中的核心组件提供了标准接口，带来了以下一些具体优势：
+
+- **轻松切换供应商：** 它允许你在不更改底层代码的情况下替换不同组件供应商。
+- **高级功能：** 它为更高级的功能（如 [流式传输](/docs/concepts/runnables/#streaming) 和 [工具调用](/docs/concepts/tool_calling/)）提供了通用方法。
+
+[LangGraph](https://langchain-ai.github.io/langgraphjs/concepts/high_level/) 使得编排复杂应用程序（例如 [代理（agents）](/docs/concepts/agents/)）成为可能，并提供 [持久化](https://langchain-ai.github.io/langgraphjs/concepts/persistence/)、[人工参与](https://langchain-ai.github.io/langgraphjs/concepts/human_in_the_loop/) 或 [内存](https://langchain-ai.github.io/langgraphjs/concepts/memory/) 等功能。
+
+[LangSmith](https://docs.smith.langchain.com/) 通过提供针对 LLM 的可观测性以及测试和评估框架，使你能够自信地迭代你的应用程序。

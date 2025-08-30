@@ -1,0 +1,90 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Firestore 聊天记忆
+
+为了在聊天会话之间实现更长期的持久化，您可以将默认的内存中 `chatHistory` 替换为 Firestore，以支持如 `BufferMemory` 这类聊天记忆类。
+
+## 安装配置
+
+首先，在您的项目中安装 Firebase 管理包：
+
+```bash npm2yarn
+npm install firebase-admin
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+从您的 Firebase 项目中访问 `Project Settings` 页面，然后选择 `Service accounts` 标签页。
+
+在 `Service accounts` 标签页中，点击 `Firebase Admin SDK` 部分内的 `Generate new private key` 按钮，下载包含您的服务账户凭据的 JSON 文件。
+
+使用下载的 JSON 文件，将 `projectId`、`privateKey` 和 `clientEmail` 传递给 `FirestoreChatMessageHistory` 类的 `config` 对象，如下所示：
+
+```typescript
+import { FirestoreChatMessageHistory } from "@langchain/community/stores/message/firestore";
+import admin from "firebase-admin";
+
+const messageHistory = new FirestoreChatMessageHistory({
+  collections: ["chats"],
+  docs: ["user-id"],
+  sessionId: "user-id",
+  userId: "a@example.com",
+  config: {
+    projectId: "YOUR-PROJECT-ID",
+    credential: admin.credential.cert({
+      projectId: "YOUR-PROJECT-ID",
+      privateKey:
+        "-----BEGIN PRIVATE KEY-----\nCHANGE-ME\n-----END PRIVATE KEY-----\n",
+      clientEmail: "CHANGE-ME@CHANGE-ME-TOO.iam.gserviceaccount.com",
+    }),
+  },
+});
+```
+
+在此，`collections` 字段应与数据库中的 `collections` 名称和顺序匹配。
+`docs` 字段也是如此，应与数据库中的 `docs` 名称和顺序匹配。
+
+## 使用方法
+
+import Example from "@examples/memory/firestore.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+### 嵌套集合
+
+`FirestoreChatMessageHistory` 类支持嵌套集合以及动态的集合/文档名称。
+
+以下示例展示了如何向具有以下结构的数据库添加和检索消息：
+
+```
+/chats/{chat-id}/bots/{bot-id}/messages/{message-id}
+```
+
+import NestedExample from "@examples/memory/firestore_nested.ts";
+
+<CodeBlock language="typescript">{NestedExample}</CodeBlock>
+
+## Firestore 规则
+
+如果您的集合名称是 "chathistory"，您可以按以下方式配置 Firestore 规则：
+
+```
+      match /chathistory/{sessionId} {
+       allow read: if request.auth.uid == resource.data.createdBy;
+       allow write: if request.auth.uid == request.resource.data.createdBy;
+			 }
+			 match /chathistory/{sessionId}/messages/{messageId} {
+       allow read: if request.auth.uid == resource.data.createdBy;
+       allow write: if request.auth.uid == request.resource.data.createdBy;
+		    }
+```

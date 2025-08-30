@@ -1,0 +1,59 @@
+---
+sidebar_class_name: node-only
+---
+
+# Gradient AI
+
+LangChain.js 支持与 Gradient AI 的集成。请访问 [Gradient AI](https://docs.gradient.ai/docs) 查看可用模型列表。
+
+## 安装配置
+
+你需要安装官方的 Gradient Node SDK 作为对等依赖：
+
+```bash npm2yarn
+npm i @gradientai/nodejs-sdk
+```
+
+你需要设置以下环境变量以使用 Gradient AI API：
+
+1. `GRADIENT_ACCESS_TOKEN`
+2. `GRADIENT_WORKSPACE_ID`
+
+或者，也可以在实例化 GradientAI 类时分别将它们设置为 `gradientAccessKey` 和 `workspaceId`。
+例如：
+
+```typescript
+const model = new GradientLLM({
+  gradientAccessKey: "我的密钥 Access Token"
+  workspaceId: "我的工作区 ID"
+});
+```
+
+## 使用方法
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+import CodeBlock from "@theme/CodeBlock";
+import GradientLLMBaseExample from "@examples/llms/gradient_ai-base.ts";
+import GradientLLMAdapterExample from "@examples/llms/gradient_ai-adapter.ts";
+
+### 使用 Gradient 的基础模型
+
+<CodeBlock language="typescript">{GradientLLMBaseExample}</CodeBlock>
+
+### 使用你自己微调的适配器（Adapter）
+
+使用你自己的自定义适配器只需在配置时设置 `adapterId`。
+
+<CodeBlock language="typescript">{GradientLLMAdapterExample}</CodeBlock>
+
+## 相关内容
+
+- LLM [概念指南](/docs/concepts/text_llms)
+- LLM [操作指南](/docs/how_to/#llms)

@@ -1,0 +1,14 @@
+# 模型速率限制
+
+您已达到模型提供方在特定时间段内允许的最大请求次数，因此将被暂时阻止访问。  
+通常，此错误是暂时性的，您的请求限制会在一段时间后重置。
+
+## 问题排查
+
+以下方法可能有助于解决此问题：
+
+- 联系您的模型提供方，请求提高速率限制。
+- 如果您的许多请求内容相同，可以使用 [模型响应缓存](/docs/how_to/chat_model_caching/)。
+- 如果您的应用程序支持，可将请求分散到不同的提供方。
+- 在初始化模型时，设置更高的 [最大重试次数](https://api.js.langchain.com/interfaces/_langchain_core.language_models_base.BaseLanguageModelParams.html#maxRetries)。
+  LangChain 将对因该问题导致失败的请求使用指数退避策略进行重试，因此重试可能会在您的限制重置后进行。

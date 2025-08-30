@@ -1,0 +1,66 @@
+# Xata 聊天记忆
+
+[Xata](https://xata.io) 是一个基于 PostgreSQL 的无服务器数据平台。它提供了一个类型安全的 TypeScript/JavaScript SDK 用于与数据库进行交互，以及一个用于管理数据的 UI 界面。
+
+通过 `XataChatMessageHistory` 类，你可以使用 Xata 数据库实现聊天会话的长期持久化。
+
+由于 Xata 是通过 REST API 工作并提供了纯 TypeScript SDK，因此你可以将其与 [Vercel Edge](https://vercel.com/docs/concepts/functions/edge-functions/edge-runtime)、[Cloudflare Workers](https://developers.cloudflare.com/workers/) 以及任何其他无服务器环境一起使用。
+
+## 配置
+
+### 安装 Xata CLI
+
+```bash
+npm install @xata.io/cli -g
+```
+
+### 创建用作向量存储的数据库
+
+在 [Xata UI](https://app.xata.io) 中创建一个新的数据库。你可以为其命名任何名称，但在本示例中我们使用 `langchain`。
+
+当首次执行时，Xata LangChain 集成将创建用于存储聊天消息的表。如果具有该名称的表已存在，则不会对其进行任何更改。
+
+### 初始化项目
+
+在你的项目目录中运行以下命令：
+
+```bash
+xata init
+```
+
+然后选择你上面创建的数据库。这将生成一个 `xata.ts` 或 `xata.js` 文件，该文件定义了用于与数据库交互的客户端。有关使用 Xata JavaScript/TypeScript SDK 的更多细节，请参阅 [Xata 入门文档](https://xata.io/docs/getting-started/installation)。
+
+## 使用
+
+import CodeBlock from "@theme/CodeBlock";
+
+存储在 Xata 数据库中的每个聊天历史会话都必须具有唯一的 ID。
+
+在本示例中，使用 `getXataClient()` 函数基于环境变量创建一个新的 Xata 客户端。不过，我们建议使用 `xata init` 命令生成的代码，在这种情况下，你只需从生成的 `xata.ts` 文件中导入 `getXataClient()` 函数即可。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+import Example from "@examples/memory/xata.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+### 使用预先创建的表
+
+如果你不希望代码总是检查表是否存在，你可以在 Xata UI 中手动创建表，并将 `createTable: false` 传递给构造函数。该表必须包含以下字段：
+
+- `sessionId` 类型为 `String`
+- `type` 类型为 `String`
+- `role` 类型为 `String`
+- `content` 类型为 `Text`
+- `name` 类型为 `String`
+- `additionalKwargs` 类型为 `Text`
+
+import Advanced from "@examples/memory/xata-advanced.ts";
+
+<CodeBlock language="typescript">{Advanced}</CodeBlock>

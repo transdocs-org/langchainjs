@@ -1,0 +1,53 @@
+---
+sidebar_position: 0
+sidebar_class_name: hidden
+---
+
+# 教程
+
+刚接触 LangChain 或通用的 LLM 应用开发？阅读这些材料可以帮助你快速入门，并开始构建你的第一个应用。
+
+## 开始使用
+
+通过构建简单的应用来熟悉 LangChain 的开源组件。
+
+如果你想从特定提供商开始使用 [聊天模型](/docs/integrations/chat/)、[向量存储](/docs/integrations/vectorstores/) 或其他 LangChain 组件，请查看我们支持的 [集成](/docs/integrations/platforms/)。
+
+- [聊天模型与提示](/docs/tutorials/llm_chain)：使用 [提示模板](/docs/concepts/prompt_templates) 和 [聊天模型](/docs/concepts/chat_models) 构建一个简单的 LLM 应用。
+- [语义搜索](/docs/tutorials/retrievers)：使用 [文档加载器](/docs/concepts/document_loaders)、[嵌入模型](/docs/concepts/embedding_models/) 和 [向量存储](/docs/concepts/vectorstores/) 在 PDF 上构建一个语义搜索引擎。
+- [分类](/docs/tutorials/classification)：使用带有 [结构化输出](/docs/concepts/structured_outputs/) 的 [聊天模型](/docs/concepts/chat_models) 将文本分类为类别或标签。
+- [提取](/docs/tutorials/extraction)：使用 [聊天模型](/docs/concepts/chat_models) 和 [少量示例提示](/docs/concepts/few_shot_prompting/) 从文本和其他非结构化媒介中提取结构化数据。
+
+如需更详细地了解所有 LangChain 组件的使用方法，请参考 [操作指南](/docs/how_to)。
+
+## 编排
+
+开始使用 [LangGraph](https://langchain-ai.github.io/langgraphjs/) 将 LangChain 组件组合成功能齐全的应用程序。
+
+- [聊天机器人](/docs/tutorials/chatbot)：构建一个包含记忆功能的聊天机器人。
+- [代理](https://langchain-ai.github.io/langgraphjs/tutorials/quickstart/)：使用 LangGraph.js 构建一个可以与外部工具交互的代理。
+- [检索增强生成 (RAG) 第一部分](/docs/tutorials/rag)：构建一个使用你自己的文档来生成回答的应用。
+- [检索增强生成 (RAG) 第二部分](/docs/tutorials/qa_chat_history)：构建一个包含用户交互记忆和多步骤检索功能的 RAG 应用。
+- [基于 SQL 的问答](/docs/tutorials/sql_qa)：构建一个通过执行 SQL 查询来生成回答的问答系统。
+- [摘要生成](/docs/tutorials/summarization)：生成（可能是长文本的）摘要。
+- [基于图数据库的问答](/docs/tutorials/graph)：构建一个通过查询图数据库来生成回答的问答系统。
+
+## LangSmith
+
+LangSmith 可以帮助你密切追踪、监控和评估你的 LLM 应用。  
+它与 LangChain 无缝集成，你可以在构建过程中使用它来检查和调试链中的各个步骤。
+
+LangSmith 的文档托管在另一个网站上。
+
+你可以浏览 LangSmith 的教程以了解以下内容：
+
+- [可观测性](https://docs.smith.langchain.com/observability/tutorials)
+- [评估](https://docs.smith.langchain.com/evaluation/tutorials)
+- [提示工程](https://docs.smith.langchain.com/prompt_engineering/tutorials)
+- [管理](https://docs.smith.langchain.com/administration/tutorials)
+
+### 评估
+
+LangSmith 可以帮助你评估 LLM 应用的性能。以下教程是入门的好方式：
+
+- [评估你的 LLM 应用](https://docs.smith.langchain.com/tutorials/Developers/evaluation)

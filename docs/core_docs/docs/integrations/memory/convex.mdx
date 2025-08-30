@@ -1,0 +1,69 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Convex 聊天记忆
+
+为了在聊天会话间实现更长期的持久化存储，您可以将默认的内存型 `chatHistory` 替换为 [Convex](https://convex.dev/)，后者为 `BufferMemory` 类似的聊天记忆类提供支持。
+
+## 设置
+
+### 创建项目
+
+首先创建一个可用的 [Convex](https://docs.convex.dev/) 项目，例如使用如下命令：
+
+```bash
+npm create convex@latest
+```
+
+### 添加数据库访问器
+
+在 `convex/langchain/db.ts` 中添加查询和变更辅助函数：
+
+```ts title="convex/langchain/db.ts"
+export * from "@langchain/community/utils/convex";
+```
+
+### 配置您的模式
+
+设置您的模式（用于索引）：
+
+```ts title="convex/schema.ts"
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+  messages: defineTable({
+    sessionId: v.string(),
+    message: v.object({
+      type: v.string(),
+      data: v.object({
+        content: v.string(),
+        role: v.optional(v.string()),
+        name: v.optional(v.string()),
+        additional_kwargs: v.optional(v.any()),
+      }),
+    }),
+  }).index("bySessionId", ["sessionId"]),
+});
+```
+
+## 使用
+
+存储在 Convex 中的每个聊天历史会话都必须具有唯一的会话 ID。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+import Example from "@examples/memory/convex/convex.ts";
+
+<CodeBlock language="typescript" title="convex/myActions.ts">
+  {Example}
+</CodeBlock>

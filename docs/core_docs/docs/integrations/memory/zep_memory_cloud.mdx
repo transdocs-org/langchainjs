@@ -1,0 +1,71 @@
+---
+hide_table_of_contents: true
+---
+
+# Zep 云存储记忆
+
+> 回忆、理解并从聊天历史中提取数据，打造个性化的 AI 体验。
+
+> [Zep](https://www.getzep.com) 是为 AI 助手应用提供的长期记忆服务。
+> 使用 Zep，你可以让 AI 助手回忆过去的对话，无论这些对话多久以前发生，
+> 同时还能减少幻觉、延迟和成本。
+
+## Zep 云存储的工作原理
+
+Zep 持久化存储并回忆聊天历史，并从这些聊天历史中自动生成摘要和其他相关数据。
+它还会对消息和摘要进行嵌入处理，使你能够搜索 Zep，从而获取过去对话中的相关上下文。
+Zep 的所有这些操作都是异步执行的，以确保这些操作不会影响用户的聊天体验。
+数据会持久化保存到数据库中，让你能够根据增长需求进行扩展。
+
+Zep 还提供了一个简单易用的文档向量搜索抽象接口，称为文档集合（Document Collections）。
+该功能旨在补充 Zep 核心的记忆功能，而不是作为通用的向量数据库。
+
+Zep 让你在构建提示词时更加有目的性：
+
+- 自动添加最近的几条消息，消息数量可根据你的应用需求自定义；
+- 在上述消息之前，添加最近对话的摘要；
+- 从整个聊天会话中提取相关的上下文摘要或消息；
+- 或者从 Zep 文档集合中获取相关的业务数据。
+
+Zep 云存储提供以下功能：
+
+- **事实提取**：无需预先定义数据模式，即可从对话中自动构建事实表。
+- **对话分类**：即时准确地对聊天对话进行分类。理解用户意图和情绪，对用户进行分组等。基于语义上下文进行链路路由，并触发事件。
+- **结构化数据提取**：使用你定义的模式，快速从聊天对话中提取业务数据。了解你的助手下一步应该询问什么才能完成任务。
+
+## 安装
+
+注册 [Zep 云存储](https://app.getzep.com/) 并创建一个项目。
+
+按照 [Zep 云存储 Typescript SDK 安装指南](https://help.getzep.com/sdks) 安装并开始使用 Zep。
+
+要使用 Zep 云存储记忆功能，你需要获取 Zep 云存储项目的 API 密钥。更多信息请参阅 [Zep 云存储文档](https://help.getzep.com/projects)。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @getzep/zep-cloud @langchain/openai @langchain/community @langchain/core
+```
+
+### ZepCloudChatMessageHistory + RunnableWithMessageHistory 的使用方式
+
+import CodeBlock from "@theme/CodeBlock";
+import ZepCloudMessageHistoryExample from "@examples/guides/expression_language/zep/zep_cloud_message_history.ts";
+
+<CodeBlock language="typescript">{ZepCloudMessageHistoryExample}</CodeBlock>
+
+### ZepCloudChatMessageHistory + RunnableWithMessageHistory + ZepVectorStore（作为检索器）的使用方式
+
+import ZepCloudMessageHistoryWithVectorStoreExample from "@examples/guides/expression_language/zep/zep_cloud_message_history_vector_store.ts";
+
+<CodeBlock language="typescript">
+  {ZepCloudMessageHistoryWithVectorStoreExample}
+</CodeBlock>
+
+### Memory 使用方式
+
+import ZepCloudMemoryExample from "@examples/memory/zep_cloud.ts";
+
+<CodeBlock language="typescript">{ZepCloudMemoryExample}</CodeBlock>

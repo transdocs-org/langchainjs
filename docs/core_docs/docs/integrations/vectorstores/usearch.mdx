@@ -1,0 +1,48 @@
+---
+sidebar_class_name: node-only
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# USearch
+
+:::tip 兼容性
+仅适用于 Node.js。
+:::
+
+[USearch](https://github.com/unum-cloud/usearch) 是一个用于高效进行相似性搜索和密集向量聚类的库。
+
+## 安装设置
+
+安装 [usearch](https://github.com/unum-cloud/usearch/tree/main/javascript) 包，这是一个为 [USearch](https://github.com/unum-cloud/usearch) 提供的 Node.js 绑定。
+
+```bash npm2yarn
+npm install -S usearch
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+## 使用方法
+
+### 从文本创建新索引
+
+import ExampleTexts from "@examples/indexes/vector_stores/usearch.ts";
+
+<CodeBlock language="typescript">{ExampleTexts}</CodeBlock>
+
+### 从加载器创建新索引
+
+import ExampleLoader from "@examples/indexes/vector_stores/usearch_fromdocs.ts";
+
+<CodeBlock language="typescript">{ExampleLoader}</CodeBlock>
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

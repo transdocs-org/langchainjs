@@ -1,0 +1,137 @@
+# 文本分割器
+
+<span data-heading-keywords="文本分割器,文本分割"></span>
+
+:::info[前提条件]
+
+- [文档](/docs/concepts/retrievers/#interface)
+- [分词](/docs/concepts/tokens)
+
+:::
+
+## 概述
+
+文档分割通常是许多应用程序的关键预处理步骤。它涉及将大段文本分解为更小、更易处理的块。此过程提供了多种好处，例如确保不同长度文档的一致处理、克服模型的输入大小限制，以及提高检索系统中使用的文本表示质量。文档分割有多种策略，每种都有其自身的优势。
+
+## 核心概念
+
+![概念概述](/img/text_splitters.png)
+
+文本分割器将文档分割成较小的块，供下游应用使用。
+
+## 为什么要分割文档？
+
+有以下几个原因需要分割文档：
+
+- **处理非均匀文档长度**：现实世界中的文档集合通常包含不同大小的文本。分割确保所有文档都能得到一致的处理。
+- **克服模型限制**：许多嵌入模型和语言模型有最大输入尺寸的限制。分割允许我们处理那些超过这些限制的文档。
+- **提高表示质量**：对于较长的文档，嵌入或其他表示的质量可能会因需要捕捉太多信息而下降。分割可以产生更集中和准确的每部分表示。
+- **增强检索精度**：在信息检索系统中，分割可以提高搜索结果的粒度，使得查询与相关文档部分的匹配更加精确。
+- **优化计算资源**：处理较小的文本块可能更节省内存，并允许更好地并行化处理任务。
+
+现在，下一个问题是**如何**将文档分割成块！有几种策略，每种都有其自身的优势。
+
+:::info[进一步阅读]
+
+- 查看 Greg Kamradt 的 [chunkviz](https://chunkviz.up.railway.app/) 工具，可视化下面讨论的不同分割策略。
+
+:::
+
+## 方法
+
+### 基于长度的分割
+
+最直观的策略是基于文档长度进行分割。这种简单而有效的方法确保每个块不超过指定的大小限制。
+基于长度分割的主要优点：
+
+- 实现简单
+- 块大小一致
+- 易于适应不同的模型需求
+
+基于长度的分割类型：
+
+- **基于 token**：基于 token 数量进行文本分割，这在使用语言模型时非常有用。
+- **基于字符**：基于字符数量进行文本分割，对于不同类型的文本可能更一致。
+
+使用 LangChain 的 `CharacterTextSplitter` 进行字符分割的示例实现：
+
+```typescript
+import { CharacterTextSplitter } from "@langchain/textsplitters";
+const textSplitter = new CharacterTextSplitter({
+  chunkSize: 100,
+  chunkOverlap: 0,
+});
+const texts = await textSplitter.splitText(document);
+```
+
+:::info[进一步阅读]
+
+- 请参阅基于 [token](/docs/how_to/split_by_token/) 分割的指南。
+- 请参阅基于 [字符](/docs/how_to/character_text_splitter/) 分割的指南。
+
+:::
+
+### 基于文本结构的分割
+
+文本自然地组织成如段落、句子和词语等层次单元。我们可以利用这种固有结构来指导我们的分割策略，创建出保持自然语言流、保持分割后的语义连贯性，并适应不同文本粒度级别的分割。
+LangChain 的 [`RecursiveCharacterTextSplitter`](/docs/how_to/recursive_text_splitter/) 实现了这一概念：
+
+- `RecursiveCharacterTextSplitter` 尝试保留较大的单元（例如段落）。
+- 如果某个单元超过块大小，它会进入下一级（例如句子）。
+- 如有必要，此过程将继续到词语级别。
+
+以下是使用示例：
+
+```typescript
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+
+const textSplitter = new RecursiveCharacterTextSplitter({
+  chunkSize: 100,
+  chunkOverlap: 0,
+});
+const texts = await textSplitter.splitText(document);
+```
+
+:::info[进一步阅读]
+
+- 请参阅 [递归文本分割](/docs/how_to/recursive_text_splitter/) 的指南。
+
+:::
+
+### 基于文档结构的分割
+
+某些文档具有固有结构，例如 HTML、Markdown 或 JSON 文件。在这种情况下，根据文档结构进行分割是有益的，因为这种结构通常自然地将语义相关的文本分组。
+基于结构分割的主要优点：
+
+- 保留文档的逻辑组织
+- 维持每个块内的上下文
+- 对于检索或摘要等下游任务可能更有效
+
+基于结构的分割示例：
+
+- **Markdown**：基于标题进行分割（例如 #, ##, ###）
+- **HTML**：基于标签进行分割
+- **JSON**：基于对象或数组元素进行分割
+- **代码**：基于函数、类或逻辑块进行分割
+
+:::info[进一步阅读]
+
+- 请参阅 [代码分割](/docs/how_to/code_splitter/) 的指南。
+
+:::
+
+### 基于语义意义的分割
+
+与前述方法不同，语义分割实际上考虑了文本的**内容**。虽然其他方法使用文档或文本结构作为语义意义的代理，而此方法则直接分析文本的语义。有几种实现方式，但概念上是当文本**意义**发生显著变化时进行分割。例如，我们可以使用滑动窗口方法生成嵌入，并比较嵌入以查找显著差异：
+
+- 从前面几个句子开始并生成嵌入。
+- 移动到下一组句子并生成另一个嵌入（例如，使用滑动窗口方法）。
+- 比较嵌入以查找显著差异，这表明语义段落之间的潜在“断点”。
+
+这种技术有助于创建更具语义一致性的块，从而可能提高检索或摘要等下游任务的质量。
+
+:::info[进一步阅读]
+
+- 查看 Greg Kamradt 的 [notebook](https://github.com/FullStackRetrieval-com/RetrievalTutorials/blob/main/tutorials/LevelsOfTextSplitting/5_Levels_Of_Text_Splitting.ipynb)，其中展示了语义分割。
+
+:::

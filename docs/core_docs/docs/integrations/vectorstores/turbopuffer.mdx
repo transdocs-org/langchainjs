@@ -1,0 +1,28 @@
+# Turbopuffer
+
+## 配置
+
+首先，您需要在此处注册一个 Turbopuffer 账户：[这里](https://turbopuffer.com/join)。  
+注册完成后，您可以创建一个 API 密钥。
+
+将您的 API 密钥设置为环境变量：
+
+```bash
+export TURBOPUFFER_API_KEY=<YOUR_API_KEY>
+```
+
+## 使用方法
+
+import CodeBlock from "@theme/CodeBlock";
+import SimilaritySearchExample from "@examples/indexes/vector_stores/turbopuffer.ts";
+
+以下是一些使用该类的示例。您可以根据之前指定的元数据过滤查询，但请注意，目前仅支持字符串值。
+
+有关可接受的过滤器格式的更多信息，请参见[此处](https://turbopuffer.com/docs/reference/query#filter-parameters)。
+
+<CodeBlock language="typescript">{SimilaritySearchExample}</CodeBlock>
+
+## 相关内容
+
+- 向量存储的[概念指南](/docs/concepts/#vectorstores)
+- 向量存储的[操作指南](/docs/how_to/#vectorstores)

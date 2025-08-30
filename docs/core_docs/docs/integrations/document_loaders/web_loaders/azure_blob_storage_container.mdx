@@ -1,0 +1,33 @@
+---
+hide_table_of_contents: true
+sidebar_class_name: node-only
+---
+
+# Azure Blob Storage 容器
+
+:::tip 兼容性
+仅适用于 Node.js。
+:::
+
+本文介绍了如何将 Azure Blob Storage 上的容器加载为 LangChain 文档。
+
+## 安装设置
+
+要运行此加载器，您需要已经设置好并可以使用 Unstructured，且其可通过一个可用的 URL 端点访问。也可以配置为在本地运行。
+
+有关如何操作的信息，请参阅[此处](/docs/integrations/document_loaders/file_loaders/unstructured)的文档。
+
+此外，您还需要安装官方的 Azure Storage Blob 客户端库：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core @azure/storage-blob
+```
+
+## 使用方法
+
+配置好 Unstructured 后，您可以使用 Azure Blob Storage Container 加载器来加载文件，并将其转换为 Document 对象。
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/azure_blob_storage_container.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

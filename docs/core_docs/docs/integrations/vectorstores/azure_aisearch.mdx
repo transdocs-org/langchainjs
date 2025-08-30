@@ -1,0 +1,52 @@
+# Azure AI 搜索
+
+[Azure AI Search](https://azure.microsoft.com/products/ai-services/ai-search)（以前称为 Azure Search 和 Azure Cognitive Search）是一个分布式、RESTful 的搜索引擎，优化了在 Azure 上的生产级工作负载下的速度和相关性。它还支持使用 [k-近邻](https://zh.wikipedia.org/wiki/最近邻搜索) (kNN) 算法的向量搜索，以及 [语义搜索](https://learn.microsoft.com/azure/search/semantic-search-overview)。
+
+此向量存储集成支持全文搜索、向量搜索以及[混合搜索以获得最佳排序性能](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/azure-cognitive-search-outperforming-vector-search-with-hybrid/ba-p/3929167)。
+
+您可以从 [此页面](https://learn.microsoft.com/azure/search/vector-search-overview) 了解如何利用 Azure AI Search 的向量搜索功能。如果您还没有 Azure 账户，可以 [创建一个免费账户](https://azure.microsoft.com/free/) 来开始使用。
+
+## 安装配置
+
+您首先需要安装 `@azure/search-documents` SDK 和 [`@langchain/community`](https://www.npmjs.com/package/@langchain/community) 包：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install -S @langchain/community @langchain/core @azure/search-documents
+```
+
+您还需要运行一个 Azure AI Search 实例。您可以按照 [本指南](https://learn.microsoft.com/azure/search/search-create-service-portal) 在 Azure 门户中免费部署一个实例。
+
+当您的实例运行后，请确保您已获取终结点和管理员密钥（查询密钥只能用于搜索文档，不能用于索引、更新或删除）。终结点是您在 Azure 门户中实例的 "概览" 部分下找到的 URL。管理员密钥可以在实例的 "密钥" 部分下找到。然后您需要设置以下环境变量：
+
+import CodeBlock from "@theme/CodeBlock";
+import EnvVars from "@examples/indexes/vector_stores/azure_aisearch/.env.example";
+
+<CodeBlock language="text">{EnvVars}</CodeBlock>
+
+## 关于混合搜索
+
+混合搜索是一种结合了全文搜索和向量搜索优势的功能，以提供最佳的排序性能。该功能在 Azure AI Search 向量存储中默认启用，但您可以通过在创建向量存储时设置 `search.type` 属性来选择不同的搜索查询类型。
+
+您可以在 [官方文档](https://learn.microsoft.com/azure/search/hybrid-search-overview) 中了解更多关于混合搜索及其如何提升搜索结果的信息。
+
+在某些场景下，例如检索增强生成 (RAG)，您可能希望在启用混合搜索的同时启用 **语义排序** 以提升搜索结果的相关性。您可以通过在创建向量存储时将 `search.type` 属性设置为 `AzureAISearchQueryType.SemanticHybrid` 来启用语义排序。
+请注意，语义排序功能仅在基本版及更高级的定价层级中可用，并且受[区域可用性](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/?products=search) 限制。
+
+您可以在 [这篇博客文章](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/azure-cognitive-search-outperforming-vector-search-with-hybrid/ba-p/3929167) 中了解更多关于使用语义排序结合混合搜索的性能表现。
+
+## 示例：索引文档、向量搜索与 LLM 集成
+
+以下是一个示例，展示了如何从文件中将文档索引到 Azure AI Search 中，执行混合搜索查询，并最终使用链（chain）基于检索到的文档回答自然语言问题。
+
+import Example from "@examples/indexes/vector_stores/azure_aisearch/azure_aisearch.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

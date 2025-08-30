@@ -1,0 +1,67 @@
+# 如何按相似性选择示例
+
+:::info 前提条件
+
+本指南假定您熟悉以下概念：
+
+- [提示模板](/docs/concepts/prompt_templates)
+- [示例选择器](/docs/how_to/example_selectors)
+- [向量存储](/docs/concepts/vectorstores)
+
+:::
+
+该对象根据与输入的相似性来选择示例。
+它通过查找与输入具有最高余弦相似度的嵌入示例来实现这一点。
+
+import CodeBlock from "@theme/CodeBlock";
+import ExampleSimilarity from "@examples/prompts/semantic_similarity_example_selector.ts";
+
+示例对象中的每个字段将用作参数以格式化传递给 `FewShotPromptTemplate` 的 `examplePrompt`。
+因此，每个示例都应包含您正在使用的示例提示所需的所有字段。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+<CodeBlock language="typescript">{ExampleSimilarity}</CodeBlock>
+
+默认情况下，示例对象中的每个字段会被连接在一起，进行嵌入，并存储在向量存储中，以便后续对用户查询进行相似性搜索。
+
+如果您只想嵌入特定的键
+（例如，您只想搜索与用户提供查询相似的示例），可以在最终的 `options` 参数中传递一个 `inputKeys` 数组。
+
+## 从现有向量存储加载
+
+您也可以通过将实例直接传递给 `SemanticSimilarityExampleSelector` 构造函数来使用预初始化的向量存储，如下所示。您还可以通过 `addExample` 方法添加更多示例：
+
+import ExampleSimilarityFromExisting from "@examples/prompts/semantic_similarity_example_selector_from_existing.ts";
+
+<CodeBlock language="typescript">{ExampleSimilarityFromExisting}</CodeBlock>
+
+## 元数据过滤
+
+添加示例时，每个字段在生成的文档中都可作为元数据使用。如果您希望对搜索空间有更多控制，可以在示例中添加额外字段，并在初始化选择器时传递一个 `filter` 参数：
+
+import ExampleSimilarityMetadataFiltering from "@examples/prompts/semantic_similarity_example_selector_metadata_filtering.ts";
+
+<CodeBlock language="typescript">
+  {ExampleSimilarityMetadataFiltering}
+</CodeBlock>
+
+## 自定义向量存储检索器
+
+您还可以传递一个向量存储检索器而不是向量存储。一种有用的方式是如果您希望使用除相似性搜索之外的检索方法，例如最大边缘相关性：
+
+import ExampleSimilarityCustomRetriever from "@examples/prompts/semantic_similarity_example_selector_custom_retriever.ts";
+
+<CodeBlock language="typescript">{ExampleSimilarityCustomRetriever}</CodeBlock>
+
+## 下一步
+
+您现在已经了解了一些关于在示例选择器中使用相似性的知识。
+
+接下来，请查看这篇关于如何使用[基于长度的示例选择器](/docs/how_to/example_selectors_length_based)的指南。

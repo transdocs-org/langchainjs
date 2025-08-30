@@ -1,0 +1,98 @@
+---
+sidebar_position: 0
+---
+
+# 简介
+
+**LangChain** 是一个用于开发由大型语言模型（LLMs）驱动的应用程序的框架。
+
+LangChain 简化了 LLM 应用生命周期的每一个阶段：
+
+- **开发**：使用 LangChain 的开源 [构建模块](/docs/concepts/lcel)、[组件](/docs/concepts) 和 [第三方集成](/docs/integrations/platforms/) 构建你的应用程序。
+  使用 [LangGraph.js](/docs/concepts/architecture#langgraph) 构建具有一流流式传输和人工介入支持的状态化代理。
+- **生产化**：使用 [LangSmith](https://docs.smith.langchain.com/) 检查、监控和评估你的链，以便你可以持续优化并自信地部署。
+- **部署**：使用 [LangGraph Cloud](https://langchain-ai.github.io/langgraph/cloud/) 将你的 LangGraph 应用程序转化为生产就绪的 API 和助手。
+
+import ThemedImage from "@theme/ThemedImage";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
+<ThemedImage
+  alt="图示 LangChain 框架的分层组织结构，显示了多层之间的相互关联部分。"
+  sources={{
+    light: useBaseUrl("/svg/langchain_stack_062024.svg"),
+    dark: useBaseUrl("/svg/langchain_stack_062024_dark.svg"),
+  }}
+  title="LangChain 框架概览"
+  style={{ width: "100%" }}
+/>
+
+具体来说，该框架包括以下开源库：
+
+- **`@langchain/core`**：基础抽象和 LangChain 表达式语言。
+- **`@langchain/community`**：第三方集成。
+  - 合作伙伴包（例如 **`@langchain/openai`**、**`@langchain/anthropic`** 等）：一些集成进一步拆分为仅依赖 **`@langchain/core`** 的轻量级独立包。
+- **`langchain`**：组成应用程序认知架构的链、代理和检索策略。
+- **[LangGraph.js](https://langchain-ai.github.io/langgraphjs/)**：通过将步骤建模为图中的边和节点，使用 LLM 构建强大且具有状态的多角色应用程序。
+- **[LangSmith](https://docs.smith.langchain.com)**：一个开发者平台，让你能够调试、测试、评估和监控 LLM 应用程序。
+
+:::note
+
+这些文档专注于 JavaScript 版本的 LangChain 库。有关 Python 版本的 LangChain 库文档，请访问 [这里](https://python.langchain.com)。
+
+:::
+
+## [教程](/docs/tutorials)
+
+如果你想要构建特定内容，或者更倾向于实践学习，请查看我们的 [教程](/docs/tutorials)。
+这是开始的最佳起点。
+
+以下是一些适合入门的教程：
+
+- [构建一个简单的 LLM 应用程序](/docs/tutorials/llm_chain)
+- [构建一个聊天机器人](/docs/tutorials/chatbot)
+- [构建一个代理](https://langchain-ai.github.io/langgraphjs/tutorials/quickstart/)
+- [LangGraph.js 快速入门](https://langchain-ai.github.io/langgraphjs/tutorials/quickstart/)
+
+完整 LangChain 教程列表请参见 [这里](/docs/tutorials)，其他 LangGraph 教程请参见 [这里](https://langchain-ai.github.io/langgraphjs/tutorials/)。
+
+## [操作指南](/docs/how_to/)
+
+[这里](/docs/how_to/) 提供了对“我该如何……？”这类问题的简短回答。
+这些操作指南不会深入探讨主题——你可以在 [教程](/docs/tutorials) 和 [API 参考](https://api.js.langchain.com) 中找到更深入的内容。
+不过，这些指南可以帮助你快速完成常见任务。
+
+LangGraph 相关的操作指南请参见 [这里](https://langchain-ai.github.io/langgraphjs/how-tos/)。
+
+## [概念指南](/docs/concepts)
+
+这里介绍了你需要了解的所有 LangChain 关键部分！[这里](/docs/concepts) 提供了所有 LangChain 概念的高层次解释。
+
+如需深入了解 LangGraph 的概念，请参见 [此页面](https://langchain-ai.github.io/langgraph/concepts/)。
+
+## [API 参考](https://api.js.langchain.com)
+
+前往参考部分获取 LangChain JavaScript 包中所有类和方法的完整文档。
+
+## 生态系统
+
+### [🦜🛠️ LangSmith](https://docs.smith.langchain.com)
+
+追踪并评估你的语言模型应用程序和智能代理，帮助你从原型过渡到生产环境。
+
+### [🦜🕸️ LangGraph](https://langchain-ai.github.io/langgraphjs/)
+
+使用 LLM 构建具有状态的多角色应用程序。与 LangChain 无缝集成，但也可以独立使用。LangGraph 支持生产级别的代理，已被 LinkedIn、Uber、Klarna、GitLab 等众多公司所信赖。
+
+## 其他资源
+
+### [安全](/docs/security)
+
+阅读我们的 [安全](/docs/security) 最佳实践，确保你安全地使用 LangChain 进行开发。
+
+### [集成](/docs/integrations/platforms/)
+
+LangChain 是一个丰富工具生态的一部分，这些工具与我们的框架集成并在其基础上构建。查看我们不断增长的 [集成列表](/docs/integrations/platforms/)。
+
+### [贡献](/docs/contributing)
+
+查看开发者指南，了解有关贡献的指导原则，并帮助你设置开发环境。

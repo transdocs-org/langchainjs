@@ -1,0 +1,157 @@
+# 结构化输出
+
+## 概述
+
+对于许多应用（例如聊天机器人），模型需要直接以自然语言回复用户。然而，在某些场景下我们需要模型以**结构化格式**输出。例如，我们可能希望将模型输出存储在数据库中，并确保输出符合数据库的模式。这种需求催生了结构化输出的概念，即可以指示模型以特定的输出结构进行响应。
+
+![结构化输出](/img/structured_output.png)
+
+## 关键概念
+
+**(1) 模式定义：** 输出结构表示为一个模式，可以通过多种方式定义。  
+**(2) 返回结构化输出：** 将该模式提供给模型，并指示其返回符合该模式的输出。
+
+## 推荐用法
+
+以下伪代码展示了使用结构化输出时推荐的工作流程。LangChain 提供了一个方法 [`withStructuredOutput()`](/docs/how_to/structured_output/#the-.withstructuredoutput-method)，它可以自动完成将模式绑定到[模型](/docs/concepts/chat_models/)并解析输出的过程。此辅助函数对所有支持结构化输出的模型提供者都可用。
+
+```typescript
+// 定义模式
+const schema = { foo: "bar" };
+// 将模式绑定到模型
+const modelWithStructure = model.withStructuredOutput(schema);
+// 调用模型以生成符合模式的结构化输出
+const structuredOutput = await modelWithStructure.invoke(userInput);
+```
+
+## 模式定义
+
+核心概念是，模型响应的输出结构需要以某种方式表示。虽然可以使用的对象类型取决于你正在使用的模型，但在 TypeScript 中，通常允许或推荐使用一些常见的对象类型用于结构化输出。
+
+结构化输出最简单且常见的格式是 Zod 模式定义：
+
+```typescript
+import { z } from "zod";
+
+const ResponseFormatter = z.object({
+  answer: z.string().describe("对用户问题的回答"),
+  followup_question: z
+    .string()
+    .describe("用户可能提出的后续问题"),
+});
+```
+
+你也可以定义一个 JSONSchema 对象，这是 Zod 模式在发送给模型提供者之前内部转换为的格式：
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/product.schema.json",
+  "title": "ResponseFormatter",
+  "type": "object",
+  "properties": {
+    "answer": {
+      "description": "对用户问题的回答",
+      "type": "string"
+    },
+    "followup_question": {
+      "description": "用户可能提出的后续问题",
+      "type": "string"
+    }
+  },
+  "required": ["answer", "followup_question"]
+}
+```
+
+## 返回结构化输出
+
+在定义了模式之后，我们需要一种方法来指示模型使用它。虽然一种方法是将该模式包含在提示词中并“礼貌地请求”模型使用它，但不推荐这样做。我们有几种更强大的方法，利用模型提供者 API 中的原生功能。
+
+### 使用工具调用
+
+许多[模型提供者支持](/docs/integrations/chat/)工具调用，这一概念在我们的[工具调用指南](/docs/concepts/tool_calling/)中有更详细的讨论。简而言之，工具调用涉及将一个工具绑定到模型上，当合适时，模型可以“决定”调用此工具并确保其响应符合该工具的模式。基于此，核心概念非常直接：**创建一个以我们的模式为结构的工具并将其绑定到模型！** 以下是一个使用上面定义的 `ResponseFormatter` 模式的示例：
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+
+const model = new ChatOpenAI({
+  model: "gpt-4o-mini",
+  temperature: 0,
+});
+
+// 使用 ResponseFormatter 作为模式创建一个工具
+const responseFormatterTool = tool(async () => {}, {
+  name: "responseFormatter",
+  schema: ResponseFormatter,
+});
+
+// 将创建的工具绑定到模型
+const modelWithTools = model.bindTools([responseFormatterTool]);
+
+// 调用模型
+const aiMsg = await modelWithTools.invoke(
+  "细胞的动力工厂是什么？"
+);
+```
+
+### JSON 模式
+
+除了工具调用之外，某些模型提供者还支持一个名为 `JSON 模式` 的功能。它支持将 JSON 模式定义作为输入，并强制模型生成符合该模式的 JSON 输出。你可以在[此处](/docs/integrations/chat/)找到支持 JSON 模式的模型提供者列表。以下是一个使用 OpenAI 的 JSON 模式功能的示例：
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+
+const model = new ChatOpenAI({
+  model: "gpt-4o-mini",
+}).bind({
+  response_format: { type: "json_object" },
+});
+
+const aiMsg = await model.invoke(
+  "返回一个 JSON 对象，键为 'random_nums'，值为 [0-99] 范围内的 10 个随机数"
+);
+console.log(aiMsg.content);
+// 输出: {
+//   "random_nums": [23, 47, 89, 15, 34, 76, 58, 3, 62, 91]
+// }
+```
+
+一个重要的注意事项：模型**仍然**返回的是字符串，需要将其解析为 JSON 对象。当然，如果你需要更高级的功能，可以使用 `json` 库或 JSON 输出解析器。更多细节请参见此[关于 JSON 输出解析器的指南](/docs/how_to/output_parser_json)。
+
+```typescript
+import json
+const jsonObject = JSON.parse(aiMsg.content)
+// {'random_ints': [23, 47, 89, 15, 34, 76, 58, 3, 62, 91]}
+```
+
+## 结构化输出方法
+
+使用上述方法生成结构化输出时会遇到一些挑战：
+
+(1) 如果使用工具调用，则需要将工具调用的参数从对象解析回原始模式。  
+(2) 此外，当我们要强制模型始终使用工具时，需要对其进行指示，这是一个特定于提供者的设置。  
+(3) 如果使用 JSON 模式，则需要将输出解析为 JSON 对象。
+
+考虑到这些挑战，LangChain 提供了一个辅助函数 (`withStructuredOutput()`) 来简化整个过程。
+
+![withStructuredOutput 方法图示](/img/with_structured_output.png)
+
+该方法既可以将模式作为工具绑定到模型，又可以将输出解析为指定的输出模式。
+
+```typescript
+// 将模式绑定到模型
+const modelWithStructure = model.withStructuredOutput(ResponseFormatter);
+// 调用模型
+const structuredOutput = await modelWithStructure.invoke(
+  "细胞的动力工厂是什么？"
+);
+// 获取返回的对象
+console.log(structuredOutput);
+// { answer: "细胞的动力工厂是线粒体。线粒体是一种细胞器，负责生成细胞大部分三磷酸腺苷 (ATP)，ATP 是化学能的来源。", followup_question: "ATP 在细胞中的作用是什么？" }
+```
+
+:::info[进一步阅读]
+
+如需了解更多使用细节，请参见我们的[使用指南](/docs/how_to/structured_output/#the-.withstructuredoutput-method)。
+
+:::

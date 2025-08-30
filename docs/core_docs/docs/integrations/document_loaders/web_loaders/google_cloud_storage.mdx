@@ -1,0 +1,35 @@
+---
+hide_table_of_contents: true
+sidebar_class_name: node-only
+---
+
+# Google Cloud Storage
+
+:::tip 兼容性
+仅适用于 Node.js。
+:::
+
+本文介绍如何将 Google Cloud Storage 文件加载到 LangChain 文档中。
+
+## 准备工作
+
+要使用此加载器，你需要已经设置并准备好可在可用 URL 端点上使用的 Unstructured。也可以将其配置为在本地运行。
+
+有关如何操作的信息，请参阅[此处](/docs/integrations/document_loaders/file_loaders/unstructured)的文档。
+
+你还需要安装官方的 Google Cloud Storage SDK：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core @google-cloud/storage
+```
+
+## 使用方法
+
+配置好 Unstructured 后，你可以使用 Google Cloud Storage 加载器来加载文件，并将其转换为 Document。
+
+此外，你还可以选择性地提供一个 `storageOptions` 参数，用于指定你的存储选项，或者在不想使用应用默认凭据（ADC）作为默认方式时指定其他认证方式。
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/google_cloud_storage.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

@@ -1,0 +1,72 @@
+# 如何使用上下文压缩进行检索
+
+:::info 预备知识
+
+本指南假设您熟悉以下概念：
+
+- [检索器](/docs/concepts/retrievers)
+- [基于检索的增强生成 (RAG)](/docs/tutorials/rag)
+
+:::
+
+检索的一个挑战在于，通常在将数据引入系统时，您并不知道文档存储系统将面临的具体查询。这意味着与查询最相关的信息可能会被埋藏在包含大量无关文本的文档中。将整个文档传递到应用程序中可能会导致更昂贵的LLM调用和较差的响应。
+
+上下文压缩正是为了解决这个问题。其理念很简单：与其立即将检索到的文档原样返回，不如使用给定查询的上下文对它们进行压缩，以便只返回相关信息。“压缩”在这里既指压缩单个文档的内容，也指过滤掉整个文档。
+
+要使用上下文压缩检索器，您需要：
+
+- 一个基础检索器
+- 一个文档压缩器
+
+上下文压缩检索器将查询传递给基础检索器，获取初始文档并将其传递给文档压缩器。文档压缩器接收文档列表，并通过减少文档内容或直接丢弃文档来缩短列表。
+
+## 使用标准的向量存储检索器
+
+首先，我们初始化一个简单的向量存储检索器，并将2023年国情咨文演讲（分块）存储进去。
+对于一个示例问题，我们的检索器返回一个或两个相关文档以及一些不相关的文档，甚至相关文档中也包含大量无关信息。
+为了提取所有可用的上下文，我们使用`LLMChainExtractor`，它将遍历最初返回的文档，并仅提取与查询相关的内容。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/retrievers/contextual_compression.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## `EmbeddingsFilter`
+
+对每个检索到的文档进行额外的LLM调用既昂贵又缓慢。`EmbeddingsFilter`提供了一种更便宜且更快的替代方案，它通过将文档和查询嵌入，并仅返回与查询嵌入足够相似的文档。
+
+这对于非向量存储检索器特别有用，因为在这些情况下我们可能无法控制返回的块大小，或者作为以下流程中的一部分。
+
+以下是一个示例：
+
+import EmbeddingsFilterExample from "@examples/retrievers/embeddings_filter.ts";
+
+<CodeBlock language="typescript">{EmbeddingsFilterExample}</CodeBlock>
+
+## 将压缩器和文档转换器串联起来
+
+通过使用`DocumentCompressorPipeline`，我们还可以轻松地按顺序组合多个压缩器。除了压缩器之外，我们还可以将BaseDocumentTransformers添加到我们的流程中，这些转换器不执行任何上下文压缩，而是对一组文档执行某些转换。
+例如，`TextSplitters`可以用作文档转换器，将文档分割成更小的部分，而`EmbeddingsFilter`可以用来根据各个块与输入查询的相似性来过滤文档。
+
+下面，我们创建了一个压缩器流程，首先将从[Tavily网络搜索API检索器](/docs/integrations/retrievers/tavily)检索到的原始网页文档分割成较小的块，然后根据与查询的相关性进行过滤。
+结果是更小的块，并且语义上与输入查询相似。
+这跳过了将文档添加到向量存储以执行相似性搜索的需要，这对于一次性使用场景非常有用：
+
+import DocumentCompressorPipelineExample from "@examples/retrievers/document_compressor_pipeline.ts";
+
+<CodeBlock language="typescript">{DocumentCompressorPipelineExample}</CodeBlock>
+
+## 后续步骤
+
+现在您已经了解了几种使用上下文压缩从结果中去除不良数据的方法。
+
+请参阅各个部分以深入了解特定检索器，或者参阅[更广泛的RAG教程](/docs/tutorials/rag)，或参阅此部分以了解如何
+[在任何数据源上创建自己的自定义检索器](/docs/how_to/custom_retriever/)。

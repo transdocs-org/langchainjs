@@ -1,0 +1,33 @@
+---
+hide_table_of_contents: true
+sidebar_class_name: node-only
+---
+
+# Sonix 音频
+
+:::tip 兼容性
+仅支持 Node.js。
+:::
+
+本文介绍了如何使用 [Sonix](https://sonix.ai/) API 从音频文件中加载文档对象。
+
+## 准备工作
+
+要运行此加载器，你需要在 https://sonix.ai/ 创建一个账户，并从 https://my.sonix.ai/api 页面获取认证密钥。
+
+此外，还需要安装 `sonix-speech-recognition` 库：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core sonix-speech-recognition
+```
+
+## 使用方法
+
+配置好认证密钥后，你可以使用该加载器创建音频转录内容，并将其转换为文档对象。
+在 `request` 参数中，可以通过设置 `audioFilePath` 指定本地文件，或使用 `audioUrl` 指定远程文件。
+你还需要指定音频的语言。支持的语言列表请参见 [此处](https://sonix.ai/docs/api#languages)。
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/sonix_audio_transcription.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

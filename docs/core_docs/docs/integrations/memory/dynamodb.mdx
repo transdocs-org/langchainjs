@@ -1,0 +1,35 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# 基于 DynamoDB 的聊天记忆
+
+为了在聊天会话间实现更长期的持久化存储，您可以将支持 `BufferMemory` 等聊天记忆类的默认内存中 `chatHistory` 替换为 DynamoDB 实例。
+
+## 安装配置
+
+首先，在您的项目中安装 AWS DynamoDB 客户端：
+
+```bash npm2yarn
+npm install @aws-sdk/client-dynamodb
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+接下来，登录您的 AWS 账户并创建一个 DynamoDB 表。将表命名为 `langchain`，分区键命名为 `id`。请确保您的分区键是字符串类型。排序键和其他设置可以保持默认。
+
+您还需要获取具有访问该表权限的角色或用户的 AWS 访问密钥和密钥，并将它们添加到您的环境变量中。
+
+## 使用方法
+
+import Example from "@examples/memory/dynamodb-store.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

@@ -1,0 +1,73 @@
+---
+sidebar_class_name: hidden
+---
+
+# Agent 与 Zapier NLA 集成
+
+:::warning
+此模块已弃用，不再受支持。以下文档在 0.2.0 或更高版本中将无法使用。
+:::
+
+完整文档请访问：https://nla.zapier.com/start/
+
+**Zapier 自然语言操作（Zapier Natural Language Actions，简称 NLA）** 通过自然语言 API 接口，为您提供访问 Zapier 平台上 5000+ 应用程序和 20000+ 操作的功能。
+
+NLA 支持如 Gmail、Salesforce、Trello、Slack、Asana、HubSpot、Google Sheets、Microsoft Teams 等应用，以及更多其他应用：https://zapier.com/apps
+
+Zapier NLA 处理所有底层 API 的身份验证以及从自然语言到 API 调用的转换，并为 LLM 返回简化后的输出。其核心思想是：您或您的用户可以通过一个类似 OAuth 的设置窗口暴露一组操作，之后您可以通过 REST API 查询和执行这些操作。
+
+NLA 提供了 API Key 和 OAuth 两种方式来签名 NLA API 请求。
+
+服务端（API Key）：适用于快速开始、测试以及 LangChain 仅使用开发者在 Zapier 账户中暴露的操作（并使用开发者在 Zapier.com 上连接的账户）的生产场景。
+
+用户端（OAuth）：适用于您正在部署面向终端用户的程序，并且 LangChain 需要访问用户在 Zapier.com 上暴露的操作和连接账户的生产场景。
+
+您可以通过环境变量（`ZAPIER_NLA_OAUTH_ACCESS_TOKEN` 或 `ZAPIER_NLA_API_KEY`）附加 NLA 凭据，或者参考 API 文档中 `ZapierNLAWrapper` 的参数说明。
+
+详细认证信息请参阅 [auth 文档](https://docs.zapier.com/platform/build/auth)。
+
+以下示例演示了如何将 Zapier 集成作为 Agent 使用：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+```typescript
+import { OpenAI } from "@langchain/openai";
+import { ZapierNLAWrapper } from "langchain/tools";
+import {
+  initializeAgentExecutorWithOptions,
+  ZapierToolKit,
+} from "langchain/agents";
+
+const model = new OpenAI({ temperature: 0 });
+const zapier = new ZapierNLAWrapper();
+const toolkit = await ZapierToolKit.fromZapierNLAWrapper(zapier);
+
+const executor = await initializeAgentExecutorWithOptions(
+  toolkit.tools,
+  model,
+  {
+    agentType: "zero-shot-react-description",
+    verbose: true,
+  }
+);
+console.log("Agent 加载完成。");
+
+const input = `总结我收到的关于硅谷银行的最后一封邮件，并将总结内容发送到 #test-zapier Slack 频道。`;
+
+console.log(`正在使用输入 "${input}" 执行操作...`);
+
+const result = await executor.invoke({ input });
+
+console.log(`获得输出：${result.output}`);
+```
+
+## 相关链接
+
+- Tool [概念指南](/docs/concepts/tools)
+- Tool [操作指南](/docs/how_to/#tools)

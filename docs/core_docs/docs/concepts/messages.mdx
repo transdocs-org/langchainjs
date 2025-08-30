@@ -1,0 +1,261 @@
+# 消息
+
+:::info 前置条件
+
+- [聊天模型](/docs/concepts/chat_models)
+
+:::
+
+## 概述
+
+消息是[聊天模型](/docs/concepts/chat_models)中通信的基本单位。它们用于表示聊天模型的输入和输出，以及与对话相关的任何附加上下文或元数据。
+
+每条消息都有一个 **角色**（例如："user"、"assistant"）、**内容**（例如：文本、多模态数据）以及可能因聊天模型提供者而异的附加元数据。
+
+LangChain 提供了一种统一的消息格式，可以在不同的聊天模型中使用，允许用户在使用不同聊天模型时无需担心每个模型提供者所使用的消息格式的具体细节。
+
+## 消息内部包含什么？
+
+一条消息通常包括以下信息：
+
+- **角色**：消息的角色（例如："user"、"assistant"）。
+- **内容**：消息的内容（例如：文本、多模态数据）。
+- 附加元数据：id、name、[token 使用情况](/docs/concepts/tokens)以及其他模型特定的元数据。
+
+### 角色
+
+角色用于区分对话中不同类型的消息，并帮助聊天模型理解如何响应给定的消息序列。
+
+| **角色**              | **描述**                                                                                                                                                                                                 |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **system**            | 用于告诉聊天模型应该如何行为，并提供额外的上下文。并非所有聊天模型提供者都支持此角色。                                                                                                                       |
+| **user**              | 表示用户与模型交互的输入，通常以文本或其他交互式输入形式表示。                                                                                                                                                |
+| **assistant**         | 表示模型的响应，可以包含文本或调用工具的请求。                                                                                                                                                              |
+| **tool**              | 用于在检索到外部数据或处理完成后，将工具调用的结果传回模型的消息。与支持[工具调用](/docs/concepts/tool_calling)的聊天模型一起使用。                                                                             |
+| **function** (遗留)   | 这是一个遗留角色，对应于 OpenAI 的旧函数调用 API。应使用 **tool** 角色替代。                                                                                                                                 |
+
+### 内容
+
+消息的内容可以是文本，也可以是一个表示[多模态数据](/docs/concepts/multimodality)（例如：图像、音频、视频）的对象数组。内容的确切格式可能因聊天模型提供者而异。
+
+目前，大多数聊天模型都支持文本作为主要内容类型，部分模型还支持多模态数据。然而，大多数聊天模型提供者对多模态数据的支持仍然有限。
+
+更多信息请参见：
+
+- [HumanMessage](#humanmessage) -- 用于用户输入中的内容。
+- [AIMessage](#aimessage) -- 用于模型响应中的内容。
+- [多模态性](/docs/concepts/multimodality) -- 有关多模态内容的更多信息。
+
+### 其他消息数据
+
+根据聊天模型提供者不同，消息可能包括以下其他数据：
+
+- **ID**：消息的可选唯一标识符。
+- **Name**：一个可选的 `name` 属性，用于区分具有相同角色的不同实体/说话者。不是所有模型都支持此功能！
+- **元数据**：关于消息的附加信息，如时间戳、token 使用情况等。
+- **工具调用**：模型请求调用一个或多个工具。更多信息请参见 [工具调用](/docs/concepts/tool_calling)。
+
+## 对话结构
+
+发送到聊天模型的消息序列应遵循特定结构，以确保聊天模型能够生成有效的响应。
+
+例如，典型的对话结构可能如下所示：
+
+1. **用户消息**： "你好，你怎么样？"
+2. **助手消息**： "我很好，谢谢你问。"
+3. **用户消息**： "你能给我讲个笑话吗？"
+4. **助手消息**： "当然！为什么稻草人赢得了一个奖项？因为他在他的领域非常出色！"
+
+有关管理聊天历史和确保对话结构正确的更多信息，请阅读 [聊天历史](/docs/concepts/chat_history) 指南。
+
+## LangChain 消息
+
+LangChain 提供了一种统一的消息格式，可以在所有聊天模型中使用，允许用户在使用不同聊天模型时无需担心每个模型提供者所使用的消息格式的具体细节。
+
+LangChain 消息是继承自 [BaseMessage](https://api.js.langchain.com/classes/_langchain_core.messages.BaseMessage.html) 的类。
+
+五种主要的消息类型是：
+
+- [SystemMessage](#systemmessage)：对应 **system** 角色
+- [HumanMessage](#humanmessage)：对应 **user** 角色
+- [AIMessage](#aimessage)：对应 **assistant** 角色
+- [AIMessageChunk](#aimessagechunk)：对应 **assistant** 角色，用于[流式传输](/docs/concepts/streaming)响应
+- [ToolMessage](#toolmessage)：对应 **tool** 角色
+
+其他重要的消息包括：
+
+- [RemoveMessage](#removemessage) -- 不对应任何角色。这是一个抽象概念，主要用于 [LangGraph](/docs/concepts/architecture#langgraph) 中管理聊天历史。
+- **遗留** [FunctionMessage](#legacy-functionmessage)：对应 OpenAI 的 **遗留** 函数调用 API 中的 **function** 角色。
+
+您可以在 [API 参考](https://api.js.langchain.com/modules/_langchain_core.messages.html) 中找到有关 **消息** 的更多信息。
+
+### SystemMessage
+
+`SystemMessage` 用于引导 AI 模型的行为并提供额外的上下文，例如指示模型采用特定角色或设置对话语气（例如："这是一场关于烹饪的对话"）。
+
+不同的聊天提供者可能通过以下方式之一支持系统消息：
+
+- **通过 "system" 消息角色**：在这种情况下，系统消息作为消息序列的一部分，其角色明确设置为 "system"。
+- **通过单独的 API 参数传递系统指令**：系统指令不是作为消息包含的，而是通过专用的 API 参数传递的。
+- **不支持系统消息**：某些模型根本不支持系统消息。
+
+大多数主要的聊天模型提供者都支持通过聊天消息或单独的 API 参数传递系统指令。LangChain 会根据提供者的能力自动适配。如果提供者支持用于系统指令的单独 API 参数，LangChain 将提取系统消息的内容并通过该参数传递。
+
+如果提供者不支持系统消息，在大多数情况下，LangChain 会尝试将系统消息的内容合并到 HumanMessage 中，或者在无法合并时抛出异常。然而，这种行为尚未在所有实现中一致执行，如果您使用的是不太流行的聊天模型实现（例如：来自 `@langchain/community` 包的实现），建议检查该模型的特定文档。
+
+### HumanMessage
+
+`HumanMessage` 对应 **"user"** 角色。人类消息表示用户与模型交互的输入。
+
+#### 文本内容
+
+大多数聊天模型期望用户的输入为文本形式。
+
+```typescript
+import { HumanMessage } from "@langchain/core/messages";
+
+await model.invoke([new HumanMessage("Hello, how are you?")]);
+```
+
+:::tip
+当使用字符串作为输入调用聊天模型时，LangChain 会自动将字符串转换为 `HumanMessage` 对象。这对于快速测试很有用。
+
+```typescript
+await model.invoke("Hello, how are you?");
+```
+
+:::
+
+#### 多模态内容
+
+某些聊天模型接受多模态输入，例如图像、音频、视频或 PDF 文件等。
+
+更多信息请参见 [多模态性](/docs/concepts/multimodality) 指南。
+
+### AIMessage
+
+`AIMessage` 用于表示角色为 **"assistant"** 的消息。这是模型的响应，可以包含文本或调用工具的请求。它还可以包括其他媒体类型，如图像、音频或视频——尽管目前这种情况仍然少见。
+
+```typescript
+import { HumanMessage } from "@langchain/core/messages";
+
+const aiMessage = await model.invoke([new HumanMessage("Tell me a joke")]);
+console.log(aiMessage);
+```
+
+```text
+AIMessage({
+  content: "为什么鸡要过马路？\n\n为了到马路的另一边！",
+  tool_calls: [],
+  response_metadata: { ... },
+  usage_metadata: { ... },
+})
+```
+
+一个 `AIMessage` 有以下属性。其中 **标准化** 的属性是 LangChain 努力在不同聊天模型提供者之间标准化的属性。**raw** 字段是特定于模型提供者的，可能有所不同。
+
+| 属性                 | 标准化/原始 | 描述                                                                                                                                                                                      |
+| -------------------- | :---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `content`            | 原始        | 通常是一个字符串，但也可以是内容块的列表。详见 [内容](#content)。                                                                                                                        |
+| `tool_calls`         | 标准化      | 与消息关联的工具调用。详见 [工具调用](/docs/concepts/tool_calling)。                                                                                                                     |
+| `invalid_tool_calls` | 标准化      | 存在解析错误的工具调用。详见 [工具调用](/docs/concepts/tool_calling)。                                                                                                                   |
+| `usage_metadata`     | 标准化      | 消息的使用元数据，如 [token 计数](/docs/concepts/tokens)。详见 [使用元数据 API 参考](https://api.js.langchain.com/types/_langchain_core.messages.UsageMetadata.html)。                 |
+| `id`                 | 标准化      | 消息的可选唯一标识符，理想情况下由创建消息的提供者/模型提供。                                                                                                                             |
+| `response_metadata`  | 原始        | 响应元数据，例如响应头、logprobs、token 计数等。                                                                                                                                          |
+
+#### content
+
+`AIMessage` 的 **content** 属性表示聊天模型生成的响应。
+
+内容可以是：
+
+- **文本** -- 几乎所有聊天模型的标准。
+- 一个 **对象数组** -- 每个对象表示一个内容块，并关联一个 `type`。
+  - 被 Anthropic 用于在进行 [工具调用](/docs/concepts/tool_calling) 时展示代理的思考过程。
+  - 被 OpenAI 用于音频输出。更多信息请参见 [多模态内容](/docs/concepts/multimodality)。
+
+:::important
+**content** 属性在不同聊天模型提供者之间 **未标准化**，主要是因为目前还缺乏足够的通用案例来进行泛化。
+:::
+
+### AIMessageChunk
+
+通常会[流式传输](/docs/concepts/streaming)聊天模型生成的响应，以便用户可以在生成过程中实时查看响应，而不是等待整个响应生成后再显示。
+
+它由聊天模型的 `stream` 和 `streamEvents` 方法返回。
+
+例如：
+
+```typescript
+for await (const chunk of model.stream([
+  new HumanMessage("天空是什么颜色？"),
+])) {
+  console.log(chunk);
+}
+```
+
+`AIMessageChunk` 的结构几乎与 `AIMessage` 相同，但使用了不同的 [ToolCallChunk](https://api.js.langchain.com/types/_langchain_core.messages_tool.ToolCallChunk.html)，以便能够以标准化方式流式传输工具调用。
+
+#### 聚合
+
+`<Type>MessageChunks` 有一个 `concat` 方法可以使用，或者您可以单独导入它。这在您想要向用户显示最终响应时非常有用。
+
+```typescript
+const aiMessage = chunk1.concat(chunk2).concat(chunk3).concat(...);
+```
+
+或
+
+```typescript
+import { concat } from "@langchain/core/utils/stream";
+const aiMessage = concat(chunk1, chunk2);
+```
+
+### ToolMessage
+
+这表示一个角色为 "tool" 的消息，其中包含[调用工具](/docs/concepts/tool_calling)的结果。除了 `role` 和 `content` 之外，此消息还有：
+
+- 一个 `tool_call_id` 字段，表示用于生成此结果的工具调用的 ID。
+- 一个 `artifact` 字段，可用于传递工具执行过程中有用的任意工件，但不应发送给模型。
+
+更多信息请参见 [工具调用](/docs/concepts/tool_calling)。
+
+### RemoveMessage
+
+这是一种特殊的消息类型，不对应任何角色。它用于 [LangGraph](/docs/concepts/architecture#langgraph) 中管理聊天历史。
+
+更多信息请参见如何使用 `RemoveMessage`：
+
+- [内存概念指南](https://langchain-ai.github.io/langgraphjs/concepts/memory/)
+- [如何删除消息](https://langchain-ai.github.io/langgraphjs/how-tos/delete-messages/)
+
+### （遗留）FunctionMessage
+
+这是一个遗留消息类型，对应于 OpenAI 的旧函数调用 API。应使用 `ToolMessage` 替代，以对应更新的工具调用 API。
+
+## OpenAI 格式
+
+### 输入
+
+聊天模型也接受 OpenAI 的格式作为聊天模型的 **输入**：
+
+```typescript
+await chatModel.invoke([
+  {
+    role: "user",
+    content: "Hello, how are you?",
+  },
+  {
+    role: "assistant",
+    content: "I'm doing well, thank you for asking.",
+  },
+  {
+    role: "user",
+    content: "Can you tell me a joke?",
+  },
+]);
+```
+
+### 输出
+
+目前，模型的输出将以 LangChain 消息的形式返回，因此如果您也需要输出采用 OpenAI 格式，则需要将输出转换为 OpenAI 格式。

@@ -1,0 +1,172 @@
+---
+sidebar_class_name: node-only
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Google Vertex AI 匹配引擎
+
+:::tip 兼容性
+仅适用于 Node.js。
+:::
+
+Google Vertex AI 匹配引擎“提供了业界领先的高规模、低延迟向量数据库。这些向量数据库通常被称为向量相似匹配或近似最近邻（ANN）服务。”
+
+## 准备工作
+
+:::caution
+该模块需要预先创建端点和已部署的索引，因为创建时间接近一小时。要了解更多信息，请参阅 LangChain Python 文档中的 [创建索引并将其部署到端点](https://python.langchain.com/docs/integrations/vectorstores/google_vertex_ai_vector_search/#deploy-index-to-the-endpoint)。
+:::
+
+在运行此代码之前，您需要确保在 Google Cloud 控制台中为相关项目启用了 Vertex AI API，并且已通过以下方式之一对 Google Cloud 进行了身份验证：
+
+- 您已登录一个被授权访问该项目的账户（使用 `gcloud auth application-default login`）。
+- 您正在使用一个被授权访问该项目的服务账户的机器上运行代码。
+- 您已下载被授权访问该项目的服务账户的凭据，并将 `GOOGLE_APPLICATION_CREDENTIALS` 环境变量设置为此文件的路径。
+
+使用以下命令安装身份验证库：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core google-auth-library
+```
+
+匹配引擎不会存储实际的文档内容，只存储嵌入向量。因此，您需要一个文档存储服务。以下示例使用 Google Cloud Storage，需要安装以下依赖：
+
+```bash npm2yarn
+npm install @google-cloud/storage
+```
+
+## 使用方法
+
+### 初始化引擎
+
+创建 `MatchingEngine` 对象时，需要一些关于匹配引擎的配置信息。您可以在 Cloud Console 的匹配引擎部分找到这些信息：
+
+- 索引的 ID
+- 索引端点的 ID
+
+您还需要一个文档存储。对于初始测试，可以使用 `InMemoryDocstore`，但建议使用 [GoogleCloudStorageDocstore](https://api.js.langchain.com/classes/_langchain_community.stores_doc_gcs.GoogleCloudStorageDocstore.html) 来更持久地存储文档。
+
+```typescript
+import { MatchingEngine } from "@langchain/community/vectorstores/googlevertexai";
+import { Document } from "langchain/document";
+import { SyntheticEmbeddings } from "langchain/embeddings/fake";
+import { GoogleCloudStorageDocstore } from "@langchain/community/stores/doc/gcs";
+
+const embeddings = new SyntheticEmbeddings({
+  vectorSize: Number.parseInt(
+    process.env.SYNTHETIC_EMBEDDINGS_VECTOR_SIZE ?? "768",
+    10
+  ),
+});
+
+const store = new GoogleCloudStorageDocstore({
+  bucket: process.env.GOOGLE_CLOUD_STORAGE_BUCKET!,
+});
+
+const config = {
+  index: process.env.GOOGLE_VERTEXAI_MATCHINGENGINE_INDEX!,
+  indexEndpoint: process.env.GOOGLE_VERTEXAI_MATCHINGENGINE_INDEXENDPOINT!,
+  apiVersion: "v1beta1",
+  docstore: store,
+};
+
+const engine = new MatchingEngine(embeddings, config);
+```
+
+### 添加文档
+
+```typescript
+const doc = new Document({ pageContent: "this" });
+await engine.addDocuments([doc]);
+```
+
+文档中的任何元数据都将转换为匹配引擎的“允许列表”值，可在查询时用于过滤。
+
+```typescript
+const documents = [
+  new Document({
+    pageContent: "this apple",
+    metadata: {
+      color: "red",
+      category: "edible",
+    },
+  }),
+  new Document({
+    pageContent: "this blueberry",
+    metadata: {
+      color: "blue",
+      category: "edible",
+    },
+  }),
+  new Document({
+    pageContent: "this firetruck",
+    metadata: {
+      color: "red",
+      category: "machine",
+    },
+  }),
+];
+
+// 添加所有文档
+await engine.addDocuments(documents);
+```
+
+文档假定还包含一个“id”参数。如果未设置，则会分配一个 ID 并作为文档的一部分返回。
+
+### 查询文档
+
+使用标准方法进行简单的 k 近邻搜索并返回所有结果：
+
+```typescript
+const results = await engine.similaritySearch("this");
+```
+
+### 使用过滤器/限制查询文档
+
+我们可以根据文档设置的元数据来限制返回的文档。例如，如果只想返回红色的文档，可以这样做：
+
+```typescript
+import { Restriction } from `@langchain/community/vectorstores/googlevertexai`;
+
+const redFilter: Restriction[] = [
+  {
+    namespace: "color",
+    allowList: ["red"],
+  },
+];
+const redResults = await engine.similaritySearch("this", 4, redFilter);
+```
+
+如果我们想执行更复杂的操作，例如红色但不可食用的物品：
+
+```typescript
+const filter: Restriction[] = [
+  {
+    namespace: "color",
+    allowList: ["red"],
+  },
+  {
+    namespace: "category",
+    denyList: ["edible"],
+  },
+];
+const results = await engine.similaritySearch("this", 4, filter);
+```
+
+### 删除文档
+
+删除文档是通过 ID 完成的。
+
+```typescript
+import { IdDocument } from `@langchain/community/vectorstores/googlevertexai`;
+
+const oldResults: IdDocument[] = await engine.similaritySearch("this", 10);
+const oldIds = oldResults.map( doc => doc.id! );
+await engine.delete({ids: oldIds});
+```
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

@@ -1,0 +1,34 @@
+# Friendli
+
+> [Friendli](https://friendli.ai/) 通过可扩展、高效的部署选项提升 AI 应用性能并优化成本节省，专为高需求的 AI 工作负载量身打造。
+
+本教程将指导你使用 LangChain 通过 `ChatFriendli` 集成聊天应用。`ChatFriendli` 提供了生成对话式 AI 响应的灵活方法，支持同步和异步调用。
+
+## 安装配置
+
+请确保已安装 `@langchain/community`。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+登录 [Friendli Suite](https://suite.friendli.ai/) 创建一个个人访问令牌，并将其设置为 `FRIENDLI_TOKEN` 环境变量。
+你也可以将团队 ID 设置为 `FRIENDLI_TEAM` 环境变量。
+
+你可以通过选择要使用的模型来初始化 Friendli 的聊天模型。默认模型是 `meta-llama-3-8b-instruct`。你可以在 [docs.friendli.ai](https://docs.friendli.ai/guides/serverless_endpoints/pricing#text-generation-models) 查看可用模型。
+
+## 使用方法
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/models/chat/friendli.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 相关内容
+
+- 聊天模型 [概念指南](/docs/concepts/chat_models)
+- 聊天模型 [操作指南](/docs/how_to/#chat-models)

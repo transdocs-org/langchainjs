@@ -1,0 +1,62 @@
+---
+sidebar_class_name: node-only
+---
+
+# Cassandra KV
+
+本示例演示了如何通过 `CassandraKVStore` 的 `BaseStore` 集成来设置聊天历史记录存储。请注意，还有一个 `CassandraChatMessageHistory` 集成，使用起来可能更简单，适合聊天历史记录存储。如果您需要一个支持前缀键的通用键值存储，则可以使用 `CassandraKVStore`。
+
+## 安装配置
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core cassandra-driver
+```
+
+根据您的数据库提供商，连接数据库的具体方法会有所不同。我们将创建一个 `configConnection` 文档，它将用于存储配置。
+
+### Apache Cassandra®
+
+在 [Apache Cassandra® 5.0](https://cassandra.apache.org/_/blog/Apache-Cassandra-5.0-Features-Storage-Attached-Indexes.html) 及以上版本中支持存储附加索引（由 `yieldKeys` 使用）。您可以使用标准连接文档，例如：
+
+```typescript
+const configConnection = {
+  contactPoints: ['h1', 'h2'],
+  localDataCenter: 'datacenter1',
+  credentials: {
+    username: <...> as string,
+    password: <...> as string,
+  },
+};
+```
+
+### Astra DB
+
+Astra DB 是一个云原生的 Cassandra 即服务（Cassandra-as-a-Service）平台。
+
+1. 创建一个 [Astra DB 账户](https://astra.datastax.com/register)。
+2. 创建一个[启用向量的数据库](https://astra.datastax.com/createDatabase)。
+3. 为您的数据库创建一个[token](https://docs.datastax.com/en/astra/docs/manage-application-tokens.html)。
+
+```typescript
+const configConnection = {
+  serviceProviderArgs: {
+    astra: {
+      token: <...> as string,
+      endpoint: <...> as string,
+    },
+  },
+};
+```
+
+除了使用 `endpoint:` 属性外，您也可以使用 `datacenterID:` 属性，并可选地使用 `regionName:` 属性。
+
+## 使用方法
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/stores/cassandra_storage.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 相关内容
+
+- [键值存储概念指南](/docs/concepts/key_value_stores)

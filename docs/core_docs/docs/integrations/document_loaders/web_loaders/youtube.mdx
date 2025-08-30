@@ -1,0 +1,24 @@
+---
+hide_table_of_contents: true
+---
+
+# YouTube 字幕
+
+本文介绍了如何将 YouTube 字幕加载到 LangChain 文档中。
+
+## 准备工作
+
+你需要安装 [youtubei.js](https://www.npmjs.com/package/youtubei.js) 以提取元数据：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core youtubei.js
+```
+
+## 使用方法
+
+你需要在 `url` 中指定视频链接。还可以指定 [ISO 639-1](https://zh.wikipedia.org/wiki/ISO_639-1) 中的 `language` 和 `addVideoInfo` 标志。
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/youtube.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

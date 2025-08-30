@@ -1,0 +1,45 @@
+---
+sidebar_class_name: web-only
+---
+
+# WebLLM
+
+:::tip 兼容性
+仅适用于网页环境。
+:::
+
+您可以使用 LangChain 的 [WebLLM](https://webllm.mlc.ai) 集成，在您的网页浏览器中直接运行大语言模型（LLM）。
+
+## 安装配置
+
+要与本地模型通信，您需要安装 [WebLLM SDK](https://www.npmjs.com/package/@mlc-ai/web-llm) 模块。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install -S @mlc-ai/web-llm @langchain/community @langchain/core
+```
+
+## 使用方法
+
+请注意，当第一次调用模型时，WebLLM 会下载该模型的完整权重文件。这可能会达到数个 GB，具体取决于您的用户网络连接和计算机配置，可能并非所有用户都能完成下载。虽然浏览器会对模型进行缓存以便后续调用使用，但我们建议您尽量使用最小的模型。
+
+另外，在调用和加载模型时，我们建议使用 [单独的 Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers)，以避免阻塞主线程的执行。
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/models/chat/integration_webllm.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+同时，也支持流式传输。
+
+## 示例
+
+有关完整的端到端示例，请查看 [此项目](https://github.com/jacoblee93/fully-local-pdf-chatbot)。
+
+## 相关内容
+
+- 聊天模型 [概念指南](/docs/concepts/chat_models)
+- 聊天模型 [操作指南](/docs/how_to/#chat-models)

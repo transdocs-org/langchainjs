@@ -1,0 +1,137 @@
+# 检索器
+
+<span data-heading-keywords="retriever,retrievers"></span>
+
+:::info[前置知识]
+
+- [向量存储](/docs/concepts/vectorstores/)
+- [嵌入模型](/docs/concepts/embedding_models/)
+- [文本分割器](/docs/concepts/text_splitters/)
+
+:::
+
+## 概述
+
+存在多种不同类型的检索系统，包括向量存储、图数据库和关系数据库。  
+随着大型语言模型的流行，检索系统已成为 AI 应用（例如 [RAG](/docs/concepts/rag/)）中的重要组成部分。  
+由于其重要性和多样性，LangChain 提供了统一的接口来与不同类型的检索系统交互。  
+LangChain [检索器](/docs/concepts/retrievers/) 接口非常简单：
+
+1. 输入：一个查询（字符串）  
+2. 输出：文档列表（标准化的 LangChain [Document](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html) 对象）
+
+## 核心概念
+
+![Retriever](/img/retriever_concept.png)
+
+所有检索器都实现了一个简单接口，用于通过自然语言查询检索文档。
+
+## 接口
+
+检索器的唯一要求是：能够接收查询并返回文档。  
+具体而言，[LangChain 的检索器类](https://api.js.langchain.com/classes/_langchain_core.retrievers.BaseRetriever.html) 只需实现 `_getRelevantDocuments` 方法，该方法接收 `query: string` 并返回与查询最相关的 [Document](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html) 对象列表。  
+用于获取相关文档的底层逻辑由检索器自身决定，可以是任何对应用最有用的方式。
+
+LangChain 检索器是一个 [可运行组件](/docs/how_to/lcel_cheatsheet/)，这是 LangChain 组件的标准接口。  
+这意味着它具有一些通用方法（包括 `invoke`）用于与之交互。可以通过查询调用检索器：
+```typescript
+const docs = await retriever.invoke(query);
+```
+检索器会返回一个 [Document](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html) 对象的列表，该对象具有两个属性：
+
+- `pageContent`：此文档的内容，目前为字符串。
+- `metadata`：与此文档关联的任意元数据（例如文档 id、文件名、来源等）。
+
+:::info[延伸阅读]
+
+- 查看我们的 [操作指南](/docs/how_to/custom_retriever/)，了解如何构建你自己的自定义检索器。
+
+:::
+
+## 常见类型
+
+尽管检索器接口非常灵活，但几类常见的检索系统被频繁使用。
+
+### 搜索 API
+
+需要注意的是，检索器并不需要真正**存储**文档。  
+例如，我们可以在搜索 API 之上构建检索器，仅返回搜索结果！
+
+### 关系型或图数据库
+
+检索器可以构建在关系型或图数据库之上。  
+在这些情况下，[查询分析](/docs/concepts/retrieval/) 技术（将自然语言转换为结构化查询）至关重要。  
+例如，你可以使用 text-to-SQL 转换为一个 SQL 数据库构建检索器。这样，一个自然语言查询（字符串）检索器就可以在幕后被转换为 SQL 查询。
+
+:::info[延伸阅读]
+
+- 查看我们的 [教程](/docs/tutorials/sql_qa/)，了解如何使用 SQL 数据库和 text-to-SQL 构建检索器。
+- 查看我们的 [教程](/docs/tutorials/graph/)，了解如何使用图数据库和 text-to-Cypher 构建检索器。
+
+:::
+
+### 词汇搜索
+
+如我们在 [检索](/docs/concepts/retrieval/) 的概念回顾中所述，许多搜索引擎基于将查询中的词语与每篇文档中的词语进行匹配。  
+[BM25](https://en.wikipedia.org/wiki/Okapi_BM25#:~:text=BM25%20is%20a%20bag%2Dof,slightly%20different%20components%20and%20parameters.) 和 [TF-IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) 是[两种流行的词汇搜索算法](https://cameronrwolfe.substack.com/p/the-basics-of-ai-powered-vector-search?utm_source=profile&utm_medium=reader2)。  
+LangChain 支持许多流行的词汇搜索算法/引擎的检索器。
+
+:::info[延伸阅读]
+
+- 查看 [BM25](/docs/integrations/retrievers/bm25/) 检索器集成。
+
+:::
+
+### 向量存储
+
+[向量存储](/docs/concepts/vectorstores/) 是一种强大且高效的方式来索引和检索非结构化数据。  
+通过调用 `asRetriever()` 方法，可以将向量存储用作检索器。
+```typescript
+const vectorstore = new MyVectorStore();
+const retriever = vectorstore.asRetriever();
+```
+## 高级检索模式
+
+### 集成
+
+由于检索器接口非常简单——给定搜索查询后返回一个 `Document` 对象列表——因此可以通过集成的方式组合多个检索器。
+当你拥有多个擅长查找不同类型相关文档的检索器时，这种方法尤其有用。
+创建一个[集成检索器](/docs/how_to/ensemble_retriever/)，通过线性加权分数来组合多个检索器，非常容易：
+```typescript
+// 初始化集成检索器
+const ensembleRetriever = new EnsembleRetriever({
+  retrievers: [bm25Retriever, vectorStoreRetriever],
+  weights: [0.5, 0.5],
+});
+```
+在集成多个检索器时，如何合并它们的搜索结果？  
+这引出了“重排序”（re-ranking）的概念：它接收多个检索器的输出，并使用更复杂的算法（例如 [Reciprocal Rank Fusion (RRF)](https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf)）进行融合。
+
+### 保留源文档
+
+许多检索器会利用某种索引，使文档易于搜索。  
+索引过程通常包含一个转换步骤（例如，向量存储通常使用文档切分）。  
+无论采用何种转换，都非常有必要在“转换后的文档”与原始文档之间保留链接，从而让检索器能够返回**原始**文档。
+
+![Retrieval with full docs](/img/retriever_full_docs.png)
+
+这一点在 AI 应用中尤为重要，因为它确保模型不会丢失文档的上下文。  
+例如，你可能在向量存储中使用较小的块大小来索引文档。  
+如果只返回**这些块**作为检索结果，模型就会丢失这些块所属的原始文档上下文。
+
+LangChain 提供了两种不同的检索器来解决这一问题：  
+- [Multi-Vector](/docs/how_to/multi_vector/) 检索器允许用户为索引使用任意文档转换（例如，用 LLM 生成文档摘要），同时保留与源文档的链接。  
+- [ParentDocument](/docs/how_to/parent_document_retriever/) 检索器将文本切分器转换得到的文档块用于索引，同时保留与源文档的链接。
+
+| 名称                                                      | 索引类型                    | 是否使用 LLM      | 适用场景                                                                                                                             | 描述                                                                                                                                                                                                              |
+| --------------------------------------------------------- | --------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [ParentDocument](/docs/how_to/parent_document_retriever/) | 向量存储 + 文档存储           | 否                | 如果页面包含大量较小的独立信息片段，最好单独索引，但在检索时希望一次性返回完整文档。 | 该方案为每个文档索引多个块。随后在嵌入空间中找到最相似的块，但返回整个父级文档（而非单个块）。                                                                                                                |
+| [Multi Vector](/docs/how_to/multi_vector/)                | 向量存储 + 文档存储           | 索引阶段有时使用  | 如果你能从文档中提取出比原文更相关的信息用于索引。                                                                                  | 该方案为每个文档创建多个向量。每个向量可用多种方式生成——示例包括文本摘要或假设性问题。                                                                                                                      |
+
+:::info[延伸阅读]
+
+- 阅读我们的 [操作指南](/docs/how_to/parent_document_retriever/)，了解如何使用 ParentDocument 检索器。  
+- 阅读我们的 [操作指南](/docs/how_to/multi_vector/)，了解如何使用 MultiVector 检索器。  
+- 观看我们的 RAG from Scratch 视频，了解 [Multi Vector 检索器](https://youtu.be/gTCU9I6QqCE?feature=shared)。
+
+:::

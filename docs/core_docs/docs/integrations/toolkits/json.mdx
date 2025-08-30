@@ -1,0 +1,53 @@
+# JSON Agent Toolkit
+
+本示例演示如何加载并使用带有JSON工具包的Agent。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+```typescript
+import * as fs from "fs";
+import * as yaml from "js-yaml";
+import { OpenAI } from "@langchain/openai";
+import { JsonSpec, JsonObject } from "@langchain/core/tools";
+import { JsonToolkit, createJsonAgent } from "@langchain/agents";
+
+export const run = async () => {
+  let data: JsonObject;
+  try {
+    const yamlFile = fs.readFileSync("openai_openapi.yaml", "utf8");
+    data = yaml.load(yamlFile) as JsonObject;
+    if (!data) {
+      throw new Error("无法加载OpenAPI规范");
+    }
+  } catch (e) {
+    console.error(e);
+    return;
+  }
+
+  const toolkit = new JsonToolkit(new JsonSpec(data));
+  const model = new OpenAI({ temperature: 0 });
+  const executor = createJsonAgent(model, toolkit);
+
+  const input = `在/completions端点的请求体中有哪些必填参数？`;
+
+  console.log(`正在以输入"${input}"执行...`);
+
+  const result = await executor.invoke({ input });
+
+  console.log(`获取输出 ${result.output}`);
+
+  console.log(
+    `获取中间步骤 ${JSON.stringify(
+      result.intermediateSteps,
+      null,
+      2
+    )}`
+  );
+};
+```

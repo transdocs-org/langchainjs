@@ -1,0 +1,49 @@
+# 聊天历史
+
+:::info 前提条件
+
+- [消息](/docs/concepts/messages)
+- [聊天模型](/docs/concepts/chat_models)
+- [工具调用](/docs/concepts/tool_calling)
+
+:::
+
+聊天历史是用户和聊天模型之间对话的记录。它用于在对话过程中保持上下文和状态。聊天历史是一系列的[消息](/docs/concepts/messages)，每条消息都与一个特定的[角色](/docs/concepts/messages#role)相关联，例如 "user"（用户）、"assistant"（助手）、"system"（系统）或 "tool"（工具）。
+
+## 对话模式
+
+![对话模式](/img/conversation_patterns.png)
+
+大多数对话以一条**系统消息**开始，用于设定对话的上下文。接着是一条包含用户输入的**用户消息**，然后是一条包含模型响应的**助手消息**。
+
+**助手**可以直接回复用户，或者在配置了工具的情况下请求调用[工具](/docs/concepts/tool_calling)以执行特定任务。
+
+因此，一个完整的对话通常包含两种交替消息模式的组合：
+
+1. **用户**和**助手**之间的来回对话。
+2. **助手**和**工具消息**之间的交互，表示一种["代理"工作流程](/docs/concepts/agents)，其中助手调用工具来执行特定任务。
+
+## 管理聊天历史
+
+由于聊天模型对输入大小有限制，因此管理聊天历史并在需要时进行裁剪非常重要，以避免超出[上下文窗口](/docs/concepts/chat_models#context_window)。
+
+在处理聊天历史时，保持正确的对话结构至关重要。
+
+管理聊天历史的关键准则：
+
+- 对话应遵循以下结构之一：
+  - 第一条消息是 "user"（用户）消息或 "system"（系统）消息，然后是 "user"（用户）消息，接着是 "assistant"（助手）消息。
+  - 最后一条消息应是 "user"（用户）消息或包含工具调用结果的 "tool"（工具）消息。
+- 在使用[工具调用](/docs/concepts/tool_calling)时，"tool"（工具）消息只能跟在请求调用该工具的 "assistant"（助手）消息之后。
+
+:::tip
+
+理解正确的对话结构对于在聊天模型中正确实现
+[memory](https://langchain-ai.github.io/langgraphjs/concepts/memory/)（记忆）功能至关重要。
+
+:::
+
+## 相关资源
+
+- [如何裁剪消息](/docs/how_to/trim_messages/)
+- [记忆指南](https://langchain-ai.github.io/langgraphjs/concepts/memory/)，介绍如何使用 [LangGraph](https://langchain-ai.github.io/langgraphjs/) 在聊天模型中实现短期和长期记忆。

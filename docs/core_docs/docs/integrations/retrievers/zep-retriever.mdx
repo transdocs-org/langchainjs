@@ -1,0 +1,39 @@
+---
+hide_table_of_contents: true
+---
+
+# Zep 开源检索器
+
+> [Zep](https://www.getzep.com) 是一个面向 AI 助手应用的长期记忆服务。
+> 使用 Zep，你可以让 AI 助手具备回忆过去对话的能力，无论这些对话多久以前发生过，
+> 同时还能减少幻觉、延迟和成本。
+
+> 对 Zep Cloud 感兴趣？请参阅 [Zep Cloud 安装指南](https://help.getzep.com/sdks)
+
+此示例展示了如何在检索链中使用 Zep 检索器，从 Zep 开源内存存储中检索文档。
+
+## 安装
+
+请按照 [Zep 开源快速入门指南](https://help.getzep.com/quickstart) 安装并开始使用 Zep。
+
+## 配置
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm i @getzep/zep-js @langchain/community @langchain/core
+```
+
+## 使用方法
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/retrievers/zep.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 相关内容
+
+- 检索器 [概念指南](/docs/concepts/retrievers)
+- 检索器 [操作指南](/docs/how_to/#retrievers)

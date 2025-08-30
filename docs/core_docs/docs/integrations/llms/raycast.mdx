@@ -1,0 +1,36 @@
+# RaycastAI
+
+> **注意：** 这是一个社区构建的集成，Raycast 并不提供官方支持。
+
+你可以在 [Raycast 环境](https://developers.raycast.com/api-reference/ai) 中使用 LangChain 的 RaycastAI 类，为你的 Raycast 扩展增添 Langchain 的功能。
+
+- RaycastAI 类目前（截至 2023 年 8 月）仅在 Raycast 环境中可用，并且仅限 [Raycast Pro](https://www.raycast.com/pro) 用户使用。你可以[这里](https://developers.raycast.com/)查看如何为 Raycast 创建扩展。
+
+- 每个 Raycast Pro 用户每分钟大约有 10 次请求的速率限制。如果你超过此限制，将会收到错误。你可以在 `RaycastAI` 构造函数中通过传递 `rateLimitPerMinute` 参数来设置你期望的每分钟请求数限制，如下面的示例所示，因为此速率限制将来可能会更改。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+import CodeBlock from "@theme/CodeBlock";
+
+```ts
+import { RaycastAI } from "@langchain/community/llms/raycast";
+
+import { Tool } from "@langchain/core/tools";
+
+const model = new RaycastAI({
+  rateLimitPerMinute: 10, // 默认值是 10，所以你可以省略这一行
+  model: "<model_name>",
+  creativity: 0, // `creativity` 是 Raycast 使用的一个术语，相当于其他一些 LLM 中的 `temperature`
+});
+```
+
+## 相关内容
+
+- LLM [概念指南](/docs/concepts/text_llms)
+- LLM [操作指南](/docs/how_to/#llms)

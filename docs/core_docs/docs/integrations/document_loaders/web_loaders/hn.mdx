@@ -1,0 +1,23 @@
+---
+hide_table_of_contents: true
+---
+
+# Hacker News
+
+本示例介绍如何使用 Cheerio 从 hacker news 网站加载数据。每个页面将生成一个文档。
+
+## 安装配置
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core cheerio
+```
+
+## 使用方法
+
+```typescript
+import { HNLoader } from "@langchain/community/document_loaders/web/hn";
+
+const loader = new HNLoader("https://news.ycombinator.com/item?id=34817881");
+
+const docs = await loader.load();
+```

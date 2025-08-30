@@ -1,0 +1,61 @@
+# 如何使用向量存储来检索数据
+
+:::info 前提条件
+
+本指南假设您熟悉以下概念：
+
+- [向量存储](/docs/concepts/#vectorstores)
+- [检索器](/docs/concepts/retrievers)
+- [文本分割器](/docs/concepts/text_splitters)
+- [链式调用](/docs/how_to/sequence/)
+
+:::
+
+可以使用 [`asRetriever()`](https://api.js.langchain.com/classes/langchain_core.vectorstores.VectorStore.html#asRetriever) 方法将向量存储转换为检索器，这样可以更方便地在链中组合使用它们。
+
+下面展示了一个检索增强生成（RAG）链，它通过以下步骤使用文档进行问答：
+
+1. 初始化一个向量存储
+2. 从该向量存储创建一个检索器
+3. 组建一个问答链
+4. 提问！
+
+每个步骤都包含多个子步骤和潜在的配置选项，但我们先演示一个常见的流程。
+首先，安装所需的依赖：
+
+import CodeBlock from "@theme/CodeBlock";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+你可以[点击此处](https://github.com/langchain-ai/langchain/blob/master/docs/docs/how_to/state_of_the_union.txt)下载 `state_of_the_union.txt` 文件。
+
+import RetrievalQAExample from "@examples/chains/retrieval_qa.ts";
+
+<CodeBlock language="typescript">{RetrievalQAExample}</CodeBlock>
+
+让我们逐步解释上面的代码。
+
+1. 首先，我们加载一段长文本，并使用文本分割器将其拆分为较小的文档。
+   然后将这些文档（同时使用传入的 `OpenAIEmbeddings` 实例对文档进行嵌入）加载到 HNSWLib 中（我们的向量存储），从而创建索引。
+
+2. 虽然我们可以直接查询向量存储，但我们将其转换为检索器，以便返回的检索文档格式适合后续的问答链。
+
+3. 我们初始化一个检索链，这将在步骤4中调用。
+
+4. 我们提出问题！
+
+## 下一步
+
+现在您已经学会了如何将向量存储转换为检索器。
+
+请参阅以下内容以深入了解：
+
+- 特定检索器的详细说明
+- 更全面的 [RAG 教程](/docs/tutorials/rag)
+- 或者本节的[如何为任意数据源创建自定义检索器](/docs/how_to/custom_retriever/)

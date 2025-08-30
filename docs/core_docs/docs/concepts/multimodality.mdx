@@ -1,0 +1,93 @@
+# 多模态
+
+## 概述
+
+**多模态**是指处理以多种形式出现的数据的能力，例如文本、音频、图像和视频。多模态可以出现在各种组件中，使模型和系统能够无缝处理和加工这些数据类型的混合。
+
+- **聊天模型**：理论上，这些模型可以接受和生成多模态输入和输出，处理诸如文本、图像、音频和视频等多种数据类型。
+- **嵌入模型**：嵌入模型可以表示多模态内容，将诸如文本、图像和音频等多种形式的数据嵌入到向量空间中。
+- **向量存储**：向量存储可以在代表多模态数据的嵌入中进行搜索，从而实现跨不同类型信息的检索。
+
+## 聊天模型中的多模态
+
+:::info 前提条件
+
+- [聊天模型](/docs/concepts/chat_models)
+- [消息](/docs/concepts/messages)
+
+:::
+
+多模态支持仍然相对较新且较少见，模型提供者尚未对定义 API 的“最佳”方式达成一致。因此，LangChain 的多模态抽象是轻量级且灵活的，旨在适应不同模型提供者的 API 和交互模式，但**模型之间并未标准化**。
+
+### 如何使用多模态模型
+
+- 使用 [聊天模型集成表](/docs/integrations/chat/) 来确定哪些模型支持多模态。
+- 参考 [相关指南](/docs/how_to/#multimodal) 获取使用多模态模型的具体示例。
+
+### 支持哪种多模态？
+
+#### 输入
+
+一些模型可以接受多模态输入，如图像、音频、视频或文件。支持的多模态输入类型取决于模型提供者。例如，[Google 的 Gemini](/docs/integrations/chat/google_generativeai/) 支持将 PDF 等文档作为输入。
+
+大多数支持**多模态输入**的聊天模型也接受以 OpenAI 内容块格式表示的这些值。目前这仅限于图像输入。对于像 Gemini 这样支持视频和其他字节输入的模型，其 API 也支持原生的、特定模型的表示方式。
+
+将多模态输入传递给聊天模型的核心方法是使用指定类型和对应数据的内容块。例如，将图像传递给聊天模型：
+
+```typescript
+import { HumanMessage } from "@langchain/core/messages";
+
+const message = new HumanMessage({
+  content: [
+    { type: "text", text: "描述这张图片中的天气" },
+    { type: "image_url", image_url: { url: image_url } },
+  ],
+});
+const response = await model.invoke([message]);
+```
+
+:::caution
+内容块的确切格式可能因模型提供者而异。请参阅聊天模型的集成文档以获取正确格式。在 [聊天模型集成表](/docs/integrations/chat/) 中查找对应的集成。
+:::
+
+#### 输出
+
+截至撰写本文时（2024年10月），几乎没有流行的聊天模型支持多模态输出。
+
+唯一的例外是 OpenAI 的聊天模型（[gpt-4o-audio-preview](/docs/integrations/chat/openai/)），它可以生成音频输出。
+
+多模态输出将作为 [AIMessage](/docs/concepts/messages/#aimessage) 响应对象的一部分出现。
+
+有关如何使用多模态输出的更多信息，请参阅 [ChatOpenAI](/docs/integrations/chat/openai/)。
+
+#### 工具
+
+目前，没有任何聊天模型设计为在 [工具调用请求](/docs/concepts/tool_calling) 或 [ToolMessage](/docs/concepts/tool_calling) 结果中直接处理多模态数据。
+
+然而，聊天模型可以通过调用带有对多模态数据引用（例如 URL）的工具（而非数据本身）来轻松与多模态数据进行交互。例如，任何支持 [工具调用](/docs/concepts/tool_calling) 的模型都可以配备用于下载和处理图像、音频或视频的工具。
+
+## 嵌入模型中的多模态
+
+:::info 前提条件
+
+- [嵌入模型](/docs/concepts/embedding_models)
+
+:::
+
+**嵌入**是用于相似性搜索和检索等任务的数据向量表示。
+
+LangChain 中当前使用的 [嵌入接口](https://api.js.langchain.com/classes/_langchain_core.embeddings.Embeddings.html) 完全针对基于文本的数据进行了优化，**不适用于**多模态数据。
+
+随着涉及多模态搜索和检索任务的用例日益增多，我们计划扩展嵌入接口以支持图像、音频和视频等其他数据类型。
+
+## 向量存储中的多模态
+
+:::info 前提条件
+
+- [向量存储](/docs/concepts/vectorstores)
+
+:::
+
+向量存储是用于存储和检索嵌入的数据库，通常用于搜索和检索任务。与嵌入类似，向量存储目前也是针对基于文本的数据进行了优化。
+
+随着涉及多模态搜索和检索任务的用例日益增多，我们计划扩展向量存储接口以支持图像、音频和视频等其他数据类型。

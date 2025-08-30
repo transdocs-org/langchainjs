@@ -1,0 +1,32 @@
+---
+hide_table_of_contents: true
+sidebar_class_name: node-only
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Postgres 聊天记忆
+
+如果你需要在聊天会话之间实现更长期的数据持久化，可以将默认的内存型 `chatHistory` 替换为 [Postgres](https://www.postgresql.org/) 数据库。
+
+## 安装配置
+
+首先安装 [node-postgres](https://node-postgres.com/) 包：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core pg
+```
+
+## 使用方法
+
+每次聊天历史记录会话都存储在 Postgres 数据库中，并且需要一个会话 ID。
+
+Postgres 的连接是通过连接池（pool）进行管理的。你可以通过 `pool` 参数传入一个已有的连接池实例，或者通过 `poolConfig` 参数传入连接池的配置。更多信息请参考 [pg-node 的连接池文档](https://node-postgres.com/apis/pool)。如果同时提供了连接池实例和配置，将以连接池实例为准。
+
+import Example from "@examples/memory/postgres.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

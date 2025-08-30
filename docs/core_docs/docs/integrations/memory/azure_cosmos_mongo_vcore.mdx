@@ -1,0 +1,37 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Azure Cosmos DB Mongo vCore 聊天消息历史记录
+
+AzureCosmosDBMongoChatMessageHistory 使用 Azure Cosmos DB Mongo vCore 来存储聊天消息历史记录。对于跨聊天会话的长期持久化，您可以替换默认的内存中 `chatHistory`，该存储机制支持如 `BufferMemory` 这类聊天记忆类。
+
+如果您还没有 Azure 账户，可以 [创建一个免费账户](https://azure.microsoft.com/free/) 来开始使用。
+
+## 安装配置
+
+首先，您需要安装 [`@langchain/azure-cosmosdb`](https://www.npmjs.com/package/@langchain/azure-cosmosdb) 包：
+
+```bash npm2yarn
+npm install @langchain/azure-cosmosdb @langchain/core
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+此外，您还需要运行一个 Azure Cosmos DB Mongo vCore 实例。您可以按照 [本指南](https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/vcore/quickstart-portal) 在 Azure 门户中免费部署，无需任何费用。
+
+实例运行后，请确保您已获得连接字符串。
+
+## 使用方法
+
+import Example from "@examples/memory/azure_cosmosdb_mongo.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

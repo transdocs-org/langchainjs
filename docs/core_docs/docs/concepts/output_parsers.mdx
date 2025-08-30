@@ -1,0 +1,36 @@
+# 输出解析器
+
+<span data-heading-keywords="output parser"></span>
+
+:::note
+
+此处的信息指的是将模型的文本输出尝试解析为更结构化表示的解析器。  
+越来越多的模型正在支持函数（或工具）调用，这可以自动处理结构化输出。  
+建议使用函数/工具调用，而不是输出解析。  
+相关文档请参阅[此处](/docs/concepts/tool_calling)。
+
+:::
+
+输出解析器负责将模型的输出转换为更适合下游任务的格式。  
+当你使用大型语言模型（LLM）生成结构化数据，或需要规范化聊天模型和LLM的输出时，输出解析器会非常有用。
+
+LangChain 提供了许多不同类型的输出解析器。以下列出了 LangChain 支持的输出解析器。下表包含以下信息：
+
+- **名称**：输出解析器的名称  
+- **支持流式传输**：该输出解析器是否支持流式传输  
+- **具有格式指令**：该输出解析器是否有格式指令。通常都有，除非 (a) 所需的 schema 没有在提示词中指定，而是通过其他参数指定（例如 OpenAI 函数调用），或 (b) 该 OutputParser 是对另一个 OutputParser 的封装  
+- **调用 LLM**：该输出解析器是否会调用 LLM。通常只有那些尝试修复格式错误输出的解析器才会这么做  
+- **输入类型**：预期的输入类型。大多数输出解析器支持字符串和消息类型，但有些（如 OpenAI Functions）需要带有特定 kwargs 的消息  
+- **输出类型**：解析器返回对象的输出类型  
+- **描述**：我们对该输出解析器的说明及其适用场景
+
+| 名称                                                                                                          | 支持流式传输 | 具有格式指令 | 调用 LLM | 输入类型            | 输出类型              | 描述                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------------------------------- | ------------ | ------------ | -------- | ------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [JSON](https://api.js.langchain.com/classes/_langchain_core.output_parsers.JsonOutputParser.html)             | ✅           | ✅           |          | `string` \| `Message` | JSON 对象            | 返回指定的 JSON 对象。可能是获取结构化数据最可靠的输出解析器之一（不使用函数调用）。                                                                                                                  |
+| [XML](https://api.js.langchain.com/classes/_langchain_core.output_parsers.XMLOutputParser.html)               | ✅           | ✅           |          | `string` \| `Message` | `object`               | 返回标签对象。当你需要 XML 格式输出时使用，适用于擅长生成 XML 的模型（如 Anthropic 的模型）。                                                                                                          |
+| [CSV](https://api.js.langchain.com/classes/langchain.output_parsers.CommaSeparatedListOutputParser.html)      | ✅           | ✅           |          | `string` \| `Message` | `Array<string>`        | 返回逗号分隔值的列表。                                                                                                                                                                                 |
+| [OutputFixing](https://api.js.langchain.com/classes/langchain.output_parsers.OutputFixingParser.html)         |              |              | ✅       | `string` \| `Message` |                        | 封装另一个输出解析器。如果该解析器出错，它会将错误信息和原始错误输出发送给 LLM 并请求修复输出。                                                                                                          |
+| [Datetime](https://api.js.langchain.com/classes/langchain.output_parsers.DatetimeOutputParser.html)           |              | ✅           |          | `string` \| `Message` | `Date`                 | 将响应解析为日期时间字符串。                                                                                                                                                                           |
+| [Structured](https://api.js.langchain.com/classes/_langchain_core.output_parsers.StructuredOutputParser.html) |              | ✅           |          | `string` \| `Message` | `Record<string, string>` | 返回结构化信息的输出解析器。它功能不如其他解析器强大，因为它只允许字段为字符串类型。当你使用较小的 LLM 时可能很有用。                                                                                    |
+
+有关如何使用输出解析器的具体信息，请参阅[此处的相关操作指南](/docs/how_to/#output-parsers)。

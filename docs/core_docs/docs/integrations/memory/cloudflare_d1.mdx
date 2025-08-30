@@ -1,0 +1,50 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# 基于 Cloudflare D1 的聊天记忆
+
+:::info
+此集成仅支持在 Cloudflare Workers 中使用。
+:::
+
+为了在多个聊天会话中实现更长期的数据持久化，您可以将用于聊天记忆类（如 `BufferMemory`）的默认内存 `chatHistory` 替换为 Cloudflare D1 实例。
+
+## 安装与配置
+
+您需要安装 LangChain Cloudflare 集成包。  
+在以下示例中，我们同时使用了 Anthropic，但您也可以使用任意模型：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/cloudflare @langchain/anthropic @langchain/core
+```
+
+按照 [官方文档](https://developers.cloudflare.com/d1/) 为您的 Worker 设置 D1 实例。您项目的 `wrangler.toml` 文件应类似于以下内容：
+
+```toml
+name = "YOUR_PROJECT_NAME"
+main = "src/index.ts"
+compatibility_date = "2024-01-10"
+
+[vars]
+ANTHROPIC_API_KEY = "YOUR_ANTHROPIC_KEY"
+
+[[d1_databases]]
+binding = "DB"                                       # 在 Worker 中可通过 env.DB 使用
+database_name = "YOUR_D1_DB_NAME"
+database_id = "YOUR_D1_DB_ID"
+```
+
+## 使用方法
+
+然后，您可以使用 D1 来存储聊天历史记录，如下所示：
+
+import Example from "@examples/memory/cloudflare_d1.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
