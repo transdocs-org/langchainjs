@@ -1,0 +1,33 @@
+---
+sidebar_class_name: node-only
+---
+
+# 阿里巴巴通义
+
+`AlibabaTongyiEmbeddings` 类使用阿里巴巴通义 API 为给定文本生成嵌入（embeddings）。
+
+## 准备工作
+
+你需要注册一个阿里巴巴 API 密钥，并将其设置为名为 `ALIBABA_API_KEY` 的环境变量。
+
+然后，你需要安装 [`@langchain/community`](https://www.npmjs.com/package/@langchain/community) 包：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+## 使用方法
+
+import CodeBlock from "@theme/CodeBlock";
+import AlibabaTongyiExample from "@examples/embeddings/alibaba_tongyi.ts";
+
+<CodeBlock language="typescript">{AlibabaTongyiExample}</CodeBlock>
+
+## 相关内容
+
+- 嵌入模型 [概念指南](/docs/concepts/embedding_models)
+- 嵌入模型 [操作指南](/docs/how_to/#embedding-models)

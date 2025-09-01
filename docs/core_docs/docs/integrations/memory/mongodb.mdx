@@ -1,0 +1,48 @@
+---
+hide_table_of_contents: true
+sidebar_class_name: node-only
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# MongoDB 聊天记忆
+
+:::tip 兼容性
+仅支持 Node.js。
+
+您仍然可以通过将 `runtime` 变量设置为 `nodejs` 来在 Next.js 中创建使用 MongoDB 的 API 路由，如下所示：
+
+```typescript
+export const runtime = "nodejs";
+```
+
+您可以在 Next.js 文档中[此处](https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes)了解更多关于 Edge 运行时的信息。
+:::
+
+为了在聊天会话之间实现更长期的持久化存储，您可以将默认的内存中 `chatHistory`（用于支持 `BufferMemory` 等聊天记忆类）替换为 MongoDB 实例。
+
+## 安装配置
+
+您需要在项目中安装 Node MongoDB SDK：
+
+```bash npm2yarn
+npm install -S mongodb
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+您还需要一个可以连接的 MongoDB 实例。
+
+## 使用方法
+
+存储在 MongoDB 中的每个聊天历史会话都必须具有唯一的会话 ID。
+
+import Example from "@examples/memory/mongodb.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

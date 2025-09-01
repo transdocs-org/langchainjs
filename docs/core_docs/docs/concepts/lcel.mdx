@@ -1,0 +1,159 @@
+# LangChain 表达式语言 (LCEL)
+
+:::info 前置条件
+
+- [Runnable 接口](/docs/concepts/runnables)
+
+:::
+
+**L**ang**C**hain **E**xpression **L**anguage（LCEL）采用一种[声明式](https://en.wikipedia.org/wiki/Declarative_programming)的方法，通过已有的 Runnables 构建新的 Runnables。
+
+这意味着你只需描述你希望发生什么，而不是如何实现它，LangChain 会优化链的运行时执行。
+
+我们通常将使用 LCEL 创建的 `Runnable` 称为“链（chain）”。需要注意的是，“链”本质上是一个 `Runnable`，并实现了完整的 [Runnable 接口](/docs/concepts/runnables)。
+
+:::note
+
+- [LCEL 速查表](/docs/how_to/lcel_cheatsheet/) 展示了涉及 Runnable 接口和 LCEL 表达式的常见模式。
+- 请参阅以下关于使用 LCEL 完成常见任务的 [操作指南列表](/docs/how_to/#langchain-expression-language-lcel)。
+- 内置的 `Runnables` 列表可以在 [LangChain Core API 参考文档](https://api.js.langchain.com/modules/_langchain_core.runnables.html) 中找到。其中许多 Runnables 在使用 LCEL 构建自定义“链”时非常有用。
+
+:::
+
+## LCEL 的优势
+
+LangChain 以多种方式优化了使用 LCEL 构建的链的运行时执行：
+
+- **优化并行执行**：使用 [RunnableParallel](#RunnableParallel) 并行运行 Runnables，或使用 [Runnable Batch API](/docs/concepts/runnables#batch) 并行处理多个输入。并行执行可以显著减少延迟，因为处理可以并行进行，而不是顺序执行。
+- **简化流式传输**：LCEL 链可以进行流式传输，允许在链执行过程中逐步输出结果。LangChain 可以优化输出流以最小化首字节时间（即从 [聊天模型](/docs/concepts/chat_models) 或 [LLM](/docs/concepts/text_llms) 输出第一个输出块所需的时间）。
+
+其他优势包括：
+
+- [**无缝集成 LangSmith 追踪**](https://docs.smith.langchain.com)
+  随着链变得越来越复杂，理解每一步发生了什么变得尤为重要。
+  使用 LCEL，**所有**步骤都会自动记录到 [LangSmith](https://docs.smith.langchain.com/)，以实现最大可观测性和调试能力。
+- **标准 API**：由于所有链都使用 Runnable 接口构建，因此它们可以像任何其他 Runnable 一样使用。
+- [**可通过 LangServe 部署**](/docs/concepts/architecture#langserve)：使用 LCEL 构建的链可以用于生产环境部署。
+
+## 是否应该使用 LCEL？
+
+LCEL 是一个[编排解决方案](<https://en.wikipedia.org/wiki/Orchestration_(computing)>)——它允许 LangChain 以优化的方式处理链的运行时执行。
+
+虽然我们看到用户在生产环境中运行了包含数百个步骤的链，但我们通常建议将 LCEL 用于较简单的编排任务。当应用需要复杂的状态管理、分支、循环或多智能体时，我们建议用户使用 [LangGraph](/docs/concepts/architecture#langgraph)。
+
+在 LangGraph 中，用户定义表示应用流程的图。这允许用户在需要时在单个节点中使用 LCEL，同时使定义复杂的编排逻辑变得简单，从而提高可读性和可维护性。
+
+以下是一些指导原则：
+
+- 如果你只是进行一次 LLM 调用，不需要使用 LCEL；直接调用底层的 [聊天模型](/docs/concepts/chat_models) 即可。
+- 如果你有一个简单链（例如，提示 + LLM + 解析器、简单的检索设置等），并且可以利用 LCEL 的优势，则使用 LCEL 是一个合理的选择。
+- 如果你正在构建一个复杂链（例如，包含分支、循环、多个智能体等），则应使用 [LangGraph](/docs/concepts/architecture#langgraph)。请记住，你始终可以在 LangGraph 的单个节点中使用 LCEL。
+
+## 组合原语
+
+`LCEL` 链是通过将现有的 `Runnables` 组合在一起构建的。主要的两个组合原语是 [RunnableSequence](https://api.js.langchain.com/classes/_langchain_core.runnables.RunnableSequence.html) 和 [RunnableParallel](https://api.js.langchain.com/classes/_langchain_core.runnables.RunnableParallel.html)。
+
+还有许多其他组合原语（例如，[RunnableAssign](https://api.js.langchain.com/classes/_langchain_core.runnables.RunnableAssign.html)），可以认为它们是这两个原语的变体。
+
+:::note
+你可以在 [LangChain Core API 参考文档](https://api.js.langchain.com/modules/_langchain_core.runnables.html) 中找到所有组合原语的列表。
+:::
+
+### RunnableSequence
+
+`RunnableSequence` 是一个组合原语，允许你顺序“链”接多个 Runnables，前一个 Runnable 的输出作为下一个 Runnable 的输入。
+
+```typescript
+import { RunnableSequence } from "@langchain/core/runnables";
+const chain = new RunnableSequence({
+  first: runnable1,
+  // 可选，用于两个以上 Runnables
+  // middle: [...],
+  last: runnable2,
+});
+```
+
+使用某些输入调用 `chain`：
+
+```typescript
+const finalOutput = await chain.invoke(someInput);
+```
+
+等价于以下代码：
+
+```typescript
+const output1 = await runnable1.invoke(someInput);
+const finalOutput = await runnable2.invoke(output1);
+```
+
+:::note
+`runnable1` 和 `runnable2` 是占位符，代表你想要链的任何 `Runnable`。
+:::
+
+### RunnableParallel
+
+`RunnableParallel` 是一个组合原语，允许你并发运行多个 Runnables，并向每个 Runnable 提供相同的输入。
+
+```typescript
+import { RunnableParallel } from "@langchain/core/runnables";
+const chain = new RunnableParallel({
+  key1: runnable1,
+  key2: runnable2,
+});
+```
+
+使用某些输入调用 `chain`：
+
+```typescript
+const finalOutput = await chain.invoke(someInput);
+```
+
+将返回一个 `finalOutput` 对象，其键与输入对象相同，但值被替换为相应 Runnable 的输出。
+
+```typescript
+{
+  key1: await runnable1.invoke(someInput),
+  key2: await runnable2.invoke(someInput),
+}
+```
+
+请注意，这些 Runnables 是并行执行的，所以虽然结果与上面显示的对象遍历相同，但执行时间要快得多。
+
+## 组合语法
+
+由于 `RunnableSequence` 和 `RunnableParallel` 的使用非常频繁，我们为其创建了简写语法，以帮助代码更易读且简洁。
+
+### `pipe` 方法
+
+你可以使用 `.pipe(runnable)` 方法将 Runnables 管道连接起来。
+
+```typescript
+const chain = runnable1.pipe(runnable2);
+```
+
+等价于：
+
+```typescript
+const chain = new RunnableSequence({
+  first: runnable1,
+  last: runnable2,
+});
+```
+
+#### RunnableLambda 函数
+
+你可以通过 `RunnableLambda` 类将通用的 TypeScript 函数定义为 Runnables。
+
+```typescript
+const someFunc = RunnableLambda.from((input) => {
+  return input;
+});
+
+const chain = someFunc.pipe(runnable1);
+```
+
+## 旧版链
+
+LCEL 旨在围绕行为和自定义提供一致性，而旧版的子类化链（如 `LLMChain` 和 `ConversationalRetrievalChain`）在这方面存在不足。许多旧版链隐藏了像提示词（prompt）这样的重要细节，随着越来越多可用模型的出现，自定义变得越来越重要。
+
+有关如何使用 LCEL 完成特定任务的指南，请参阅 [相关操作指南](/docs/how_to/#langchain-expression-language-lcel)。

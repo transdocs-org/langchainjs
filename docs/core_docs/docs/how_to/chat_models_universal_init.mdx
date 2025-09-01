@@ -1,0 +1,75 @@
+# 如何用一行代码初始化任意模型
+
+import CodeBlock from "@theme/CodeBlock";
+
+许多大型语言模型（LLM）应用允许最终用户指定他们希望应用使用哪个模型提供商和模型。
+这需要编写一些逻辑，根据用户的配置来初始化不同的聊天模型。
+`initChatModel()` 辅助方法使得无需担心导入路径和类名，即可轻松初始化多种不同的模型集成。
+请注意，此功能仅适用于聊天模型。
+
+:::info 前提条件
+
+本指南假定您熟悉以下概念：
+
+- [聊天模型](/docs/concepts/chat_models)
+
+- [LangChain 表达式语言 (LCEL)](/docs/concepts/lcel)
+
+- [工具调用](/docs/concepts/tools)
+
+:::
+
+:::caution 兼容性
+**此功能仅适用于 Node 环境。在非 Node 环境中或与打包工具一起使用时，功能可能无法正常工作，且不在官方支持范围内。**
+
+`initChatModel` 要求 `langchain>=0.2.11`。有关升级时的注意事项，请参见[本指南](/docs/how_to/installation/#installing-integration-packages)。
+
+支持的集成列表，请参见 [initChatModel()](https://api.js.langchain.com/functions/langchain.chat_models_universal.initChatModel.html) API 文档。
+
+请确保安装了您希望支持的模型提供商的集成包。例如，如果您要初始化 OpenAI 模型，则应安装 `@langchain/openai`。
+:::
+
+## 基本用法
+
+import BasicExample from "@examples/models/chat/configurable/basic.ts";
+
+<CodeBlock language="typescript">{BasicExample}</CodeBlock>
+
+## 推断模型提供商
+
+对于常见且具有辨识度的模型名称，`initChatModel()` 会尝试推断模型提供商。
+完整的推断行为列表，请参见[API 文档](https://api.js.langchain.com/functions/langchain.chat_models_universal.initChatModel.html)。
+例如，任何以 `gpt-3...` 或 `gpt-4...` 开头的模型都会被推断为使用模型提供商 `openai`。
+
+import InferringProviderExample from "@examples/models/chat/configurable/inferring_model_provider.ts";
+
+<CodeBlock language="typescript">{InferringProviderExample}</CodeBlock>
+
+## 创建可配置模型
+
+您还可以通过指定 `configurableFields` 来创建运行时可配置的模型。
+如果您未指定 `model` 值，则 "model" 和 "modelProvider" 将默认为可配置项。
+
+import ConfigurableModelExample from "@examples/models/chat/configurable/configurable_model.ts";
+
+<CodeBlock language="typescript">{ConfigurableModelExample}</CodeBlock>
+
+### 带默认值的可配置模型
+
+我们可以创建带有默认模型值的可配置模型，指定哪些参数是可配置的，并为可配置参数添加前缀：
+
+import ConfigurableModelWithDefaultsExample from "@examples/models/chat/configurable/configurable_model_with_defaults.ts";
+
+<CodeBlock language="typescript">
+  {ConfigurableModelWithDefaultsExample}
+</CodeBlock>
+
+### 以声明方式使用可配置模型
+
+我们可以在可配置模型上调用如 `bindTools`、`withStructuredOutput`、`withConfig` 等声明式操作，并以与常规实例化的聊天模型对象相同的方式对可配置模型进行链式调用。
+
+import ConfigurableModelDeclarativelyExample from "@examples/models/chat/configurable/configurable_model_declaratively.ts";
+
+<CodeBlock language="typescript">
+  {ConfigurableModelDeclarativelyExample}
+</CodeBlock>

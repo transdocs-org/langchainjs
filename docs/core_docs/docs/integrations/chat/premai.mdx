@@ -1,0 +1,35 @@
+---
+sidebar_label: PremAI
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# ChatPrem
+
+## 安装配置
+
+1. 创建一个 Prem AI 账户，并在此处获取您的 API 密钥 [here](https://studio.premai.io/sign-up).
+2. 导出或直接设置您的 API 密钥。ChatPrem 类默认使用 `process.env.PREM_API_KEY`。
+
+```bash
+export PREM_API_KEY=your-api-key
+```
+
+您可以如下使用 Prem AI 提供的模型：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+import PremAI from "@examples/models/chat/integration_premai.ts";
+
+<CodeBlock language="typescript">{PremAI}</CodeBlock>
+
+## 相关内容
+
+- 聊天模型 [概念指南](/docs/concepts/chat_models)
+- 聊天模型 [操作指南](/docs/how_to/#chat-models)

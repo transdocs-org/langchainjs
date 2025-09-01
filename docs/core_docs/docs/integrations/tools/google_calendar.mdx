@@ -1,0 +1,36 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Google Calendar 工具
+
+Google Calendar 工具允许你的代理从已连接的日历创建和查看 Google Calendar 事件。
+
+## 安装配置
+
+要使用 Google Calendar 工具，你需要安装以下官方的 peer dependency：
+
+```bash npm2yarn
+npm install googleapis
+```
+
+## 使用方法
+
+import ToolExample from "@examples/tools/google_calendar.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core @langchain/community @langchain/langgraph
+```
+
+<CodeBlock language="typescript">{ToolExample}</CodeBlock>
+
+## 相关内容
+
+- 工具[概念指南](/docs/concepts/tools)
+- 工具[操作指南](/docs/how_to/#tools)

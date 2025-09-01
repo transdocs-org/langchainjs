@@ -1,0 +1,302 @@
+# 少样本提示模板
+
+少样本提示是一种提示技术，它为大型语言模型（LLM）提供一个示例列表，然后要求LLM根据提供的示例生成一些文本。
+
+例如：
+
+假设你希望你的LLM以特定格式回应。你可以用一个问题-答案对的列表来提示LLM，让它知道应该以什么格式回应。
+
+```txt
+请按照以下格式回应用户的问题：
+
+问题：你叫什么名字？
+回答：我的名字是John。
+
+问题：你多大了？
+回答：我25岁。
+
+问题：你最喜欢的颜色是什么？
+回答：
+```
+
+在这里，我们没有定义最后一个`回答：`，以便LLM可以填写它。LLM将生成以下内容：
+
+```txt
+回答：我没有最喜欢的颜色；我没有偏好。
+```
+
+### 使用场景
+
+在以下示例中，我们通过少量示例让LLM将问题重新表述为更通用的查询。
+
+我们提供了两组具体的示例问题和重新表述后的通用问题。`FewShotChatMessagePromptTemplate`将使用我们的示例，当调用`.format`时，我们将看到这些示例被格式化为可以传递给LLM的字符串。
+
+```typescript
+import {
+  ChatPromptTemplate,
+  FewShotChatMessagePromptTemplate,
+} from "langchain/prompts";
+```
+
+```typescript
+const examples = [
+  {
+    input: "The Police的成员可以合法逮捕吗？",
+    output: "The Police的成员能做什么？",
+  },
+  {
+    input: "Jan Sindel出生在哪个国家？",
+    output: "Jan Sindel的个人背景是什么？",
+  },
+];
+const examplePrompt = ChatPromptTemplate.fromTemplate(`Human: {input}
+AI: {output}`);
+const fewShotPrompt = new FewShotChatMessagePromptTemplate({
+  examplePrompt,
+  examples,
+  inputVariables: [], // 无输入变量
+});
+```
+
+```typescript
+const formattedPrompt = await fewShotPrompt.format({});
+console.log(formattedPrompt);
+```
+
+```typescript
+[
+  HumanMessage {
+    lc_namespace: [ 'langchain', 'schema' ],
+    content: 'Human: The Police的成员可以合法逮捕吗？\n' +
+      'AI: The Police的成员能做什么？',
+    additional_kwargs: {}
+  },
+  HumanMessage {
+    lc_namespace: [ 'langchain', 'schema' ],
+    content: "Human: Jan Sindel出生在哪个国家？\n" +
+      "AI: Jan Sindel的个人背景是什么？",
+    additional_kwargs: {}
+  }
+]
+```
+
+然后，如果我们使用另一个问题，LLM将按我们期望的方式重写问题。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+```
+
+```typescript
+const model = new ChatOpenAI({ model: "gpt-4o-mini" });
+const examples = [
+  {
+    input: "The Police的成员可以合法逮捕吗？",
+    output: "The Police的成员能做什么？",
+  },
+  {
+    input: "Jan Sindel出生在哪个国家？",
+    output: "Jan Sindel的个人背景是什么？",
+  },
+];
+const examplePrompt = ChatPromptTemplate.fromTemplate(`Human: {input}
+AI: {output}`);
+const fewShotPrompt = new FewShotChatMessagePromptTemplate({
+  prefix:
+    "使用以下示例将用户的查询重新表述为更通用的形式",
+  suffix: "Human: {input}",
+  examplePrompt,
+  examples,
+  inputVariables: ["input"],
+});
+const formattedPrompt = await fewShotPrompt.format({
+  input: "法国的主要城市是什么？",
+});
+
+const response = await model.invoke(formattedPrompt);
+console.log(response);
+```
+
+```typescript
+AIMessage {
+  lc_namespace: [ 'langchain', 'schema' ],
+  content: '法国的首都是哪里？',
+  additional_kwargs: { function_call: undefined }
+}
+```
+
+### 使用函数的少样本提示
+
+你也可以使用函数进行部分填充。这种情况适用于当你知道某个变量总是需要以通用方式获取。一个典型例子是日期或时间。想象一下，你有一个提示，你总是希望它包含当前日期。你不能将日期硬编码到提示中，而随着其他输入变量一起传递可能会很麻烦。在这种情况下，能够使用一个始终返回当前日期的函数来部分填充提示是非常方便的。
+
+```typescript
+const getCurrentDate = () => {
+  return new Date().toISOString();
+};
+
+const prompt = new FewShotChatMessagePromptTemplate({
+  template: "告诉我一个关于{date}的{adjective}笑话",
+  inputVariables: ["adjective", "date"],
+});
+
+const partialPrompt = await prompt.partial({
+  date: getCurrentDate,
+});
+
+const formattedPrompt = await partialPrompt.format({
+  adjective: "有趣的",
+});
+
+console.log(formattedPrompt);
+
+// 告诉我一个关于2023-07-13T00:54:59.287Z的有趣的笑话
+```
+
+### 少样本与聊天少样本
+
+聊天和非聊天的少样本提示模板的行为类似。以下示例将演示使用聊天和非聊天模板及其输出差异。
+
+```typescript
+import {
+  FewShotPromptTemplate,
+  FewShotChatMessagePromptTemplate,
+} from "langchain/prompts";
+```
+
+```typescript
+const examples = [
+  {
+    input: "The Police的成员可以合法逮捕吗？",
+    output: "The Police的成员能做什么？",
+  },
+  {
+    input: "Jan Sindel出生在哪个国家？",
+    output: "Jan Sindel的个人背景是什么？",
+  },
+];
+const prompt = `Human: {input}
+AI: {output}`;
+const examplePromptTemplate = PromptTemplate.fromTemplate(prompt);
+const exampleChatPromptTemplate = ChatPromptTemplate.fromTemplate(prompt);
+const chatFewShotPrompt = new FewShotChatMessagePromptTemplate({
+  examplePrompt: exampleChatPromptTemplate,
+  examples,
+  inputVariables: [], // 无输入变量
+});
+const fewShotPrompt = new FewShotPromptTemplate({
+  examplePrompt: examplePromptTemplate,
+  examples,
+  inputVariables: [], // 无输入变量
+});
+```
+
+```typescript
+console.log("聊天少样本：", await chatFewShotPrompt.formatMessages({}));
+/**
+聊天少样本：  [
+  HumanMessage {
+    lc_namespace: [ 'langchain', 'schema' ],
+    content: 'Human: The Police的成员可以合法逮捕吗？\n' +
+      'AI: The Police的成员能做什么？',
+    additional_kwargs: {}
+  },
+  HumanMessage {
+    lc_namespace: [ 'langchain', 'schema' ],
+    content: "Human: Jan Sindel出生在哪个国家？\n" +
+      "AI: Jan Sindel的个人背景是什么？",
+    additional_kwargs: {}
+  }
+]
+ */
+```
+
+```typescript
+console.log("少样本：", await fewShotPrompt.formatPromptValue({}));
+/**
+少样本：
+
+Human: The Police的成员可以合法逮捕吗？
+AI: The Police的成员能做什么？
+
+Human: Jan Sindel出生在哪个国家？
+AI: Jan Sindel的个人背景是什么？
+ */
+```
+
+在这里，我们可以看到`FewShotChatMessagePromptTemplate`和`FewShotPromptTemplate`的主要区别在于输入和输出值。
+
+`FewShotChatMessagePromptTemplate`通过使用`ChatPromptTemplate`的示例列表工作，其输出是`BaseMessage`实例的列表。
+
+另一方面，`FewShotPromptTemplate`通过使用`PromptTemplate`的示例工作，其输出是一个字符串。
+
+## 对非聊天模型的支持
+
+LangChain还提供了一个用于非聊天模型的少样本提示格式化类：`FewShotPromptTemplate`。其API基本相同，但输出格式不同（聊天消息 vs 字符串）。
+
+### 使用函数的部分填充
+
+```typescript
+import {
+  ChatPromptTemplate,
+  FewShotChatMessagePromptTemplate,
+} from "langchain/prompts";
+```
+
+```typescript
+const examplePrompt = PromptTemplate.fromTemplate("{foo}{bar}");
+const prompt = new FewShotPromptTemplate({
+  prefix: "{foo}{bar}",
+  examplePrompt,
+  inputVariables: ["foo", "bar"],
+});
+const partialPrompt = await prompt.partial({
+  foo: () => Promise.resolve("boo"),
+});
+const formatted = await partialPrompt.format({ bar: "baz" });
+console.log(formatted);
+```
+
+```txt
+boobaz\n
+```
+
+### 使用函数和示例选择器
+
+```typescript
+import {
+  ChatPromptTemplate,
+  FewShotChatMessagePromptTemplate,
+} from "langchain/prompts";
+```
+
+```typescript
+const examplePrompt = PromptTemplate.fromTemplate("关于{x}的一个示例");
+const exampleSelector = await LengthBasedExampleSelector.fromExamples(
+  [{ x: "foo" }, { x: "bar" }],
+  { examplePrompt, maxLength: 200 }
+);
+const prompt = new FewShotPromptTemplate({
+  prefix: "{foo}{bar}",
+  exampleSelector,
+  examplePrompt,
+  inputVariables: ["foo", "bar"],
+});
+const partialPrompt = await prompt.partial({
+  foo: () => Promise.resolve("boo"),
+});
+const formatted = await partialPrompt.format({ bar: "baz" });
+console.log(formatted);
+```
+
+```txt
+boobaz
+关于foo的一个示例
+关于bar的一个示例
+```

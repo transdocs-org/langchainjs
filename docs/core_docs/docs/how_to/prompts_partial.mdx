@@ -1,0 +1,116 @@
+# 如何部分格式化提示模板
+
+:::info 前置条件
+
+本指南假定您熟悉以下概念：
+
+- [提示模板](/docs/concepts/prompt_templates)
+
+:::
+
+就像将参数部分绑定到一个函数一样，对提示模板进行“部分”处理也是有意义的——例如，传递一部分所需的值，从而创建一个新的提示模板，该模板只需要剩余部分的值。
+
+LangChain 支持以下两种方式的部分格式化：
+
+1. 使用字符串值进行部分格式化。
+2. 使用返回字符串值的函数进行部分格式化。
+
+在下面的示例中，我们将介绍这两种用例的动机以及如何在 LangChain 中实现它们。
+
+## 使用字符串进行部分格式化
+
+部分格式化提示模板的一个常见用例是，当您在其他变量之前先获取到了提示中部分变量的值。例如，假设您有一个提示模板需要两个变量 `foo` 和 `baz`。如果您在链中的早期就获取到了 `foo` 的值，而 `baz` 的值稍后才能获取到，那么在整个链中都传递这两个变量会不太方便。相反，您可以使用 `foo` 的值对提示模板进行部分格式化，然后传递这个部分格式化的提示模板，并只使用它即可。以下是一个这样的示例：
+
+```typescript
+import { PromptTemplate } from "langchain/prompts";
+
+const prompt = new PromptTemplate({
+  template: "{foo}{bar}",
+  inputVariables: ["foo", "bar"],
+});
+
+const partialPrompt = await prompt.partial({
+  foo: "foo",
+});
+
+const formattedPrompt = await partialPrompt.format({
+  bar: "baz",
+});
+
+console.log(formattedPrompt);
+
+// foobaz
+```
+
+您也可以直接通过初始化时传入部分变量来实现相同的效果。
+
+```typescript
+const prompt = new PromptTemplate({
+  template: "{foo}{bar}",
+  inputVariables: ["bar"],
+  partialVariables: {
+    foo: "foo",
+  },
+});
+
+const formattedPrompt = await prompt.format({
+  bar: "baz",
+});
+
+console.log(formattedPrompt);
+
+// foobaz
+```
+
+## 使用函数进行部分格式化
+
+您还可以使用函数来进行部分格式化。这种用例适用于当您知道某个变量总是需要以一种通用方式获取的情况。一个典型的例子是处理日期或时间。假设您有一个提示模板，您总是希望其中包含当前日期。您不能将当前日期硬编码到提示模板中，同时每次手动传递它也可能比较繁琐。在这种情况下，使用一个始终返回当前日期的函数对提示模板进行部分格式化会非常方便。
+
+```typescript
+const getCurrentDate = () => {
+  return new Date().toISOString();
+};
+
+const prompt = new PromptTemplate({
+  template: "Tell me a {adjective} joke about the day {date}",
+  inputVariables: ["adjective", "date"],
+});
+
+const partialPrompt = await prompt.partial({
+  date: getCurrentDate,
+});
+
+const formattedPrompt = await partialPrompt.format({
+  adjective: "funny",
+});
+
+console.log(formattedPrompt);
+
+// Tell me a funny joke about the day 2023-07-13T00:54:59.287Z
+```
+
+同样，您也可以在初始化提示模板时直接传入部分变量：
+
+```typescript
+const prompt = new PromptTemplate({
+  template: "Tell me a {adjective} joke about the day {date}",
+  inputVariables: ["adjective"],
+  partialVariables: {
+    date: getCurrentDate,
+  },
+});
+
+const formattedPrompt = await prompt.format({
+  adjective: "funny",
+});
+
+console.log(formattedPrompt);
+
+// Tell me a funny joke about the day 2023-07-13T00:54:59.287Z
+```
+
+## 下一步
+
+现在您已经了解了如何将部分变量应用于提示模板。
+
+接下来，请查看本节中有关提示模板的其他指南，例如 [向提示模板添加少量示例](/docs/how_to/few_shot_examples_chat)。

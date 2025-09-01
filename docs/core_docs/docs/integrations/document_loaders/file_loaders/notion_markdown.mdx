@@ -1,0 +1,18 @@
+---
+hide_table_of_contents: true
+---
+
+# Notion Markdown 导出
+
+此示例介绍如何从 Notion 仪表板导出的 Notion 页面加载数据。
+
+首先，按照官方说明[此处](https://www.notion.so/help/export-your-content)将你的 Notion 页面导出为 **Markdown & CSV** 格式。请确保勾选 `包含子页面` 和 `为子页面创建文件夹`。
+
+然后，解压下载的文件，并将解压后的文件夹移至你的代码仓库中。该文件夹应包含你所有页面的 Markdown 文件。
+
+一旦文件夹放入你的仓库中，只需运行下面的示例代码：
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/notion_markdown.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

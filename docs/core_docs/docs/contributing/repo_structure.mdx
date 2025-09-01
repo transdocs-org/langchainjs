@@ -1,0 +1,49 @@
+---
+sidebar_position: 0.5
+---
+
+# 仓库结构
+
+如果你计划为 LangChain 的代码或文档做贡献，了解仓库的高层结构会很有帮助。
+
+LangChain 被组织成一个 [单体仓库](https://zh.wikipedia.org/wiki/单体仓库)，其中包含多个包。
+
+以下是仓库结构的树状表示：
+
+```text
+.
+├── docs
+│   ├── core_docs # 包含此处文档的内容：https://js.langchain.com/
+│   ├── api_refs # 包含此处 API 参考文档的内容：https://api.js.langchain.com/
+├── langchain # 主要包
+│   ├── src/**/tests/*.test.ts/ # 单元测试（每个包中都存在，但为简洁起见未显示）
+│   ├── src/**/tests/*.int.test.ts/ # 集成测试（每个包中都存在，但为简洁起见未显示）
+├── langchain # 关键抽象的基础接口
+├── libs # 社区包
+│   ├── langchain-community # 第三方集成
+│   ├── langchain-partner-1
+│   ├── langchain-partner-2
+│   ├── ...
+```
+
+根目录还包含以下文件：
+
+- `package.json`: 构建文档和检查文档格式所需的依赖项。
+
+根目录中还有其他文件，它们的用途应该是一目了然的。欢迎自由浏览！
+
+## 文档
+
+`/docs` 目录包含文档内容，这些内容在 https://js.langchain.com/ 及其关联的 API 参考文档 https://api.js.langchain.com/ 中展示。
+
+有关如何为文档做贡献，请参阅[文档](/docs/contributing/documentation/style_guide)指南。
+
+## 代码
+
+`/libs` 目录包含 LangChain 包的代码。
+
+要了解如何贡献代码，请参阅以下指南：
+
+- [代码](./code.mdx) 了解如何在 LangChain 代码库中进行开发。
+- [集成](./integrations.mdx) 了解如何为 langchain-community 贡献第三方集成，或如何开始一个新的合作伙伴包。
+- [测试](./testing.mdx) 指南，了解如何为包编写测试。

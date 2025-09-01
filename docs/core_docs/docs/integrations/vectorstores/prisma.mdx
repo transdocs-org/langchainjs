@@ -1,0 +1,103 @@
+---
+sidebar_class_name: node-only
+---
+
+# Prisma
+
+为了在 PostgreSQL 数据库中使用向量搜索增强现有模型，Langchain 支持将 [Prisma](https://www.prisma.io/) 与 PostgreSQL 和 [`pgvector`](https://github.com/pgvector/pgvector) Postgres 扩展一起使用。
+
+## 安装配置
+
+### 使用 Supabase 设置数据库实例
+
+请参考 [Prisma 和 Supabase 集成指南](https://supabase.com/docs/guides/integrations/prisma) 来使用 Supabase 和 Prisma 设置新的数据库实例。
+
+### 安装 Prisma
+
+```bash npm2yarn
+npm install prisma
+```
+
+### 使用 `docker-compose` 设置 `pgvector` 自托管实例
+
+`pgvector` 提供了一个预构建的 Docker 镜像，可用于快速设置一个自托管的 Postgres 实例。
+
+```yaml
+services:
+  db:
+    image: ankane/pgvector
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=
+      - POSTGRES_USER=
+      - POSTGRES_DB=
+
+volumes:
+  db:
+```
+
+### 创建新的 schema
+
+假设你尚未创建 schema，请创建一个包含类型为 `Unsupported("vector")` 的 `vector` 字段的新模型：
+
+```prisma
+model Document {
+  id      String                 @id @default(cuid())
+  content String
+  vector  Unsupported("vector")?
+}
+```
+
+然后，使用 `--create-only` 创建一个新的迁移以避免直接运行迁移：
+
+```bash npm2yarn
+npx prisma migrate dev --create-only
+```
+
+如果尚未启用 `pgvector` 扩展，请向新创建的迁移中添加以下行：
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+
+然后运行迁移：
+
+```bash npm2yarn
+npx prisma migrate dev
+```
+
+## 使用方法
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+:::warning
+表名和列名（如 `tableName`、`vectorColumnName`、`columns` 和 `filter` 等字段）会直接传递到 SQL 查询中，而没有参数化。必须事先对这些字段进行清理，以避免 SQL 注入。
+:::
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/indexes/vector_stores/prisma_vectorstore/prisma.ts";
+import Schema from "@examples/indexes/vector_stores/prisma_vectorstore/prisma/schema.prisma";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+以下 SQL 操作符可以作为过滤器使用：`equals`、`in`、`isNull`、`isNotNull`、`like`、`lt`、`lte`、`gt`、`gte`、`not`。
+
+以上示例使用了以下 schema：
+
+<CodeBlock language="prisma">{Schema}</CodeBlock>
+
+如果你不需要 `namespace`，可以将其删除。
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

@@ -1,0 +1,32 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Google 地点工具
+
+Google 地点工具允许你的智能代理使用 Google 地点 API，从而从 Google 地点列表中的地点相关文本中获取地址、电话号码、网站等信息。
+
+## 安装配置
+
+你需要从 [Google 的网站](https://developers.google.com/maps/documentation/places/web-service/overview) 获取一个 API 密钥，并 [启用新的地点 API](https://console.cloud.google.com/apis/library/places.googleapis.com)。然后，将你的 API 密钥设置为 `process.env.GOOGLE_PLACES_API_KEY`，或者在构造函数参数中以 `apiKey` 的形式传入。
+
+## 使用方法
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+import ToolExample from "@examples/tools/google_places.ts";
+
+<CodeBlock language="typescript">{ToolExample}</CodeBlock>
+
+## 相关内容
+
+- 工具 [概念指南](/docs/concepts/tools)
+- 工具 [操作指南](/docs/how_to/#tools)

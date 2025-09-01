@@ -1,0 +1,150 @@
+# 聊天模型
+
+## 概述
+
+大型语言模型（LLMs）是先进的机器学习模型，能够胜任各种与语言相关的任务，如文本生成、翻译、摘要、问答等，而无需为每个场景进行任务特定的调优。
+
+现代LLMs通常通过一个**聊天模型接口**访问，该接口接收一个[消息](/docs/concepts/messages)列表作为输入，并返回一个[消息](/docs/concepts/messages)作为输出。
+
+新一代聊天模型还提供了额外的功能：
+
+- [工具调用](/docs/concepts/tool_calling)：许多流行的聊天模型提供原生的[工具调用](/docs/concepts/tool_calling)API。该API允许开发者构建丰富的应用，使AI能够与外部服务、API和数据库交互。工具调用也可用于从非结构化数据中提取结构化信息并执行各种其他任务。
+- [结构化输出](/docs/concepts/structured_outputs)：一种使聊天模型以结构化格式（如符合给定模式的JSON）响应的技术。
+- [多模态](/docs/concepts/multimodality)：处理文本以外的数据的能力；例如，图像、音频和视频。
+
+## 功能特性
+
+LangChain为使用不同提供商的聊天模型提供了一致的接口，同时还提供了用于监控、调试和优化LLM应用性能的额外功能。
+
+- 与多个聊天模型提供商集成（例如Anthropic、OpenAI、Ollama、Microsoft Azure、Google Vertex、Amazon Bedrock、Hugging Face、Cohere、Groq）。请参阅[聊天模型集成](/docs/integrations/chat/)以获取当前支持的模型列表。
+- 可使用LangChain的[消息](/docs/concepts/messages)格式或OpenAI格式。
+- 标准化的[工具调用API](/docs/concepts/tool_calling)：用于将工具绑定到模型的标准接口，访问模型发出的工具调用请求，并将工具结果返回给模型。
+- 通过`withStructuredOutput`方法提供标准化的[结构化输出](/docs/concepts/structured_outputs)API。
+- 集成[LangSmith](https://docs.smith.langchain.com)，用于监控和调试基于LLM的生产级应用。
+- 其他功能如标准化的[令牌使用](/docs/concepts/messages#token_usage)、[速率限制](#rate-limiting)、[缓存](#cache)等。
+
+## 集成支持
+
+LangChain有多个聊天模型集成，使你可以使用来自不同提供商的各种模型。
+
+这些集成分为两种类型：
+
+1. **官方模型**：由LangChain和/或模型提供商官方支持的模型。你可以在`@langchain/<provider>`包中找到这些模型。
+2. **社区模型**：主要由社区贡献和支持的模型。你可以在`@langchain/community`包中找到这些模型。
+
+LangChain的聊天模型命名约定是在类名前加上"Chat"前缀（例如，`ChatOllama`、`ChatAnthropic`、`ChatOpenAI`等）。
+
+请参阅[聊天模型集成](/docs/integrations/chat/)以获取支持的模型列表。
+
+:::note
+模型名称中**不**包含"Chat"前缀，或包含"LLM"后缀的模型通常指的是较旧的模型，它们不遵循聊天模型接口，而是使用以字符串作为输入并返回字符串的接口。
+:::
+
+## 接口定义
+
+LangChain聊天模型实现了[BaseChatModel](https://api.js.langchain.com/classes/_langchain_core.language_models_chat_models.BaseChatModel.html)接口。由于BaseChatModel也实现了[Runnable接口](/docs/concepts/runnables)，聊天模型支持[标准的流式接口](/docs/concepts/streaming)、优化的[批量处理](/docs/concepts/runnables#batch)等。请参阅[Runnable接口](/docs/concepts/runnables)以获取更多详情。
+
+聊天模型的许多关键方法以[消息](/docs/concepts/messages)作为输入，并返回消息作为输出。
+
+聊天模型提供了一组标准参数，可用于配置模型。这些参数通常用于控制模型的行为，例如输出的温度、响应中的最大令牌数、等待响应的最大时间等。请参阅[标准参数](#standard-parameters)部分以获取更多详情。
+
+:::note
+在文档中，我们经常会将"LLM"和"Chat Model"这两个术语互换使用。这是因为大多数现代LLM都是通过聊天模型接口向用户提供的。
+
+然而，LangChain也包含了不遵循聊天模型接口的旧版LLM实现，这些模型使用以字符串作为输入并返回字符串的接口。这些模型通常没有"Chat"前缀（例如，`Ollama`、`Anthropic`、`OpenAI`等）。
+这些模型实现了[BaseLLM](https://api.js.langchain.com/classes/_langchain_core.language_models_llms.BaseLLM.html)接口，有时会带有"LLM"后缀（例如，`OpenAILLM`等）。通常，用户不应使用这些模型。
+:::
+
+### 关键方法
+
+聊天模型的关键方法包括：
+
+1. **invoke**：与聊天模型交互的主要方法。它接收一个[消息](/docs/concepts/messages)列表作为输入，并返回一个消息列表作为输出。
+2. **stream**：允许你在聊天模型生成输出时进行流式传输的方法。
+3. **batch**：允许你将多个请求批量发送给聊天模型以提高处理效率的方法。
+4. **bindTools**：允许你将工具绑定到聊天模型以便在模型的执行上下文中使用的方法。
+5. **withStructuredOutput**：针对原生支持[结构化输出](/docs/concepts/structured_outputs)的模型，对`invoke`方法的封装。
+
+其他重要方法可以在[BaseChatModel API Reference](https://api.js.langchain.com/classes/_langchain_core.language_models_chat_models.BaseChatModel.html)中找到。
+
+### 输入与输出
+
+现代LLM通常通过一个聊天模型接口访问，该接口接收[消息](/docs/concepts/messages)作为输入并返回[消息](/docs/concepts/messages)作为输出。消息通常关联一个角色（例如，"system"、"human"、"assistant"）以及一个或多个包含文本或潜在的多模态数据（例如，图像、音频、视频）的内容块。
+
+LangChain支持两种与聊天模型交互的消息格式：
+
+1. **LangChain消息格式**：LangChain自己的消息格式，默认使用，并且是LangChain内部使用的格式。
+2. **OpenAI的消息格式**：OpenAI的消息格式。
+
+### 标准参数
+
+许多聊天模型都有标准化的参数可用于配置模型：
+
+| 参数名        | 描述                                                                                                                                                                         |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `model`       | 你想要使用的特定AI模型的名称或标识符（例如，`"gpt-3.5-turbo"`或`"gpt-4"`）。                                                                             |
+| `temperature` | 控制模型输出的随机性。较高的值（例如1.0）使响应更具创造性，而较低的值（例如0.1）使响应更确定性和集中。 |
+| `timeout`     | 在取消请求之前等待模型响应的最大时间（以秒为单位）。确保请求不会无限期挂起。                                    |
+| `maxTokens`   | 限制响应中的令牌总数（词和标点）。这控制了输出的长度。                                                                |
+| `stop`        | 指定停止序列，表示模型应何时停止生成令牌。例如，你可以使用特定字符串来表示响应的结束。                   |
+| `maxRetries`  | 如果请求因网络超时或速率限制等问题失败，系统将尝试重新发送请求的最大次数。                                             |
+| `apiKey`      | 用于向模型提供商认证的API密钥。通常在你注册访问模型时发放。                                                   |
+| `baseUrl`     | 请求发送到的API端点的URL。通常由模型提供商提供，对于定向你的请求是必要的。                               |
+
+需要注意的重要事项：
+
+- 标准参数仅适用于那些暴露了具有预期功能参数的模型提供商。例如，某些提供商不暴露最大输出令牌的配置，因此这些情况下无法支持max_tokens。
+- 目前标准参数仅在有自己集成包的集成中强制执行（例如`@langchain/openai`、`@langchain/anthropic`等），在`@langchain/community`中的模型上不强制执行。
+
+聊天模型还接受特定于该集成的其他参数。要查找某个ChatModel支持的所有参数，请前往该模型的[API参考](https://api.js.langchain.com/)。
+
+## 工具调用
+
+聊天模型可以调用[工具](/docs/concepts/tools)来执行任务，例如从数据库获取数据、发起API请求或运行自定义代码。更多信息请参阅[工具调用](/docs/concepts/tool_calling)指南。
+
+## 结构化输出
+
+可以要求聊天模型以特定格式（例如JSON或符合特定模式）进行响应。这个功能对于信息提取任务非常有用。请在[结构化输出](/docs/concepts/structured_outputs)指南中阅读更多相关内容。
+
+## 多模态
+
+大型语言模型（LLMs）不仅限于处理文本。它们还可以用于处理其他类型的数据，如图像、音频和视频。这被称为[多模态](/docs/concepts/multimodality)。
+
+目前，只有部分LLM支持多模态输入，几乎没有支持多模态输出的。请查阅具体模型文档以获取详细信息。
+
+## 上下文窗口
+
+聊天模型的上下文窗口指的是模型一次可以处理的最大输入序列长度。虽然现代LLM的上下文窗口相当大，但它们仍然是开发者在使用聊天模型时必须考虑的限制。
+
+如果输入超过了上下文窗口，模型可能无法处理整个输入并可能引发错误。在会话应用中，这一点尤其重要，因为上下文窗口决定了模型在整个对话中可以"记住"多少信息。开发者通常需要在上下文窗口内管理输入，以保持对话的连贯性而不超出限制。关于对话中内存管理的更多细节，请参阅[memory](https://langchain-ai.github.io/langgraphjs/concepts/memory/)。
+
+输入的大小是以[令牌](/docs/concepts/tokens)为单位来衡量的，这是模型使用的处理单元。
+
+## 高级主题
+
+### 缓存
+
+聊天模型的API可能很慢，因此一个自然的问题是是否应该缓存之前对话的结果。理论上，缓存可以通过减少向模型提供商发出的请求数量来帮助提高性能。但在实践中，缓存聊天模型响应是一个复杂的问题，应谨慎对待。
+
+原因是，如果依赖缓存模型的**确切**输入，那么在对话中第一次或第二次交互之后获得缓存命中的可能性很低。例如，你认为多个对话以完全相同的消息开始的可能性有多大？三个消息完全相同的呢？
+
+另一种方法是使用语义缓存，即根据输入的含义而不是输入本身来缓存响应。这在某些情况下可能有效，但在其他情况下则不行。
+
+语义缓存会在你的应用程序关键路径上引入另一个模型的依赖（例如，语义缓存可能依赖于[嵌入模型](/docs/concepts/embedding_models)将文本转换为向量表示），并且不能保证能准确捕捉输入的含义。
+
+然而，在某些情况下缓存聊天模型响应可能是有益的。例如，如果你有一个用于回答常见问题的聊天模型，缓存响应可以帮助减少对模型提供商的负载并提高响应时间。
+
+请参阅[如何缓存聊天模型响应](/docs/how_to/#chat-model-caching)指南以获取更多详情。
+
+## 相关资源
+
+- 使用聊天模型的指南：[如何指南](/docs/how_to/#chat-models)。
+- 支持的聊天模型列表：[聊天模型集成](/docs/integrations/chat/)。
+
+### 概念指南
+
+- [消息](/docs/concepts/messages)
+- [工具调用](/docs/concepts/tool_calling)
+- [多模态](/docs/concepts/multimodality)
+- [结构化输出](/docs/concepts/structured_outputs)
+- [令牌](/docs/concepts/tokens)

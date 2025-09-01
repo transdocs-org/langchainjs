@@ -1,0 +1,31 @@
+---
+hide_table_of_contents: true
+---
+
+# HyDE 检索器
+
+此示例展示如何使用 HyDE 检索器，它实现了论文 [this paper](https://arxiv.org/abs/2212.10496) 中描述的假设文档嵌入（HyDE）。
+
+从高层次来看，HyDE 是一种嵌入技术，它接收查询，生成一个假设性的答案，然后嵌入该生成的文档，并将其作为最终的嵌入结果。
+
+因此，为了使用 HyDE，我们需要提供一个基础的嵌入模型以及一个可用于生成这些文档的 LLM。默认情况下，HyDE 类自带了一些可使用的默认提示（详见论文中的详细说明），但我们也可以自定义提示，其应包含一个单独的输入变量 `{question}`。
+
+## 使用方法
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/retrievers/hyde.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 相关内容
+
+- 检索器 [概念指南](/docs/concepts/retrievers)
+- 检索器 [操作指南](/docs/how_to/#retrievers)

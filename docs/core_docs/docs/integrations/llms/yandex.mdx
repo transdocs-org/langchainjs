@@ -1,0 +1,34 @@
+# YandexGPT
+
+LangChain.js 支持调用 [YandexGPT](https://cloud.yandex.com/zh-CN/services/yandexgpt) 大型语言模型（LLM）。
+
+## 准备工作
+
+首先，您需要[创建服务账号](https://cloud.yandex.com/zh-CN/docs/iam/operations/sa/create)，并为其分配 `ai.languageModels.user` 角色。
+
+接下来，您有两种身份验证方式：
+
+- [IAM 令牌](https://cloud.yandex.com/zh-CN/docs/iam/operations/iam-token/create-for-sa)。
+  您可以在构造函数参数中通过 `iam_token` 指定该令牌，或者在环境变量 `YC_IAM_TOKEN` 中指定。
+- [API 密钥](https://cloud.yandex.com/zh-CN/docs/iam/operations/api-key/create)。
+  您可以在构造函数参数中通过 `api_key` 指定该密钥，或者在环境变量 `YC_API_KEY` 中指定。
+
+## 使用方法
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/yandex @langchain/core
+```
+
+import CodeBlock from "@theme/CodeBlock";
+import YandexGPTExample from "@examples/models/llm/yandex.ts";
+
+<CodeBlock language="typescript">{YandexGPTExample}</CodeBlock>
+
+## 相关内容
+
+- LLM [概念指南](/docs/concepts/text_llms)
+- LLM [操作指南](/docs/how_to/#llms)

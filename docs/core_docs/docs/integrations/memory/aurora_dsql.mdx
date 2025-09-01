@@ -1,0 +1,42 @@
+---
+hide_table_of_contents: true
+sidebar_class_name: node-only
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Aurora DSQL 聊天记忆
+
+为了在聊天会话之间实现更长期的持久化，您可以将默认的内存中 `chatHistory` 替换为无服务器且兼容 PostgreSQL 的 [Amazon Aurora DSQL](https://aws.amazon.com/rds/aurora/dsql/) 数据库。
+
+这与 PostgreSQL 的集成非常相似，但有一些差异以使其兼容 DSQL：
+
+1. PostgreSQL 中的 `id` 列是 SERIAL 自增列，而 DSQL 中使用的是 UUID，并通过数据库函数 `gen_random_uuid` 生成。
+2. 创建了一个 `created_at` 列来跟踪消息的顺序和历史。
+3. PostgreSQL 中的 `message` 列是 JSONB 类型，而 DSQL 中是 TEXT 类型，并通过 JavaScript 解析来处理。
+
+## 配置
+
+前往 AWS 控制台并创建一个 Aurora DSQL 集群：https://console.aws.amazon.com/dsql/clusters
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core pg @aws-sdk/dsql-signer
+```
+
+## 使用方法
+
+每个聊天历史会话都存储在一个 Aurora DSQL（兼容 PostgreSQL）数据库中，并需要一个会话 ID。
+
+与 Aurora DSQL 的连接是通过一个 PostgreSQL 连接池处理的。您可以通过 `pool` 参数传递一个连接池实例，或者通过 `poolConfig` 参数传递一个连接池配置。更多信息请参见 [pg-node 的连接池文档](https://node-postgres.com/apis/pool)。如果同时提供了连接池实例和连接池配置，则优先使用连接池实例。
+
+有关 DSQL 的身份验证和授权方法，请参阅 https://docs.aws.amazon.com/aurora-dsql/latest/userguide/authentication-authorization.html。
+
+以下示例使用 AWS SDK 生成一个认证令牌，并将其传递给连接池配置：
+
+import Example from "@examples/memory/aurora_dsql.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

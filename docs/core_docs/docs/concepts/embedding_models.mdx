@@ -1,0 +1,113 @@
+# 嵌入模型
+
+<span data-heading-keywords="embedding,embeddings"></span>
+
+:::info[前提条件]
+
+- [文档](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html)
+
+:::
+
+:::info[注意]
+
+本概念概述主要关注基于文本的嵌入模型。
+
+尽管嵌入模型也可以是[多模态](/docs/concepts/multimodality)，但目前LangChain尚未支持此类模型。
+
+:::
+
+想象一下，能够用一个紧凑的表示来捕捉任何文本（一条推文、文档或书籍）的本质。这就是嵌入模型的力量，它构成了许多检索系统的核心。嵌入模型将人类语言转化为机器可以快速且准确地理解和比较的格式。这些模型将文本作为输入，并生成固定长度的数字数组，即文本语义含义的数值指纹。嵌入允许搜索系统不仅基于关键词匹配，还能基于语义理解来查找相关文档。
+
+## 关键概念
+
+![概念概述](/img/embeddings_concept.png)
+
+（1）**将文本嵌入为向量**：嵌入将文本转换为数值向量表示。
+
+（2）**度量相似性**：可以通过简单的数学运算来比较嵌入向量。
+
+## 嵌入
+
+### 历史背景
+
+多年来，嵌入模型的发展经历了显著的演变。2018年，Google推出了[BERT（Bidirectional Encoder Representations from Transformers，基于Transformer的双向编码器表示）](https://www.nvidia.com/en-us/glossary/bert/)，这是一个关键性的进展。BERT将Transformer模型应用于将文本嵌入为简单的向量表示，从而在各种自然语言处理任务中实现了前所未有的性能。然而，BERT并未针对高效生成句子嵌入进行优化。这一限制促使了[SBERT（Sentence-BERT）](https://www.sbert.net/examples/training/sts/README.html)的诞生，它改进了BERT架构以生成语义丰富的句子嵌入，通过余弦相似度等相似性度量方法即可轻松比较，显著降低了诸如查找相似句子等任务的计算开销。如今，嵌入模型生态系统已日趋多样化，众多供应商都推出了各自的实现。为了在这众多选项中做出选择，研究人员和从业者通常会参考像MTEB（Massive Text Embedding Benchmark，大规模文本嵌入基准）[这里](https://huggingface.co/blog/mteb)这样的基准测试。
+
+:::info[进一步阅读]
+
+- 参见[原始BERT论文](https://arxiv.org/abs/1810.04805)。
+- 参见Cameron Wolfe关于嵌入模型的[精彩综述](https://cameronrwolfe.substack.com/p/the-basics-of-ai-powered-vector-search?utm_source=profile&utm_medium=reader2)。
+- 参见MTEB（Massive Text Embedding Benchmark）[排行榜](https://huggingface.co/blog/mteb)，了解嵌入模型的全面概览。
+
+:::
+
+### 接口
+
+LangChain为使用嵌入模型提供了统一的接口，提供用于常见操作的标准方法。该通用接口通过两个核心方法简化了与各种嵌入提供者的交互：
+
+- `embedDocuments`：用于嵌入多个文本（文档）
+- `embedQuery`：用于嵌入单个文本（查询）
+
+这种区分很重要，因为某些提供者对文档（用于搜索的内容）和查询（搜索输入本身）采用不同的嵌入策略。为了说明这一点，以下是一个使用LangChain的`.embedDocuments`方法嵌入字符串列表的实际示例：
+
+```typescript
+import { OpenAIEmbeddings } from "@langchain/openai";
+const embeddingsModel = new OpenAIEmbeddings();
+const embeddings = await embeddingsModel.embedDocuments([
+  "Hi there!",
+  "Oh, hello!",
+  "What's your name?",
+  "My friends call me World",
+  "Hello World!",
+]);
+
+console.log(`(${embeddings.length}, ${embeddings[0].length})`);
+// (5, 1536)
+```
+
+为了方便起见，你也可以使用`embedQuery`方法嵌入单个文本：
+
+```typescript
+const queryEmbedding = await embeddingsModel.embedQuery(
+  "What is the meaning of life?"
+);
+```
+
+:::info[进一步阅读]
+
+- 参见[LangChain嵌入模型集成列表](/docs/integrations/text_embedding/)。
+- 参见这些关于使用嵌入模型的[操作指南](/docs/how_to/embed_text)。
+
+:::
+
+### 集成
+
+LangChain提供了许多嵌入模型的集成，你可以在[嵌入模型集成页面](/docs/integrations/text_embedding/)中找到它们。
+
+## 度量相似性
+
+每个嵌入本质上是一组坐标，通常位于高维空间中。在这个空间中，每个点（嵌入）的位置反映了其对应文本的含义。就像词典中相似的词可能彼此接近一样，相似的概念在嵌入空间中也会彼此接近。这使得不同文本之间可以进行直观的比较。通过将文本简化为这些数值表示，我们可以使用简单的数学运算快速度量两个文本的相似程度，而不管其原始长度或结构如何。一些常见的相似性度量包括：
+
+- **余弦相似性**：度量两个向量之间的夹角余弦值。
+- **欧几里得距离**：度量两点之间的直线距离。
+- **点积**：度量一个向量在另一个向量上的投影。
+
+相似性度量的选择应基于所使用的模型。例如，[OpenAI建议对其嵌入使用余弦相似性](https://platform.openai.com/docs/guides/embeddings/which-distance-function-should-i-use)，这可以轻松实现：
+
+```typescript
+function cosineSimilarity(vec1: number[], vec2: number[]): number {
+  const dotProduct = vec1.reduce((sum, val, i) => sum + val * vec2[i], 0);
+  const norm1 = Math.sqrt(vec1.reduce((sum, val) => sum + val * val, 0));
+  const norm2 = Math.sqrt(vec2.reduce((sum, val) => sum + val * val, 0));
+  return dotProduct / (norm1 * norm2);
+}
+
+const similarity = cosineSimilarity(queryResult, documentResult);
+console.log("Cosine Similarity:", similarity);
+```
+
+:::info[进一步阅读]
+
+- 参见Simon Willison关于嵌入和相似性度量的[精彩博客文章和视频](https://simonwillison.net/2023/Oct/23/embeddings/)。
+- 参见Google关于嵌入模型相似性度量的[文档](https://developers.google.com/machine-learning/clustering/dnn-clustering/supervised-similarity)。
+- 参见Pinecone关于相似性度量的[博客文章](https://www.pinecone.io/learn/vector-similarity/)。
+- 参见OpenAI关于应使用哪种相似性度量与OpenAI嵌入的[常见问题解答](https://platform.openai.com/docs/guides/embeddings/faq)。

@@ -1,0 +1,31 @@
+# MESSAGE_COERCION_FAILURE
+
+LangChain 中的若干模块接受 [`MessageLike`](https://api.js.langchain.com/types/_langchain_core.messages.BaseMessageLike.html) 对象作为正式 [`BaseMessage`](/docs/concepts/messages) 类的替代。其中包括 OpenAI 风格的消息对象（如 `{ role: "user", content: "Hello world!" }`）、元组以及普通字符串（会被转换为 [`HumanMessages`](/docs/concepts/messages/#humanmessage)）。
+
+如果这些模块接收了不属于上述格式的数据，你将会看到类似以下的错误：
+
+```ts
+const badlyFormattedMessageObject = {
+  role: "foo",
+  randomNonContentValue: "bar",
+};
+
+await model.invoke([badlyFormattedMessageObject]);
+```
+
+```
+Error: Unable to coerce message from array: only human, AI, system, or tool message coercion is currently supported.
+
+Received: {
+  "role": "foo",
+  "randomNonContentValue": "bar",
+}
+```
+
+## 故障排查
+
+以下方法可能有助于解决此错误：
+
+- 确保所有传递给聊天模型的输入都是 LangChain 消息类的数组，或者使用受支持的类消息格式。
+  - 检查是否发生了字符串化或其他意外的转换。
+- 检查错误的堆栈跟踪，并添加日志或调试语句。

@@ -1,0 +1,35 @@
+# OpenAI 函数元数据标记器
+
+在处理文档时，常常需要为导入的文档添加结构化元数据标签，例如文档的标题、语气或长度，以便后续进行更精确的相似性搜索。然而，当文档数量庞大时，手动完成这一标注过程可能会非常繁琐。
+
+`MetadataTagger` 文档转换器通过根据提供的模式从每个文档中自动提取元数据，从而实现自动化处理。它底层使用了基于 OpenAI Functions 的可配置链，因此如果你传入了一个自定义的 LLM 实例，该实例必须是支持函数调用的 OpenAI 模型。
+
+**注意：** 此文档转换器最适合处理完整的文档，因此建议在进行其他拆分或处理之前，先使用完整文档运行它！
+
+### 使用方法
+
+例如，假设你有一组影评需要索引。你可以按如下方式初始化文档转换器：
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+```typescript
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_transformers/metadata_tagger.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+```
+
+此外还有一个 `createMetadataTagger` 方法，它接受一个有效的 JSON Schema 对象作为参数。
+
+### 自定义设置
+
+你可以在第二个选项参数中将标准的 LLMChain 参数传递给底层的标记链。  
+例如，如果你希望 LLM 关注输入文档中的特定细节，或者以某种风格提取元数据，可以传入一个自定义提示：
+
+```typescript
+import CustomExample from "@examples/document_transformers/metadata_tagger_custom_prompt.ts";
+
+<CodeBlock language="typescript">{CustomExample}</CodeBlock>
+```

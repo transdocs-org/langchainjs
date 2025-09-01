@@ -1,0 +1,168 @@
+# libSQL
+
+[Turso](https://turso.tech) 是一个基于 [libSQL](https://docs.turso.tech/libsql) 的兼容 SQLite 的数据库，而 libSQL 是 SQLite 的开源贡献分支。向量相似性搜索作为原生数据类型内置于 Turso 和 libSQL 中，使你能够直接在数据库中存储和查询向量。
+
+LangChain.js 支持使用本地的 libSQL 或远程的 Turso 数据库作为向量存储，并提供了简单的 API 来与它进行交互。
+
+本指南提供了使用 libSQL 向量存储的快速概览。有关所有 libSQL 特性和配置的详细文档，请参阅 API 参考。
+
+## 概述
+
+## 集成详情
+
+| 类               | 包                | PY 支持 | 最新包版本                                                    |
+| ------------------ | ------------------ | ------- | ------------------------------------------------------------- |
+| `LibSQLVectorStore` | `@langchain/community` | ❌       | ![npm 版本](https://img.shields.io/npm/v/@langchain/community) |
+
+## 准备工作
+
+要使用 libSQL 向量存储，你需要创建一个 Turso 账户或设置一个本地的 SQLite 数据库，并安装 `@langchain/community` 集成包。
+
+本指南还将使用 OpenAI 嵌入，你需要安装 `@langchain/openai` 集成包。当然，你也可以选择使用其他支持的嵌入模型。
+
+在使用 libSQL 向量存储时，你可以使用本地的 SQLite，或者使用托管的 Turso 数据库。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @libsql/client @langchain/openai @langchain/community
+```
+
+现在是时候创建数据库了。你可以创建一个本地数据库，或者使用托管的 Turso 数据库。
+
+### 本地 libSQL
+
+创建一个新的本地 SQLite 文件并连接到 shell：
+
+```bash
+sqlite3 file.db
+```
+
+### 托管 Turso
+
+访问 [sqlite.new](https://sqlite.new) 创建一个新的数据库，给它起个名字，并创建一个数据库认证令牌。
+
+确保复制数据库认证令牌和数据库 URL，它应该类似于：
+
+```text
+libsql://[数据库名称]-[你的用户名].turso.io
+```
+
+### 设置表和索引
+
+执行以下 SQL 命令来创建新表或向现有表添加嵌入列。
+
+请确保修改 SQL 中的以下部分：
+
+- `TABLE_NAME` 是你想要创建的表名。
+- `content` 用于存储 `Document.pageContent` 值。
+- `metadata` 用于存储 `Document.metadata` 对象。
+- `EMBEDDING_COLUMN` 用于存储向量值，请使用你打算使用的模型的维度大小（OpenAI 使用 1536）。
+
+```sql
+CREATE TABLE IF NOT EXISTS TABLE_NAME (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    content TEXT,
+    metadata TEXT,
+    EMBEDDING_COLUMN F32_BLOB(1536) -- OpenAI 的 1536 维 f32 向量
+);
+```
+
+现在在 `EMBEDDING_COLUMN` 列上创建索引 - 索引名称很重要！
+
+```sql
+CREATE INDEX IF NOT EXISTS idx_TABLE_NAME_EMBEDDING_COLUMN ON TABLE_NAME(libsql_vector_idx(EMBEDDING_COLUMN));
+```
+
+请确保将 `TABLE_NAME` 和 `EMBEDDING_COLUMN` 替换为你在上一步中使用的值。
+
+## 实例化
+
+要初始化一个新的 `LibSQL` 向量存储，当你在远程操作时需要提供数据库 URL 和认证令牌，或者通过传递本地 SQLite 的文件名来完成。
+
+```typescript
+import { LibSQLVectorStore } from "@langchain/community/vectorstores/libsql";
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { createClient } from "@libsql/client";
+
+const embeddings = new OpenAIEmbeddings({
+  model: "text-embedding-3-small",
+});
+
+const libsqlClient = createClient({
+  url: "libsql://[数据库名称]-[你的用户名].turso.io",
+  authToken: "...",
+});
+
+// 本地实例化
+// const libsqlClient = createClient({
+//  url: "file:./dev.db",
+// });
+
+const vectorStore = new LibSQLVectorStore(embeddings, {
+  db: libsqlClient,
+  table: "TABLE_NAME",
+  column: "EMBEDDING_COLUMN",
+});
+```
+
+## 管理向量存储
+
+### 向向量存储中添加条目
+
+```typescript
+import type { Document } from "@langchain/core/documents";
+
+const documents: Document[] = [
+  { pageContent: "Hello", metadata: { topic: "greeting" } },
+  { pageContent: "Bye bye", metadata: { topic: "greeting" } },
+];
+
+await vectorStore.addDocuments(documents);
+```
+
+### 从向量存储中删除条目
+
+```typescript
+await vectorStore.deleteDocuments({ ids: [1, 2] });
+```
+
+## 查询向量存储
+
+插入文档后，你可以查询向量存储。
+
+### 直接查询
+
+执行简单的相似性搜索如下所示：
+
+```typescript
+const resultOne = await vectorStore.similaritySearch("hola", 1);
+
+for (const doc of similaritySearchResults) {
+  console.log(`${doc.pageContent} [${JSON.stringify(doc.metadata, null)}]`);
+}
+```
+
+带评分的相似性搜索：
+
+```typescript
+const similaritySearchWithScoreResults =
+  await vectorStore.similaritySearchWithScore("hola", 1);
+
+for (const [doc, score] of similaritySearchWithScoreResults) {
+  console.log(
+    `${score.toFixed(3)} ${doc.pageContent} [${JSON.stringify(doc.metadata)}]`
+  );
+}
+```
+
+## API 参考
+
+有关所有 `LibSQLVectorStore` 特性和配置的详细文档，请参阅 API 参考。
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

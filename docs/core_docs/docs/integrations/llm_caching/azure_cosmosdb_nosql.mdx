@@ -1,0 +1,40 @@
+# Azure Cosmos DB NoSQL 语义缓存
+
+> 语义缓存功能支持与 Azure Cosmos DB for NoSQL 的集成，使用户能够根据用户输入与先前缓存结果之间的语义相似性检索缓存的响应。该功能依赖于 [AzureCosmosDBNoSQLVectorStore](/docs/integrations/vectorstores/azure_cosmosdb_nosql)，它用于存储缓存提示的向量嵌入。这些嵌入支持基于相似性的搜索，从而让系统检索到相关的缓存结果。
+
+如果你还没有 Azure 账户，可以[创建一个免费账户](https://azure.microsoft.com/free/)开始使用。
+
+## 配置
+
+首先，你需要安装 [`@langchain/azure-cosmosdb`](https://www.npmjs.com/package/@langchain/azure-cosmosdb) 包：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/azure-cosmosdb @langchain/core
+```
+
+你还需要运行一个 Azure Cosmos DB for NoSQL 实例。你可以根据[此指南](https://learn.microsoft.com/azure/cosmos-db/nosql/quickstart-portal)在 Azure 门户中免费部署一个实例。
+
+当你启动实例后，请确保你已获取连接字符串。如果你使用的是托管身份（Managed Identity），则需要确保拥有终结点。你可以在 Azure 门户中实例的 "Settings / Keys" 部分找到这些信息。
+
+import CodeBlock from "@theme/CodeBlock";
+
+:::info
+
+当使用 Azure 托管身份（Managed Identity）和基于角色的访问控制（RBAC）时，你必须提前创建好数据库和容器。RBAC 不提供创建数据库和容器的权限。你可以参考 [Azure Cosmos DB 文档](https://learn.microsoft.com/azure/cosmos-db/how-to-setup-rbac#permission-model)了解有关权限模型的更多信息。
+
+:::
+
+## 使用示例
+
+import Example from "@examples/caches/azure_cosmosdb_nosql/azure_cosmosdb_nosql.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 相关内容
+
+- 向量存储的[概念指南](/docs/concepts/#vectorstores)
+- 向量存储的[操作指南](/docs/how_to/#vectorstores)

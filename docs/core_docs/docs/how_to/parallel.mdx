@@ -1,0 +1,62 @@
+# 如何并行调用可运行对象
+
+:::info 前提条件
+
+本指南假定你熟悉以下概念：
+
+- [LangChain 表达式语言 (LCEL)](/docs/concepts/lcel)
+- [链式调用可运行对象](/docs/how_to/sequence/)
+
+:::
+
+[`RunnableParallel`](https://api.js.langchain.com/classes/langchain_core.runnables.RunnableParallel.html)（也称为 `RunnableMap`）是一种原始对象，其值是可运行对象（或可以被强制转换为可运行对象的对象，比如函数）。  
+它会并行运行其所有值，每个值都会使用传给 `RunnableParallel` 的初始输入进行调用。最终的返回值是一个对象，其键对应各个值的结果。
+
+## 使用 `RunnableParallels` 格式化数据
+
+`RunnableParallels` 适用于并行化操作，但也可以用于将一个可运行对象的输出格式转换为下一个可运行对象所需的输入格式。你可以使用它们来拆分或分支链，使得多个组件可以并行处理输入。之后，其他组件可以合并或整合这些结果，以生成最终响应。这种类型的链会创建一个如下所示的计算图：
+
+```text
+     输入
+      / \
+     /   \
+ 分支1 分支2
+     \   /
+      \ /
+     合并
+```
+
+在下面的示例中，`RunnableParallel` 中每个链的输入都应是一个包含 `"topic"` 键的对象。  
+我们可以通过传递一个符合该结构的对象来满足这一要求。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/anthropic @langchain/cohere @langchain/core
+```
+
+import CodeBlock from "@theme/CodeBlock";
+import BasicExample from "@examples/guides/expression_language/runnable_maps_basic.ts";
+
+<CodeBlock language="typescript">{BasicExample}</CodeBlock>
+
+## 操作输入/输出
+
+Maps 可以用于将一个可运行对象的输出转换为下一个可运行对象所需的输入格式。
+
+请注意，下面 `RunnableSequence.from()` 调用中的对象会被自动转换为一个 runnable map。对象的所有键的值必须是可运行对象，或者本身可以被强制转换为可运行对象（函数转换为 `RunnableLambda`，对象转换为 `RunnableMap`）。  
+当你通过 `.pipe()` 方法组合链时，也会发生类似的强制转换。
+
+import SequenceExample from "@examples/guides/expression_language/runnable_maps_sequence.ts";
+
+<CodeBlock language="typescript">{SequenceExample}</CodeBlock>
+
+在此示例中，prompt 的输入期望是一个包含 "context" 和 "question" 键的对象。用户的输入只是问题。因此我们需要使用检索器获取上下文，并将用户输入作为 "question" 键的值透传过去。
+
+## 下一步
+
+你现在了解了一些使用 `RunnableParallel` 来格式化和并行化链式步骤的方法。
+
+接下来，你可能会对在链中[使用自定义逻辑](/docs/how_to/functions/)感兴趣。

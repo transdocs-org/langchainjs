@@ -1,0 +1,139 @@
+---
+sidebar_position: 0
+sidebar_label: v0.3
+---
+
+# LangChain v0.3
+
+_最后更新时间：07.08.25_
+
+## 已变更的内容
+
+- 所有 LangChain 包现在将 `@langchain/core` 作为 peer dependency 而非直接依赖，以避免 [core 版本冲突](/docs/how_to/installation/#installing-integration-packages) 导致的类型错误。
+  - 现在你需要显式安装 `@langchain/core`，而不能依赖其他包内部解析的版本。
+- 默认情况下，回调现在是非阻塞的后台操作，而非阻塞操作。
+  - 这意味着如果你在无服务器环境中使用 LangSmith 进行追踪，你需要 [等待回调完成以确保它们在函数结束前执行完毕](/docs/how_to/callbacks_serverless)。
+- 移除了 `langchain` 中已弃用的文档加载器和自查询入口点，改用 [`@langchain/community`](https://www.npmjs.com/package/@langchain/community) 和集成包中的入口点。
+- 移除了 community 中已弃用的 Google PaLM 入口点，改用 [`@langchain/google-vertexai`](https://www.npmjs.com/package/@langchain/google-vertexai) 和 [`@langchain/google-genai`](https://www.npmjs.com/package/@langchain/google-genai) 中的入口点。
+- 弃用了使用包含 `"type"` 属性的对象作为 [`BaseMessageLike`](https://v03.api.js.langchain.com/types/_langchain_core.messages.BaseMessageLike.html) 的方式，改用更接近 OpenAI 风格的 [`MessageWithRole`](https://v03.api.js.langchain.com/types/_langchain_core.messages.MessageFieldWithRole.html)。
+
+## 新增功能
+
+在 0.2.x 开发期间添加了以下功能：
+
+- 简化了工具的定义和使用。[了解更多](https://blog.langchain.dev/improving-core-tool-interfaces-and-docs-in-langchain/)。
+- 添加了[通用聊天模型构造器](https://js.langchain.com/docs/how_to/chat_models_universal_init/)。
+- 添加了[发送自定义事件的能力](https://js.langchain.com/docs/how_to/callbacks_custom_events/)。
+- 发布了 LangGraph.js 0.2.0，并将其作为 [使用 LangChain.js 创建代理的推荐方式](https://js.langchain.com/docs/how_to/migrate_agent)。
+- 改进了集成文档和 API 参考。[了解更多](https://blog.langchain.dev/langchain-integration-docs-revamped/)。
+
+## 如何更新你的代码
+
+如果你正在使用 `langchain` / `@langchain/community` / `@langchain/core` 0.0 或 0.1，我们建议你首先 [升级到 0.2](https://js.langchain.com/v0.2/docs/versions/v0_2/)。
+
+如果你正在使用 `@langchain/langgraph`，请升级到 `@langchain/langgraph>=0.2.3`。这将兼容所有基础包的 0.2 或 0.3 版本。
+
+以下是所有已发布包及其在 `package.json` 中建议的版本约束的完整列表。任何现在支持 `@langchain/core` 0.3 的包都进行了次版本升级。
+
+### 基础包
+
+| 包名                  | 最新版本 | 推荐的 `package.json` 约束           |
+| --------------------- | -------- | ------------------------------------- |
+| langchain             | 0.3.29   | >=0.3.58 <0.4.0                       |
+| @langchain/community  | 0.3.48   | >=0.3.58 <0.4.0                       |
+| @langchain/textsplitters | 0.1.0 | >=0.2.21 <0.4.0                       |
+| @langchain/core       | 0.3.62   | >=0.3.0 <0.4.0                        |
+
+### 下游包
+
+| 包名                   | 最新版本 | 推荐的 `package.json` 约束           |
+| ---------------------- | -------- | ------------------------------------- |
+| @langchain/langgraph   | 0.3.7    | >=0.3.58 <0.4.0                       |
+
+### 集成包
+
+| 包名                           | 最新版本 | 推荐的 `package.json` 约束           |
+| ------------------------------ | -------- | ------------------------------------- |
+| @langchain/anthropic           | 0.3.24   | >=0.3.58 <0.4.0                       |
+| @langchain/aws                 | 0.1.11   | >=0.3.58 <0.4.0                       |
+| @langchain/azure-cosmosdb      | 0.2.8    | >=0.2.21 <0.4.0                       |
+| @langchain/azure-dynamic-sessions | 0.2.0 | >=0.2.21 <0.4.0                       |
+| @langchain/baidu-qianfan       | 0.1.0    | >=0.1.0 <0.4.0                        |
+| @langchain/cloudflare          | 0.1.0    | >=0.1.0 <0.4.0                        |
+| @langchain/cohere              | 0.3.4    | >=0.3.58 <0.4.0                       |
+| @langchain/exa                 | 0.1.0    | >=0.1.0 <0.4.0                        |
+| @langchain/google-genai        | 0.2.14   | >=0.3.58 <0.4.0                       |
+| @langchain/google-vertexai     | 0.2.14   | >=0.3.58 <0.4.0                       |
+| @langchain/google-vertexai-web | 0.2.14   | >=0.3.58 <0.4.0                       |
+| @langchain/groq                | 0.2.3    | >=0.3.58 <0.4.0                       |
+| @langchain/mistralai           | 0.2.1    | >=0.3.58 <0.4.0                       |
+| @langchain/mixedbread-ai       | 0.2.0    | >=0.2.21 <0.4.0                       |
+| @langchain/mongodb             | 0.1.0    | >=0.1.0 <0.4.0                        |
+| @langchain/nomic               | 0.1.0    | >=0.3.0 <0.4.0                        |
+| @langchain/ollama              | 0.2.3    | >=0.3.58 <0.4.0                       |
+| @langchain/openai              | 0.5.18   | >=0.3.58 <0.4.0                       |
+| @langchain/pinecone            | 0.2.0    | >=0.2.21 <0.4.0                       |
+| @langchain/qdrant              | 0.1.2    | >=0.2.21 <0.4.0                       |
+| @langchain/redis               | 0.1.1    | >=0.2.21 <0.4.0                       |
+| @langchain/weaviate            | 0.2.1    | >=0.2.21 <0.4.0                       |
+| @langchain/yandex              | 0.1.0    | >=0.2.21 <0.4.0                       |
+
+更新到最新版本的包后，如果尚未安装，你需要显式安装 `@langchain/core`：
+
+```bash npm2yarn
+npm install @langchain/core
+```
+
+我们还建议检查你的 lockfile 或运行 [相应的包管理器命令](/docs/how_to/installation/#installing-integration-packages)，以确保你的包管理器只安装了一个版本的 `@langchain/core`。
+
+如果你当前在无服务器环境中运行代码（例如，Cloudflare Worker、Edge 函数或 AWS Lambda 函数），并且你使用了 LangSmith 追踪或其他回调，你需要 [等待回调完成以确保它们在函数结束前执行完毕](/docs/how_to/callbacks_serverless)。
+以下是一个快速示例：
+
+```ts
+import { RunnableLambda } from "@langchain/core/runnables";
+import { awaitAllCallbacks } from "@langchain/core/callbacks/promises";
+
+const runnable = RunnableLambda.from(() => "hello!");
+
+const customHandler = {
+  handleChainEnd: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    console.log("调用完成");
+  },
+};
+
+const startTime = new Date().getTime();
+
+await runnable.invoke({ number: "2" }, { callbacks: [customHandler] });
+
+console.log(`耗时: ${new Date().getTime() - startTime}ms`);
+
+await awaitAllCallbacks();
+
+console.log(`最终耗时: ${new Date().getTime() - startTime}ms`);
+```
+
+```
+耗时: 1ms
+调用完成
+最终耗时: 2164ms
+```
+
+你也可以将 `LANGCHAIN_CALLBACKS_BACKGROUND` 设置为 `"false"` 来使所有回调变为阻塞模式：
+
+```ts
+process.env.LANGCHAIN_CALLBACKS_BACKGROUND = "false";
+
+const startTimeBlocking = new Date().getTime();
+
+await runnable.invoke({ number: "2" }, { callbacks: [customHandler] });
+
+console.log(
+  `初始耗时: ${new Date().getTime() - startTimeBlocking}ms`
+);
+```
+
+```
+调用完成
+初始耗时: 2002ms
+```

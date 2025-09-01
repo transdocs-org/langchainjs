@@ -1,0 +1,81 @@
+# Momento Vector Index (MVI)
+
+[MVI](https://gomomento.com)：您数据的最高产、最易用的无服务器向量索引。要开始使用 MVI，只需注册一个账户即可。无需处理基础设施、管理服务器，也无需担心扩展问题。MVI 是一项可自动扩展以满足您需求的服务。无论是在 Node.js、浏览器还是边缘环境中，Momento 都能为您提供支持。
+
+要注册并访问 MVI，请访问 [Momento 控制台](https://console.gomomento.com)。
+
+## 配置
+
+1. 在 [Momento 控制台](https://console.gomomento.com/)中注册一个 API 密钥。
+2. 为您的环境安装 SDK。
+
+   2.1 对于 **Node.js**：
+
+   ```bash npm2yarn
+   npm install @gomomento/sdk
+   ```
+
+   2.2 对于 **浏览器或边缘环境**：
+
+   ```bash npm2yarn
+   npm install @gomomento/sdk-web
+   ```
+
+3. 在运行代码前为 Momento 设置环境变量
+
+   3.1 OpenAI
+
+   ```bash
+   export OPENAI_API_KEY=YOUR_OPENAI_API_KEY_HERE
+   ```
+
+   3.2 Momento
+
+   ```bash
+   export MOMENTO_API_KEY=YOUR_MOMENTO_API_KEY_HERE # https://console.gomomento.com
+   ```
+
+import CodeBlock from "@theme/CodeBlock";
+
+## 使用方法
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+### 使用 `fromTexts` 方法索引文档并进行搜索
+
+此示例演示了如何使用 `fromTexts` 方法实例化向量存储并索引文档。
+如果索引不存在，则会创建它。如果索引已存在，则会将文档添加到现有索引中。
+
+`ids` 是可选的；如果您省略它们，Momento 会为您生成 UUID。
+
+import TextsExample from "@examples/indexes/vector_stores/momento_vector_index/fromTexts.ts";
+
+<CodeBlock language="typescript">{TextsExample}</CodeBlock>
+
+### 使用 `fromDocuments` 方法索引文档并进行搜索
+
+与上述类似，此示例演示了如何使用 `fromDocuments` 方法实例化向量存储并索引文档。
+如果索引不存在，则会创建它。如果索引已存在，则会将文档添加到现有索引中。
+
+使用 `fromDocuments` 可以将各种文档加载器与索引无缝连接起来。
+
+import DocsExample from "@examples/indexes/vector_stores/momento_vector_index/fromDocs.ts";
+
+<CodeBlock language="typescript">{DocsExample}</CodeBlock>
+
+### 从现有集合中搜索
+
+import ExistingExample from "@examples/indexes/vector_stores/momento_vector_index/fromExisting.ts";
+
+<CodeBlock language="typescript">{ExistingExample}</CodeBlock>
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

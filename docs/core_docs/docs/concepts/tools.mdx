@@ -1,0 +1,175 @@
+# 工具
+
+:::info 前提条件
+
+- [聊天模型](/docs/concepts/chat_models/)
+
+:::
+
+## 概述
+
+LangChain 中的 **工具** 抽象将一个 TypeScript **函数** 与一个定义了该函数 **名称**、**描述** 和 **输入** 的 **schema** 关联起来。
+
+**工具** 可以传递给支持 [工具调用](/docs/concepts/tool_calling) 的 [聊天模型](/docs/concepts/chat_models)，允许模型请求使用特定输入执行特定函数。
+
+## 关键概念
+
+- 工具是一种将函数及其 schema 封装在一起的方法，以便可以将其传递给聊天模型。
+- 使用 [tool](https://api.js.langchain.com/functions/_langchain_core.tools.tool-1.html) 函数创建工具，该函数简化了工具创建过程，支持以下功能：
+  - 定义返回 **工件**（例如图像等）的工具。
+  - 使用 **注入的工具参数** 隐藏 schema 中的输入参数（因此对模型隐藏）。
+
+## 工具接口
+
+工具接口在 [`StructuredTool`](https://api.js.langchain.com/classes/_langchain_core.tools.StructuredTool.html) 类中定义，该类是 [Runnable 接口](/docs/concepts/runnables) 的子类。
+
+与工具 **schema** 对应的关键属性：
+
+- **name**：工具的名称。
+- **description**：对工具功能的描述。
+- **args**：返回工具参数 JSON schema 的属性。
+
+用于执行与 **工具** 关联函数的关键方法：
+
+- **invoke**：使用给定参数调用工具。
+
+## 使用 `tool` 函数创建工具
+
+推荐使用 [tool](https://api.js.langchain.com/functions/_langchain_core.tools.tool-1.html) 函数创建工具。该函数旨在简化工具创建过程，在大多数情况下都应使用它。
+
+```typescript
+import { tool } from "@langchain/core/tools";
+import { z } from "zod";
+
+const multiply = tool(
+  ({ a, b }: { a: number; b: number }): number => {
+    /**
+     * 将两个数字相乘。
+     */
+    return a * b;
+  },
+  {
+    name: "multiply",
+    description: "将两个数字相乘",
+    schema: z.object({
+      a: z.number(),
+      b: z.number(),
+    }),
+  }
+);
+```
+
+有关如何创建工具的更多详细信息，请参阅 [如何创建自定义工具](/docs/how_to/custom_tools/) 指南。
+
+:::note
+LangChain 还有其他几种创建工具的方法，例如通过子类化 [`StructuredTool`](https://api.js.langchain.com/classes/_langchain_core.tools.StructuredTool.html) 类或使用 `StructuredTool`。这些方法在 [如何创建自定义工具指南](/docs/how_to/custom_tools/) 中有展示，但我们通常建议在大多数情况下使用 `tool` 函数。
+:::
+
+## 直接使用工具
+
+定义工具后，可以通过直接调用函数来使用它。例如，使用上面定义的 `multiply` 工具：
+
+```typescript
+await multiply.invoke({ a: 2, b: 3 });
+```
+
+### 查看
+
+您还可以检查工具的 schema 和其他属性：
+
+```typescript
+console.log(multiply.name); // multiply
+console.log(multiply.description); // 将两个数字相乘。
+```
+
+:::note
+如果您使用的是预构建的 LangChain 或 LangGraph 组件（如 [createReactAgent](https://langchain-ai.github.io/langgraphjs/reference/functions/langgraph_prebuilt.createReactAgent.html)），可能不需要直接与工具交互。然而，了解如何使用它们对于调试和测试非常有价值。此外，在构建自定义 LangGraph 工作流时，可能需要直接使用工具。
+:::
+
+## 配置 schema
+
+`tool` 函数提供了额外的选项来配置工具的 schema（例如，修改名称、描述或解析函数的 doc-string 以推断 schema）。
+
+详细信息请参见 [tool 的 API 参考](https://api.js.langchain.com/functions/_langchain_core.tools.tool-1.html)，并查看 [如何创建自定义工具](/docs/how_to/custom_tools/) 指南中的示例。
+
+## 工具工件
+
+**工具** 是可以由模型调用的实用程序，其输出设计为反馈给模型。然而，有时我们希望工具执行的某些工件对链或代理中的下游组件可用，但不想暴露给模型本身。例如，如果一个工具返回一个自定义对象、数据框或图像，我们可能希望向模型传递此输出的某些元数据，而不是实际输出本身。同时，我们可能希望能够在其他地方（例如下游工具中）访问这个完整输出。
+
+```typescript
+const someTool = tool(({ ... }) => {
+    // 做一些事情
+}, {
+  // ... 工具 schema 参数
+  // 设置 returnType 为 "content_and_artifact"
+  responseFormat: "content_and_artifact"
+});
+```
+
+详细信息请参见 [如何从工具返回工件](/docs/how_to/tool_artifacts/)。
+
+### RunnableConfig
+
+您可以使用 `RunnableConfig` 对象将自定义运行时值传递给工具。
+
+如果需要从工具内部访问 [RunnableConfig](/docs/concepts/runnables/#RunnableConfig) 对象，可以通过在工具的函数签名中使用 `RunnableConfig` 来实现。
+
+```typescript
+import { RunnableConfig } from "@langchain/core/runnables";
+
+const someTool = tool(
+    async (args: any, config: RunnableConfig): Promise<[string, any]> => {
+        /**
+         * 执行某些操作的工具。
+         */
+    },
+    {
+        name: "some_tool",
+        description: "执行某些操作的工具",
+        schema: z.object({ ... }),
+        returnType: "content_and_artifact"
+    }
+);
+
+
+await someTool.invoke(..., { configurable: { value: "some_value" } });
+```
+
+`config` 不会是工具 schema 的一部分，并将在运行时注入适当的值。
+
+## 最佳实践
+
+在设计供模型使用的工具时，请记住以下几点：
+
+- 命名良好、正确记录并正确类型提示的工具更容易被模型使用。
+- 设计简单且范围狭窄的工具，因为它们更容易被模型正确使用。
+- 使用支持 [工具调用](/docs/concepts/tool_calling) API 的聊天模型以充分利用工具。
+
+## 工具包
+
+<span data-heading-keywords="toolkit,toolkits"></span>
+
+LangChain 有一个 **工具包** 的概念。这是一个非常轻量的抽象，用于将设计为一起使用的工具组合在一起，以完成特定任务。
+
+### 接口
+
+所有工具包都暴露了一个 `getTools` 方法，该方法返回一个工具列表。因此，您可以执行以下操作：
+
+```typescript
+// 初始化一个工具包
+const toolkit = new ExampleTookit(...)
+
+// 获取工具列表
+const tools = toolkit.getTools()
+```
+
+## 相关资源
+
+有关更多信息，请参阅以下资源：
+
+- [`tool` 的 API 参考](https://api.js.langchain.com/functions/_langchain_core.tools.tool-1.html)
+- [如何创建自定义工具](/docs/how_to/custom_tools/)
+- [如何将运行时值传递给工具](/docs/how_to/tool_runtime/)
+- [所有 LangChain 工具的如何指南](https://docs.langchain.com/docs/how_to/#tools)
+- [显示与 LangGraph 一起使用的其他如何指南](https://langchain-ai.github.io/langgraphjs/how-tos/tool-calling/)
+- 工具集成，请参阅 [工具集成文档](https://docs.langchain.com/docs/integrations/tools/)。

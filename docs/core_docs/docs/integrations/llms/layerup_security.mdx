@@ -1,0 +1,36 @@
+import CodeBlock from "@theme/CodeBlock";
+
+# Layerup 安全
+
+[Layerup 安全](https://uselayerup.com) 集成允许您保护对任何 LangChain 大型语言模型（LLM）、LLM 链或 LLM 代理的调用。该 LLM 对象包裹在任意现有的 LLM 对象外围，从而在您的用户和 LLM 之间建立一个安全层。
+
+虽然 Layerup 安全对象被设计为一个 LLM，但它实际上并不是一个 LLM，它只是包裹在一个 LLM 上，使其能够适配底层 LLM 的相同功能。
+
+## 准备工作
+
+首先，您需要从 Layerup [官网](https://uselayerup.com) 获取一个 Layerup 安全账户。
+
+接下来，通过 [仪表板](https://dashboard.uselayerup.com) 创建一个项目，并复制您的 API 密钥。我们建议将您的 API 密钥放置在项目的环境变量中。
+
+安装 Layerup 安全 SDK：
+
+```bash npm2yarn
+npm install @layerup/layerup-security
+```
+
+然后安装 LangChain 社区包：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+现在，您就可以开始使用 Layerup 安全保护您的 LLM 调用了！
+
+import LayerupSecurityExampleCode from "@examples/llms/layerup_security.ts";
+
+<CodeBlock language="typescript">{LayerupSecurityExampleCode}</CodeBlock>
+
+## 相关内容
+
+- LLM [概念指南](/docs/concepts/text_llms)
+- LLM [操作指南](/docs/how_to/#llms)

@@ -1,0 +1,34 @@
+---
+sidebar_label: NIBittensorChatModel
+sidebar_class_name: hidden
+---
+
+# NIBittensorChatModel
+
+:::warning
+此模块已弃用，不再受支持。以下文档在 0.2.0 及之后版本中将无法正常工作。
+:::
+
+LangChain.js 为 Neural Internet 的 Bittensor 聊天模型提供了实验性支持。
+
+以下是一个示例：
+
+```typescript
+import { NIBittensorChatModel } from "langchain/experimental/chat_models/bittensor";
+import { HumanMessage } from "@langchain/core/messages";
+
+const chat = new NIBittensorChatModel();
+const message = new HumanMessage("What is bittensor?");
+const res = await chat.invoke([message]);
+console.log({ res });
+/*
+  {
+    res: "\nBittensor is opensource protocol..."
+  }
+ */
+```
+
+## 相关内容
+
+- 聊天模型 [概念指南](/docs/concepts/chat_models)
+- 聊天模型 [操作指南](/docs/how_to/#chat-models)

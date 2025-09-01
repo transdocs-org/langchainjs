@@ -1,0 +1,29 @@
+# 如何合并多个检索器的结果
+
+:::info 前提条件
+
+本指南假设您已经熟悉以下概念：
+
+- [文档（Documents）](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html)
+- [检索器（Retrievers）](/docs/concepts/retrievers)
+
+:::
+
+[EnsembleRetriever](https://api.js.langchain.com/classes/langchain.retrievers_ensemble.EnsembleRetriever.html) 支持合并多个检索器的结果。它通过一组 [BaseRetriever](https://api.js.langchain.com/classes/langchain_core.retrievers.BaseRetriever.html) 对象进行初始化。`EnsembleRetriever` 会根据 [Reciprocal Rank Fusion](https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf) 算法对各个子检索器的结果进行重新排序。
+
+通过结合不同算法的优势，`EnsembleRetriever` 可以实现比单一算法更好的性能。
+
+一个常见的有效模式是将关键词匹配检索器与稠密检索器（如基于嵌入向量的相似度检索）结合使用，因为它们的优势是互补的。这种组合可以被视为一种“混合搜索”。稀疏检索器擅长根据关键词查找相关文档，而稠密检索器则擅长根据语义相似性查找相关文档。
+
+下面我们将演示如何将一个[简单的自定义检索器](/docs/how_to/custom_retriever/)（该检索器仅返回直接包含输入查询的文档）与一个基于[内存中的向量存储](https://api.js.langchain.com/classes/langchain.vectorstores_memory.MemoryVectorStore.html)的检索器进行集成。
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/retrievers/ensemble_retriever.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 下一步
+
+现在您已经学会了如何合并多个检索器的结果。  
+接下来，您可以查看其他一些检索相关的指南，例如如何通过[为每个文档使用多个嵌入向量来提升检索效果](/docs/how_to/multi_vector)，  
+或者如何[创建您自己的自定义检索器](/docs/how_to/custom_retriever)。

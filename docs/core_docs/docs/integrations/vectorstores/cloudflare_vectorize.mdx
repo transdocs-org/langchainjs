@@ -1,0 +1,73 @@
+---
+hide_table_of_contents: true
+---
+
+# Cloudflare Vectorize
+
+如果你正在 Cloudflare Worker 中部署项目，则可以在 LangChain.js 中使用 [Cloudflare Vectorize](https://developers.cloudflare.com/vectorize/)。这是一个功能强大且便捷的选项，直接集成在 Cloudflare 中。
+
+## 设置
+
+:::tip 兼容性
+Cloudflare Vectorize 当前处于公开测试阶段，使用时需要一个付费计划的 Cloudflare 账户。
+:::
+
+在[设置好项目](https://developers.cloudflare.com/vectorize/get-started/intro/#prerequisites)之后，运行以下 Wrangler 命令来创建索引：
+
+```bash
+$ npx wrangler vectorize create <index_name> --preset @cf/baai/bge-small-en-v1.5
+```
+
+你可以在官方文档中查看 `vectorize` 命令的完整选项列表：[官方文档](https://developers.cloudflare.com/workers/wrangler/commands/#vectorize)。
+
+接下来，你需要更新 `wrangler.toml` 文件，添加一项 `[[vectorize]]`：
+
+```toml
+[[vectorize]]
+binding = "VECTORIZE_INDEX"
+index_name = "<index_name>"
+```
+
+最后，你需要安装 LangChain Cloudflare 集成包：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/cloudflare @langchain/core
+```
+
+## 使用
+
+以下是一个示例 Worker，根据使用的路径将文档添加到向量存储、查询向量存储或清空向量存储。它还使用了 [Cloudflare Workers AI Embeddings](/docs/integrations/text_embedding/cloudflare_ai)。
+
+:::note
+如果在本地运行，请确保使用 `npx wrangler dev --remote` 运行 wrangler！
+:::
+
+```toml
+name = "langchain-test"
+main = "worker.ts"
+compatibility_date = "2024-01-10"
+
+[[vectorize]]
+binding = "VECTORIZE_INDEX"
+index_name = "langchain-test"
+
+[ai]
+binding = "AI"
+```
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/indexes/vector_stores/cloudflare_vectorize/example.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+你还可以传递一个 `filter` 参数，以根据之前加载的元数据进行过滤。
+有关所需格式的信息，请参阅[官方文档](https://developers.cloudflare.com/vectorize/learning/metadata-filtering/)。
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

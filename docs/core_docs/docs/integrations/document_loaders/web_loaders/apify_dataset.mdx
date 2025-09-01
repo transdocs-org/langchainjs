@@ -1,0 +1,57 @@
+---
+hide_table_of_contents: true
+sidebar_class_name: node-only
+---
+
+# Apify 数据集
+
+本指南展示了如何将 [Apify](https://apify.com) 与 LangChain 配合使用，从 Apify 数据集加载文档。
+
+## 概述
+
+[Apify](https://apify.com) 是一个用于网页抓取和数据提取的云平台，它提供了一个[生态系统](https://apify.com/store)，其中包含超过两千个现成的应用程序，称为 _Actors（执行器）_，适用于各种网页抓取、爬虫和数据提取的场景。
+
+本指南展示了如何从 [Apify 数据集](https://docs.apify.com/platform/storage/dataset) 加载文档 —— 一种为存储结构化的网页抓取结果而设计的可扩展的仅追加存储，例如产品列表或 Google SERPs（搜索引擎结果页面），然后可以将这些数据导出为 JSON、CSV 或 Excel 等多种格式。
+
+数据集通常用于保存不同 Actors 的结果。例如，[Website Content Crawler（网站内容爬虫）](https://apify.com/apify/website-content-crawler) Actor 可以深度爬取文档网站、知识库、帮助中心或博客等网站，并将网页的文本内容存储到数据集中，之后你可以将这些文档导入向量数据库，用于信息检索。另一个例子是 [RAG Web Browser（RAG 网页浏览器）](https://apify.com/apify/rag-web-browser) Actor，它会查询 Google 搜索，抓取排名前 N 的页面结果，并以 Markdown 格式返回清理后的内容，供大型语言模型进一步处理。
+
+## 准备工作
+
+首先，你需要安装官方的 Apify 客户端：
+
+```bash npm2yarn
+npm install apify-client
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install hnswlib-node @langchain/openai @langchain/community @langchain/core
+```
+
+你还需要注册并获取你的 [Apify API 令牌](https://console.apify.com/settings/integrations)。
+
+## 使用方法
+
+### 从一个新的数据集开始（爬取网站并将数据存储到 Apify 数据集）
+
+如果你在 Apify 平台上还没有现成的数据集，则需要通过调用一个 Actor 并等待结果来初始化文档加载器。在下面的示例中，我们使用 [Website Content Crawler（网站内容爬虫）](https://apify.com/apify/website-content-crawler) Actor 来爬取 LangChain 文档，将结果存储到 Apify 数据集中，然后使用 `ApifyDatasetLoader` 加载该数据集。为了演示，我们将使用快速的 Cheerio 爬虫类型，并将爬取的页面数量限制为 10 个。
+
+**注意：** 运行 Website Content Crawler 可能需要一些时间，具体取决于网站的大小。对于大型网站，可能需要数小时甚至几天！
+
+以下是一个示例：
+
+import CodeBlock from "@theme/CodeBlock";
+import NewExample from "@examples/document_loaders/apify_dataset_new.ts";
+
+<CodeBlock language="typescript">{NewExample}</CodeBlock>
+
+### 从现有的数据集加载
+
+如果你已经运行过某个 Actor，并且在 Apify 平台上已有数据集，则可以直接使用构造函数初始化文档加载器：
+
+import ExistingExample from "@examples/document_loaders/apify_dataset_existing.ts";
+
+<CodeBlock language="typescript">{ExistingExample}</CodeBlock>

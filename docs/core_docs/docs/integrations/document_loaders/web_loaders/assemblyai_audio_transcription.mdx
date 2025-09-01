@@ -1,0 +1,39 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# AssemblyAI 音频转录文本
+
+本文介绍如何使用 [AssemblyAI API](https://www.assemblyai.com/docs/api-reference/transcripts/submit?utm_source=langchainjs) 从文件中加载音频（和视频）转录文本作为文档对象。
+
+## 使用方法
+
+首先，你需要安装官方的 AssemblyAI 包：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core assemblyai
+```
+
+要使用加载器，你需要一个 [AssemblyAI 账户](https://www.assemblyai.com/dashboard/signup?utm_source=langchainjs)，并[从仪表板获取你的 AssemblyAI API 密钥](https://www.assemblyai.com/app/account?utm_source=langchainjs)。
+
+然后，将 API 密钥配置为 `ASSEMBLYAI_API_KEY` 环境变量，或者通过 `apiKey` 选项参数传入。
+
+import TranscriptExample from "@examples/document_loaders/assemblyai_audio_transcription.ts";
+
+<CodeBlock language="typescript">{TranscriptExample}</CodeBlock>
+
+> **提示**
+>
+> - 你可以使用 `AudioTranscriptParagraphsLoader` 或 `AudioTranscriptSentencesLoader` 将转录文本按段落或句子拆分。
+> - `audio` 参数可以是 URL、本地文件路径、buffer 或流。
+> - `audio` 也可以是视频文件。支持的文件类型请参阅[常见问题文档](https://www.assemblyai.com/docs/concepts/faq?utm_source=langchainjs#:~:text=file%20types%20are%20supported)。
+> - 如果没有传入 `apiKey` 选项，加载器将使用 `ASSEMBLYAI_API_KEY` 环境变量。
+> - 你可以添加除 `audio` 外的更多属性。完整的请求参数列表请参阅 [AssemblyAI API 文档](https://www.assemblyai.com/docs/api-reference/transcripts/submit?utm_source=langchainjs#create-a-transcript)。
+
+你还可以使用 `AudioSubtitleLoader` 来获取 `srt` 或 `vtt` 格式的字幕作为文档。
+
+import SubtitleExample from "@examples/document_loaders/assemblyai_subtitles.ts";
+
+<CodeBlock language="typescript">{SubtitleExample}</CodeBlock>

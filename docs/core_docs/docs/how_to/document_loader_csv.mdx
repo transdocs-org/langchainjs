@@ -1,0 +1,92 @@
+# 如何加载CSV数据
+
+> [逗号分隔值（CSV）](https://zh.wikipedia.org/wiki/逗号分隔值) 文件是一种以逗号为分隔符的文本文件。文件的每一行是一个数据记录，每个记录包含一个或多个字段，字段之间以逗号分隔。
+
+按每个文档单行的方式加载CSV数据。
+
+## 安装
+
+```bash npm2yarn
+npm install d3-dsv@2
+```
+
+## 使用方法，提取所有列
+
+示例CSV文件：
+
+```csv
+id,text
+1,This is a sentence.
+2,This is another sentence.
+```
+
+示例代码：
+
+```typescript
+import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
+
+const loader = new CSVLoader("src/document_loaders/example_data/example.csv");
+
+const docs = await loader.load();
+/*
+[
+  Document {
+    "metadata": {
+      "line": 1,
+      "source": "src/document_loaders/example_data/example.csv",
+    },
+    "pageContent": "id: 1
+text: This is a sentence.",
+  },
+  Document {
+    "metadata": {
+      "line": 2,
+      "source": "src/document_loaders/example_data/example.csv",
+    },
+    "pageContent": "id: 2
+text: This is another sentence.",
+  },
+]
+*/
+```
+
+## 使用方法，提取单个列
+
+示例CSV文件：
+
+```csv
+id,text
+1,This is a sentence.
+2,This is another sentence.
+```
+
+示例代码：
+
+```typescript
+import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
+
+const loader = new CSVLoader(
+  "src/document_loaders/example_data/example.csv",
+  "text"
+);
+
+const docs = await loader.load();
+/*
+[
+  Document {
+    "metadata": {
+      "line": 1,
+      "source": "src/document_loaders/example_data/example.csv",
+    },
+    "pageContent": "This is a sentence.",
+  },
+  Document {
+    "metadata": {
+      "line": 2,
+      "source": "src/document_loaders/example_data/example.csv",
+    },
+    "pageContent": "This is another sentence.",
+  },
+]
+*/
+```

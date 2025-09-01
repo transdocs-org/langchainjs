@@ -1,0 +1,68 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Astra DB 聊天记忆
+
+为了在聊天会话之间实现更长期的持久化，您可以将默认的内存中 `chatHistory`（用于支持 `BufferMemory` 等聊天记忆类）替换为 Astra DB。
+
+## 安装设置
+
+您需要安装 Astra DB TS 客户端：
+
+```bash npm2yarn
+npm install @datastax/astra-db-ts
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+## 配置和初始化
+
+有两种方式可以初始化您的 `AstraDBChatMessageHistory`：
+
+如果您已经定义了 `AstraDB` 客户端的实例，可以连接到您的集合，并使用构造函数初始化 `ChatMessageHistory` 的实例。
+
+```typescript
+const client = (client = new AstraDB(
+  process.env.ASTRA_DB_APPLICATION_TOKEN,
+  process.env.ASTRA_DB_ENDPOINT,
+  process.env.ASTRA_DB_NAMESPACE
+));
+
+const collection = await client.collection("YOUR_COLLECTION_NAME");
+
+const chatHistory = new AstraDBChatMessageHistory({
+  collection,
+  sessionId: "YOUR_SESSION_ID",
+});
+```
+
+如果您还没有 `AstraDB` 客户端的实例，可以使用 `initialize` 方法。
+
+```typescript
+const chatHistory = await AstraDBChatMessageHistory.initialize({
+  token: process.env.ASTRA_DB_APPLICATION_TOKEN ?? "token",
+  endpoint: process.env.ASTRA_DB_ENDPOINT ?? "endpoint",
+  namespace: process.env.ASTRA_DB_NAMESPACE,
+  collectionName: "YOUR_COLLECTION_NAME",
+  sessionId: "YOUR_SESSION_ID",
+});
+```
+
+## 使用方法
+
+:::tip 提示
+您的集合必须已经存在
+:::
+
+import Example from "@examples/memory/astradb.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

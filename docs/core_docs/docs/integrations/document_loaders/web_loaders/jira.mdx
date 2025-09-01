@@ -1,0 +1,23 @@
+---
+sidebar_class_name: node-only
+---
+
+# Jira
+
+:::tip 兼容性
+仅适用于 Node.js。
+:::
+
+这部分内容介绍如何从 Jira 项目的问题中加载文档对象。
+
+## 凭据
+
+- 您需要设置一个访问令牌，并将其与您的 Jira 用户名一起提供，以便对请求进行身份验证。
+- 您还需要包含待加载问题的项目的项目密钥和主机 URL。
+
+## 使用方式
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/jira.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

@@ -1,0 +1,327 @@
+---
+sidebar_position: 0
+sidebar_class_name: hidden
+---
+
+# 操作指南
+
+在这里你可以找到“我该如何……？”这类问题的答案。  
+这些指南以目标为导向且具体明确，旨在帮助你完成特定任务。  
+如需概念性解释，请参阅 [概念指南](/docs/concepts/)。  
+如需端到端的完整教程，请参阅 [教程](/docs/tutorials/)。  
+如需对每个类和函数的详细描述，请参阅 [API 参考文档](https://api.js.langchain.com/)。
+
+## 安装
+
+- [如何：安装 LangChain 包](/docs/how_to/installation/)
+
+## 核心功能
+
+这部分突出介绍使用 LangChain 的核心功能。
+
+- [如何：从 LLM 返回结构化数据](/docs/how_to/structured_output/)
+- [如何：使用聊天模型调用工具](/docs/how_to/tool_calling/)
+- [如何：流式传输可运行对象](/docs/how_to/streaming)
+- [如何：调试你的 LLM 应用](/docs/how_to/debugging/)
+
+## LangChain 表达式语言 (LCEL)
+
+LangChain 表达式语言 (LCEL) 是一种创建任意自定义链的方式。它基于 [`Runnable`](https://api.js.langchain.com/classes/langchain_core.runnables.Runnable.html) 协议。
+
+[**LCEL 速查表**](/docs/how_to/lcel_cheatsheet/)：快速了解如何使用 LCEL 的主要原语。
+
+- [如何：链式调用可运行对象](/docs/how_to/sequence)
+- [如何：流式传输可运行对象](/docs/how_to/streaming)
+- [如何：并行调用可运行对象](/docs/how_to/parallel/)
+- [如何：将运行时参数附加到可运行对象](/docs/how_to/binding/)
+- [如何：运行自定义函数](/docs/how_to/functions)
+- [如何：将参数从一个步骤传递到下一个步骤](/docs/how_to/passthrough)
+- [如何：向链的状态中添加值](/docs/how_to/assign)
+- [如何：添加消息历史](/docs/how_to/message_history)
+- [如何：在链中路由执行](/docs/how_to/routing)
+- [如何：添加备用方案](/docs/how_to/fallbacks)
+- [如何：取消执行](/docs/how_to/cancel_execution/)
+
+## 组件
+
+这些是构建应用程序时可以使用的核心构建块。
+
+### 提示模板
+
+[提示模板](/docs/concepts/prompt_templates) 负责将用户输入格式化为可传递给语言模型的格式。
+
+- [如何：使用少量示例](/docs/how_to/few_shot_examples)
+- [如何：在聊天模型中使用少量示例](/docs/how_to/few_shot_examples_chat/)
+- [如何：部分格式化提示模板](/docs/how_to/prompts_partial)
+- [如何：组合提示模板](/docs/how_to/prompts_composition)
+
+### 示例选择器
+
+[示例选择器](/docs/concepts/example_selectors) 负责选择正确的少量示例并传递给提示。
+
+- [如何：使用示例选择器](/docs/how_to/example_selectors)
+- [如何：根据长度选择示例](/docs/how_to/example_selectors_length_based)
+- [如何：根据语义相似性选择示例](/docs/how_to/example_selectors_similarity)
+- [如何：从 LangSmith 的少量示例数据集中选择示例](/docs/how_to/example_selectors_langsmith)
+
+### 聊天模型
+
+[聊天模型](/docs/concepts/chat_models) 是语言模型的新形式，它接收消息并输出一条消息。
+
+- [如何：调用函数/工具](/docs/how_to/tool_calling)
+- [如何：让模型返回结构化输出](/docs/how_to/structured_output)
+- [如何：缓存模型响应](/docs/how_to/chat_model_caching)
+- [如何：创建自定义聊天模型类](/docs/how_to/custom_chat)
+- [如何：获取对数概率](/docs/how_to/logprobs)
+- [如何：流式返回响应](/docs/how_to/chat_streaming)
+- [如何：跟踪 token 使用情况](/docs/how_to/chat_token_usage_tracking)
+- [如何：将工具输出传递给聊天模型](/docs/how_to/tool_results_pass_to_model/)
+- [如何：流式传输工具调用](/docs/how_to/tool_streaming)
+- [如何：少量示例提示工具行为](/docs/how_to/tools_few_shot)
+- [如何：强制调用特定工具](/docs/how_to/tool_choice)
+- [如何：禁用并行工具调用](/docs/how_to/tool_calling_parallel/)
+- [如何：一行代码初始化任意模型](/docs/how_to/chat_models_universal_init/)
+
+### 消息
+
+[消息](/docs/concepts/##message-types) 是聊天模型的输入和输出。它们包含一些 `内容` 和一个 `角色`，用于描述消息的来源。
+
+- [如何：裁剪消息](/docs/how_to/trim_messages/)
+- [如何：过滤消息](/docs/how_to/filter_messages/)
+- [如何：合并连续的同类消息](/docs/how_to/merge_message_runs/)
+
+### LLMs
+
+LangChain 所称的 [LLMs](/docs/concepts/text_llms) 是较旧形式的语言模型，它接收一个字符串并输出一个字符串。
+
+- [如何：缓存模型响应](/docs/how_to/llm_caching)
+- [如何：创建自定义 LLM 类](/docs/how_to/custom_llm)
+- [如何：流式返回响应](/docs/how_to/streaming_llm)
+- [如何：跟踪 token 使用情况](/docs/how_to/llm_token_usage_tracking)
+
+### 输出解析器
+
+[输出解析器](/docs/concepts/output_parsers) 负责将 LLM 的输出解析为更结构化的格式。
+
+- [如何：使用输出解析器将 LLM 响应解析为结构化格式](/docs/how_to/output_parser_structured)
+- [如何：解析 JSON 输出](/docs/how_to/output_parser_json)
+- [如何：解析 XML 输出](/docs/how_to/output_parser_xml)
+- [如何：尝试修复输出解析中的错误](/docs/how_to/output_parser_fixing/)
+
+### 文档加载器
+
+[文档加载器](/docs/concepts/document_loaders) 负责从各种来源加载文档。
+
+- [如何：加载 CSV 数据](/docs/how_to/document_loader_csv)
+- [如何：从目录加载数据](/docs/how_to/document_loader_directory)
+- [如何：加载 PDF 文件](/docs/how_to/document_loader_pdf)
+- [如何：编写自定义文档加载器](/docs/how_to/document_loader_custom)
+- [如何：加载 HTML 数据](/docs/how_to/document_loader_html)
+- [如何：加载 Markdown 数据](/docs/how_to/document_loader_markdown)
+
+### 文本分割器
+
+[文本分割器](/docs/concepts/text_splitters) 负责将文档分割成可用于检索的小块。
+
+- [如何：递归分割文本](/docs/how_to/recursive_text_splitter)
+- [如何：按字符分割](/docs/how_to/character_text_splitter)
+- [如何：分割代码](/docs/how_to/code_splitter)
+- [如何：按 token 分割](/docs/how_to/split_by_token)
+
+### 嵌入模型
+
+[嵌入模型](/docs/concepts/embedding_models) 负责将一段文本转换为数值表示。
+
+- [如何：嵌入文本数据](/docs/how_to/embed_text)
+- [如何：缓存嵌入结果](/docs/how_to/caching_embeddings)
+
+### 向量数据库
+
+[向量数据库](/docs/concepts/#vectorstores) 是能够高效存储和检索嵌入的数据库。
+
+- [如何：创建和查询向量数据库](/docs/how_to/vectorstores)
+
+### 检索器
+
+[检索器](/docs/concepts/retrievers) 负责接收一个查询并返回相关文档。
+
+- [如何：使用向量数据库检索数据](/docs/how_to/vectorstore_retriever)
+- [如何：生成多个查询以进行检索](/docs/how_to/multiple_queries)
+- [如何：使用上下文压缩来压缩检索到的数据](/docs/how_to/contextual_compression)
+- [如何：编写自定义检索器类](/docs/how_to/custom_retriever)
+- [如何：合并多个检索器的结果](/docs/how_to/ensemble_retriever)
+- [如何：为每个文档生成多个嵌入](/docs/how_to/multi_vector)
+- [如何：为一个文本块检索整个文档](/docs/how_to/parent_document_retriever)
+- [如何：生成元数据过滤器](/docs/how_to/self_query)
+- [如何：创建时间加权检索器](/docs/how_to/time_weighted_vectorstore)
+- [如何：减少检索延迟](/docs/how_to/reduce_retrieval_latency)
+
+### 索引
+
+索引是保持你的向量数据库与底层数据源同步的过程。
+
+- [如何：重新索引数据以保持向量数据库与底层数据源同步](/docs/how_to/indexing)
+
+### 工具
+
+LangChain 的 [工具](/docs/concepts/tools) 包含工具的描述（传递给语言模型）以及要调用的函数的实现。
+
+- [如何：创建工具](/docs/how_to/custom_tools)
+- [如何：使用内置工具和工具包](/docs/how_to/tools_builtin)
+- [如何：使用聊天模型调用工具](/docs/how_to/tool_calling/)
+- [如何：将工具输出传递给聊天模型](/docs/how_to/tool_results_pass_to_model/)
+- [如何：少量示例提示工具行为](/docs/how_to/tools_few_shot)
+- [如何：将运行时值传递给工具](/docs/how_to/tool_runtime)
+- [如何：处理工具错误](/docs/how_to/tools_error)
+- [如何：强制调用特定工具](/docs/how_to/tool_choice/)
+- [如何：禁用并行工具调用](/docs/how_to/tool_calling_parallel/)
+- [如何：在自定义工具中访问 `RunnableConfig` 对象](/docs/how_to/tool_configure)
+- [如何：在自定义工具中流式传输子运行事件](/docs/how_to/tool_stream_events)
+- [如何：从工具返回工件](/docs/how_to/tool_artifacts)
+- [如何：将 Runnables 转换为工具](/docs/how_to/convert_runnable_to_tool)
+- [如何：为模型添加临时工具调用能力](/docs/how_to/tools_prompting)
+
+### 代理
+
+:::note
+
+如需代理的深入操作指南，请查看 [LangGraph](https://langchain-ai.github.io/langgraphjs/) 文档。
+
+:::
+
+- [如何：使用传统 LangChain 代理 (AgentExecutor)](/docs/how_to/agent_executor)
+- [如何：从传统 LangChain 代理迁移到 LangGraph](/docs/how_to/migrate_agent)
+
+### 回调
+
+[回调](/docs/concepts/callbacks) 允许你钩入 LLM 应用执行的各个阶段。
+
+- [如何：在运行时传递回调](/docs/how_to/callbacks_runtime)
+- [如何：将回调附加到模块](/docs/how_to/callbacks_attach)
+- [如何：将回调传递到模块构造函数中](/docs/how_to/callbacks_constructor)
+- [如何：创建自定义回调处理器](/docs/how_to/custom_callbacks)
+- [如何：在无服务器环境中等待回调](/docs/how_to/callbacks_serverless)
+- [如何：分发自定义回调事件](/docs/how_to/callbacks_custom_events)
+
+### 自定义
+
+LangChain 的所有组件都可以轻松扩展以支持你自己的版本。
+
+- [如何：创建自定义聊天模型类](/docs/how_to/custom_chat)
+- [如何：创建自定义 LLM 类](/docs/how_to/custom_llm)
+- [如何：编写自定义检索器类](/docs/how_to/custom_retriever)
+- [如何：编写自定义文档加载器](/docs/how_to/document_loader_custom)
+- [如何：创建自定义回调处理器](/docs/how_to/custom_callbacks)
+- [如何：定义自定义工具](/docs/how_to/custom_tools)
+- [如何：分发自定义回调事件](/docs/how_to/callbacks_custom_events)
+
+### 生成式 UI
+
+- [如何：构建由 LLM 生成的 UI](/docs/how_to/generative_ui)
+- [如何：将代理数据流式传输到客户端](/docs/how_to/stream_agent_client)
+- [如何：将结构化输出流式传输到客户端](/docs/how_to/stream_tool_client)
+
+### 多模态
+
+- [如何：将多模态数据直接传递给模型](/docs/how_to/multimodal_inputs/)
+- [如何：使用多模态提示](/docs/how_to/multimodal_prompts/)
+- [如何：使用多模态数据调用工具](/docs/how_to/tool_calls_multimodal/)
+
+## 使用场景
+
+这些指南涵盖特定使用场景的细节。
+
+### 基于 RAG 的问答
+
+检索增强生成 (RAG) 是将 LLM 连接到外部数据源的一种方式。  
+如需 RAG 的高级教程，请参阅 [本指南](/docs/tutorials/rag/)。
+
+- [如何：添加聊天历史](/docs/how_to/qa_chat_history_how_to/)
+- [如何：流式传输](/docs/how_to/qa_streaming/)
+- [如何：返回来源](/docs/how_to/qa_sources/)
+- [如何：返回引用](/docs/how_to/qa_citations/)
+- [如何：按用户进行检索](/docs/how_to/qa_per_user/)
+
+### 提取
+
+提取是指使用 LLM 从非结构化文本中提取结构化信息。  
+如需提取的高级教程，请参阅 [本指南](/docs/tutorials/extraction/)。
+
+- [如何：使用参考示例](/docs/how_to/extraction_examples/)
+- [如何：处理长文本](/docs/how_to/extraction_long_text/)
+- [如何：在不使用函数调用的情况下进行提取](/docs/how_to/extraction_parse)
+
+### 聊天机器人
+
+聊天机器人是指使用 LLM 进行对话。  
+如需构建聊天机器人的高级教程，请参阅 [本指南](/docs/tutorials/chatbot/)。
+
+- [如何：管理记忆](/docs/how_to/chatbots_memory)
+- [如何：进行检索](/docs/how_to/chatbots_retrieval)
+- [如何：使用工具](/docs/how_to/chatbots_tools)
+
+### 查询分析
+
+查询分析是指使用 LLM 生成一个发送给检索器的查询。  
+如需查询分析的高级教程，请参阅 [本指南](/docs/tutorials/rag#query-analysis)。
+
+- [如何：向提示中添加示例](/docs/how_to/query_few_shot)
+- [如何：处理未生成查询的情况](/docs/how_to/query_no_queries)
+- [如何：处理多个查询](/docs/how_to/query_multiple_queries)
+- [如何：处理多个检索器](/docs/how_to/query_multiple_retrievers)
+- [如何：构建过滤器](/docs/how_to/query_constructing_filters)
+- [如何：处理高基数分类变量](/docs/how_to/query_high_cardinality)
+
+### SQL 和 CSV 上的问答
+
+你可以使用 LLM 对表格数据进行问答。  
+如需高级教程，请参阅 [本指南](/docs/tutorials/sql_qa/)。
+
+- [如何：使用提示改进结果](/docs/how_to/sql_prompting)
+- [如何：进行查询验证](/docs/how_to/sql_query_checking)
+- [如何：处理大型数据库](/docs/how_to/sql_large_db)
+
+### 图数据库上的问答
+
+你可以使用 LLM 对图数据库进行问答。  
+如需高级教程，请参阅 [本指南](/docs/tutorials/graph/)。
+
+- [如何：将值映射到数据库](/docs/how_to/graph_mapping)
+- [如何：在数据库上添加语义层](/docs/how_to/graph_semantic)
+- [如何：通过提示改进结果](/docs/how_to/graph_prompting)
+- [如何：构建知识图谱](/docs/how_to/graph_constructing)
+
+## [LangGraph.js](https://langchain-ai.github.io/langgraphjs)
+
+LangGraph.js 是 LangChain 的扩展，旨在通过将步骤建模为图中的边和节点，构建强大且有状态的多角色 LLM 应用程序。
+
+LangGraph.js 的文档目前托管在单独的网站上。  
+你可以在 [这里](https://langchain-ai.github.io/langgraphjs/how-tos/) 查看 LangGraph.js 的操作指南。
+
+## [LangSmith](https://docs.smith.langchain.com/)
+
+LangSmith 允许你密切追踪、监控和评估你的 LLM 应用。  
+它与 LangChain 和 LangGraph.js 无缝集成，你可以使用它在构建链时检查和调试各个步骤。
+
+LangSmith 的文档托管在单独的网站上。  
+你可以在 [这里](https://docs.smith.langchain.com/observability/how_to_guides) 查看 LangSmith 的操作指南，但我们会突出显示一些与 LangChain 特别相关的部分：
+
+### 评估
+
+<span data-heading-keywords="评估,评估"></span>
+
+性能评估是构建 LLM 驱动应用的重要组成部分。  
+LangSmith 帮助你完成从创建数据集到定义指标再到运行评估器的整个过程。
+
+如需了解更多，请参阅 [LangSmith 评估操作指南](https://docs.smith.langchain.com/evaluation/how_to_guides)。
+
+### 追踪
+
+<span data-heading-keywords="追踪,追踪"></span>
+
+追踪可以让你观察链和代理内部的执行情况，对于诊断问题至关重要。
+
+- [如何：使用 LangChain 进行追踪](https://docs.smith.langchain.com/observability/how_to_guides/trace_with_langchain)
+- [如何：向追踪中添加元数据和标签](https://docs.smith.langchain.com/observability/how_to_guides/add_metadata_tags)
+
+你可以在 LangSmith 文档的 [这一部分](https://docs.smith.langchain.com/observability/how_to_guides#tracing-configuration) 查看与追踪相关的通用操作指南。

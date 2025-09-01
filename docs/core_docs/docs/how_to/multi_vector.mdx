@@ -1,0 +1,68 @@
+# 如何为每个文档生成多个嵌入
+
+:::info 预备知识
+
+本指南假定您熟悉以下概念：
+
+- [检索器 (Retrievers)](/docs/concepts/retrievers)
+- [文本分割器 (Text splitters)](/docs/concepts/text_splitters)
+- [检索增强生成 (RAG)](/docs/tutorials/rag)
+
+:::
+
+通过对原始文档的不同表示形式进行嵌入，然后在任何表示形式产生搜索结果时返回原始文档，您可以调整和优化检索性能。LangChain 提供了一个基础的 [`MultiVectorRetriever`](https://api.js.langchain.com/classes/langchain.retrievers_multi_vector.MultiVectorRetriever.html)，专门用于实现这一目的！
+
+其中大部分复杂性在于如何为每个文档创建多个向量。  
+本指南介绍了一些常见的方式来创建这些向量并使用 `MultiVectorRetriever`。
+
+为每个文档创建多个向量的方法包括：
+
+- 更小的块：将文档拆分为更小的块，并对这些块进行嵌入（例如 [`ParentDocumentRetriever`](/docs/how_to/parent_document_retriever)）
+- 摘要：为每个文档创建摘要，将摘要与文档一起（或代替文档）进行嵌入
+- 假设性问题：生成适合用该文档回答的假设性问题，将这些问题与文档一起（或代替文档）进行嵌入
+
+请注意，这也支持另一种添加嵌入的方法——手动添加。这种方法很好，因为您可以显式地添加应导致检索到文档的问题或查询，从而获得更多的控制权。
+
+## 更小的块
+
+通常，检索较大的信息块是有用的，但嵌入较小的块。  
+这样可以让嵌入尽可能准确地捕捉语义含义，同时传递尽可能多的上下文。  
+注意：这就是 `ParentDocumentRetriever` 所做的事情。在这里，我们展示其底层的工作原理。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+import CodeBlock from "@theme/CodeBlock";
+import SmallChunksExample from "@examples/retrievers/multi_vector_small_chunks.ts";
+
+<CodeBlock language="typescript">{SmallChunksExample}</CodeBlock>
+
+## 摘要
+
+有时，摘要可能更准确地概括一个块的内容，从而带来更好的检索效果。  
+以下展示如何创建摘要，并对摘要进行嵌入。
+
+import SummaryExample from "@examples/retrievers/multi_vector_summary.ts";
+
+<CodeBlock language="typescript">{SummaryExample}</CodeBlock>
+
+## 假设性查询
+
+LLM 还可用于生成针对特定文档可能提出的问题列表。  
+这些问题可以被嵌入，并用于检索原始文档：
+
+import HypotheticalExample from "@examples/retrievers/multi_vector_hypothetical.ts";
+
+<CodeBlock language="typescript">{HypotheticalExample}</CodeBlock>
+
+## 下一步
+
+您现在已经了解了几种为每个文档生成多个嵌入的方法。
+
+接下来，您可以深入了解特定检索器的详细内容，或者查看 RAG 的完整教程 [(RAG 教程)](/docs/tutorials/rag)，或者继续阅读本节以学习如何  
+[为任意数据源创建自定义检索器](/docs/how_to/custom_retriever/)。

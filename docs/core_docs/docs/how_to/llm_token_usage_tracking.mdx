@@ -1,0 +1,38 @@
+---
+sidebar_position: 5
+---
+
+# 如何跟踪令牌使用情况
+
+:::info 前提条件
+
+本指南假设您已熟悉以下概念：
+
+- [LLMs](/docs/concepts/text_llms)
+
+:::
+
+本笔记本介绍了如何跟踪特定 LLM 调用的令牌使用情况。目前只有部分提供商实现了此功能，包括 OpenAI。
+
+以下是一个通过回调跟踪单次 LLM 调用令牌使用情况的示例：
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/models/llm/token_usage_tracking.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+如果将此模型传递给一个调用它多次的链或代理，它会在每次调用时记录输出。
+
+## 下一步
+
+您现在已经了解了如何获取受支持的 LLM 提供商的令牌使用情况。
+
+接下来，请查看本节中的其他操作指南，例如[如何实现自己的自定义 LLM](/docs/how_to/custom_llm)。

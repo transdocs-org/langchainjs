@@ -1,0 +1,78 @@
+# Neo4j 向量索引
+
+Neo4j 是一个开源的图数据库，集成了对向量相似性搜索的支持。  
+它支持：
+
+- 近似最近邻搜索
+- 欧几里得相似度和余弦相似度
+- 结合向量搜索和关键词搜索的混合搜索
+
+## 安装配置
+
+要使用 Neo4j 向量索引，你需要安装 `neo4j-driver` 包：
+
+```bash npm2yarn
+npm install neo4j-driver
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+### 使用 `docker-compose` 搭建 `Neo4j` 自托管实例
+
+`Neo4j` 提供了一个预构建的 Docker 镜像，可以用来快速搭建一个自托管的 Neo4j 数据库实例。  
+在下方创建一个名为 `docker-compose.yml` 的文件：
+
+import CodeBlock from "@theme/CodeBlock";
+import DockerExample from "@examples/indexes/vector_stores/neo4j_vector/docker-compose.example.yml";
+
+<CodeBlock language="yml" name="docker-compose.yml">
+  {DockerExample}
+</CodeBlock>
+
+然后在相同的目录中运行 `docker compose up` 来启动容器。
+
+你可以在 Neo4j [官网](https://neo4j.com/docs/operations-manual/current/installation/) 上找到更多关于如何搭建 Neo4j 的信息。
+
+## 使用方法
+
+import Example from "@examples/indexes/vector_stores/neo4j_vector/neo4j_vector.ts";
+
+使用 `Neo4jVectorStore` 的完整示例如下：
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+### 使用 retrievalQuery 参数自定义响应
+
+import RetrievalExample from "@examples/indexes/vector_stores/neo4j_vector/neo4j_vector_retrieval.ts";
+
+<CodeBlock language="typescript">{RetrievalExample}</CodeBlock>
+
+### 从现有图实例化 Neo4jVectorStore
+
+import ExistingGraphExample from "@examples/indexes/vector_stores/neo4j_vector/neo4j_vector_existinggraph.ts";
+
+<CodeBlock language="typescript">{ExistingGraphExample}</CodeBlock>
+
+### 元数据过滤
+
+import MetadataExample from "@examples/indexes/vector_stores/neo4j_vector/neo4j_vector_metadata.ts";
+
+<CodeBlock language="typescript">{MetadataExample}</CodeBlock>
+
+# 免责声明 ⚠️
+
+**安全提示**：请确保数据库连接使用的凭据是经过严格限制的，仅包含必要的权限。  
+如果未做到这一点，可能会导致数据损坏或丢失，因为调用代码可能执行删除、修改数据的命令，或者读取数据库中存在的敏感数据。  
+为防止此类不良后果，应（根据情况）限制为此工具使用的凭据授予的权限。例如，为数据库创建只读用户可以确保调用代码无法修改或删除数据。  
+更多信息请参见[安全页面](/docs/security)。
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

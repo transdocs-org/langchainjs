@@ -1,0 +1,38 @@
+---
+hide_table_of_contents: true
+---
+
+# EPUB 文件
+
+本示例介绍如何从 EPUB 文件加载数据。默认情况下，EPUB 文件中的每一章都会创建一个文档，您可以通过将 `splitChapters` 选项设置为 `false` 来更改此行为。
+
+# 安装配置
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core epub2 html-to-text
+```
+
+# 使用方法，每章一个文档
+
+```typescript
+import { EPubLoader } from "@langchain/community/document_loaders/fs/epub";
+
+const loader = new EPubLoader("src/document_loaders/example_data/example.epub");
+
+const docs = await loader.load();
+```
+
+# 使用方法，每文件一个文档
+
+```typescript
+import { EPubLoader } from "@langchain/community/document_loaders/fs/epub";
+
+const loader = new EPubLoader(
+  "src/document_loaders/example_data/example.epub",
+  {
+    splitChapters: false,
+  }
+);
+
+const docs = await loader.load();
+```

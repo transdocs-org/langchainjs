@@ -1,0 +1,64 @@
+---
+sidebar_class_name: node-only
+hide_table_of_contents: true
+---
+
+# GitHub
+
+本示例介绍如何从 GitHub 仓库加载数据。
+你可以将 `GITHUB_ACCESS_TOKEN` 环境变量设置为 GitHub 的访问令牌，以提高请求频率限制并访问私有仓库。
+
+## 设置
+
+GitHub 加载器需要 [ignore npm 包](https://www.npmjs.com/package/ignore) 作为对等依赖。请按照如下方式安装：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core ignore
+```
+
+## 使用
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/github.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+加载器将忽略二进制文件，如图片。
+
+### 使用 .gitignore 语法
+
+要忽略特定文件，可以在构造函数中传入一个 `ignorePaths` 数组：
+
+import IgnoreExample from "@examples/document_loaders/github_ignore_paths.ts";
+
+<CodeBlock language="typescript">{IgnoreExample}</CodeBlock>
+
+### 使用不同的 GitHub 实例
+
+如果你希望使用非 `github.com` 的 GitHub 实例（例如你公司内部的 GitHub Enterprise 实例），可以使用以下两个额外参数进行配置：
+
+- `baseUrl` - 你的 GitHub 实例的基础 URL，这样 githubUrl 会匹配为 `<baseUrl>/<owner>/<repo>/...`
+- `apiUrl` - 你的 GitHub 实例 API 端点的 URL
+
+import CustomInstanceExample from "@examples/document_loaders/github_custom_instance.ts";
+
+<CodeBlock language="typescript">{CustomInstanceExample}</CodeBlock>
+
+### 处理子模块
+
+如果你的仓库包含子模块，你需要决定加载器是否处理这些子模块。你可以通过布尔类型的 `processSubmodules` 参数进行控制。默认情况下，不处理子模块。
+请注意，只有在将 `recursive` 参数设置为 true 的情况下，才能处理子模块。
+
+import SubmodulesExample from "@examples/document_loaders/github_submodules.ts";
+
+<CodeBlock language="typescript">{SubmodulesExample}</CodeBlock>
+
+注意：加载器不会跟踪位于当前仓库所用 GitHub 实例之外的子模块。
+
+### 流式处理大型仓库
+
+对于需要以节省内存的方式处理大型仓库的场景，可以使用 `loadAsStream` 方法，以异步流的方式从整个 GitHub 仓库中加载文档。
+
+import StreamExample from "@examples/document_loaders/github_stream.ts";
+
+<CodeBlock language="typescript">{StreamExample}</CodeBlock>

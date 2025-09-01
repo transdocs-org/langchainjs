@@ -1,0 +1,27 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Mem0 内存
+
+[Mem0](https://github.com/mem0ai/mem0) 是一个面向LLM应用的自我改进型内存层，可实现节省成本并令用户满意的个性化AI体验。
+
+## 安装配置
+
+前往 [Mem0 仪表板](https://app.mem0.ai) 获取 Mem0 的 API 密钥。
+
+## 使用方法
+
+import Example from "@examples/memory/mem0.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core @langchain/community
+```
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

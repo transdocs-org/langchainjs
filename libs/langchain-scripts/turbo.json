@@ -1,0 +1,12 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build:internal"],
+      "outputs": ["**/dist/**"]
+    },
+    "build:internal": {
+      "outputs": ["**/dist/**"]
+    }
+  }
+}

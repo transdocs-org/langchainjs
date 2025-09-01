@@ -1,0 +1,24 @@
+# 站点地图加载器
+
+本笔记将介绍如何使用 [`SitemapLoader`](https://api.js.langchain.com/classes/_langchain_community.document_loaders_web_sitemap.SitemapLoader.html) 类将站点地图加载为 `Document` 对象。
+
+## 准备工作
+
+首先，我们需要安装 `langchain` 包：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+传入的 URL 必须包含指向站点地图的 `.xml` 路径，否则会默认在 URL 后附加 `/sitemap.xml`。
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/sitemap.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+或者，如果你只想加载站点地图本身，而不加载站点地图中每个页面的内容，你可以使用 `parseSitemap` 方法：
+
+import ParseSitemapExample from "@examples/document_loaders/parse_sitemap.ts";
+
+<CodeBlock language="typescript">{ParseSitemapExample}</CodeBlock>

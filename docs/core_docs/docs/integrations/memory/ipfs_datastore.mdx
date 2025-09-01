@@ -1,0 +1,42 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# IPFS 数据存储聊天记忆
+
+对于存储后端，您可以使用 IPFS Datastore Chat Memory 来包装一个 IPFS 数据存储，从而允许您使用任何兼容 IPFS 的数据存储。
+
+## 安装配置
+
+首先，安装集成所需的依赖项：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install cborg interface-datastore it-all @langchain/community @langchain/core
+```
+
+现在您可以安装并使用您选择的 IPFS 数据存储。以下是一些选项：
+
+- [datastore-core](https://github.com/ipfs/js-stores/blob/main/packages/datastore-core) 内存中的数据存储实现。
+- [datastore-fs](https://github.com/ipfs/js-stores/blob/main/packages/datastore-fs) 使用文件系统作为后端的数据存储实现。
+- [datastore-idb](https://github.com/ipfs/js-stores/blob/main/packages/datastore-idb) 使用 IndexedDB 作为后端的数据存储实现。
+- [datastore-level](https://github.com/ipfs/js-stores/blob/main/packages/datastore-level) 使用 level(up|down) 作为后端的数据存储实现。
+- [datastore-s3](https://github.com/ipfs/js-stores/blob/main/packages/datastore-s3) 由 S3 提供支持的底层数据存储实现。
+
+## 使用方法
+
+```typescript
+// 将 FsDatastore 替换为您选择的 IPFS 数据存储。
+import { FsDatastore } from "datastore-fs";
+import { IPFSDatastoreChatMessageHistory } from "@langchain/community/stores/message/ipfs_datastore";
+
+const datastore = new FsDatastore("path/to/store");
+const sessionId = "my-session";
+
+const history = new IPFSDatastoreChatMessageHistory({ datastore, sessionId });
+```

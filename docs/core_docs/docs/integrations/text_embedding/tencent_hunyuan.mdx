@@ -1,0 +1,43 @@
+---
+sidebar_label: 腾讯混元
+---
+
+# TencentHunyuan
+
+`TencentHunyuanEmbeddings` 类使用腾讯混元 API 为给定文本生成嵌入表示。
+
+## 准备工作
+
+1. 在 [这里](https://cloud.tencent.com/register) 注册腾讯云账号。
+2. 在 [这里](https://console.cloud.tencent.com/cam/capi) 创建 SecretID 和 SecretKey。
+3. 将 SecretID 和 SecretKey 分别设置为名为 `TENCENT_SECRET_ID` 和 `TENCENT_SECRET_KEY` 的环境变量。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+如果你在浏览器环境中使用 LangChain.js，还需要安装以下依赖项：
+
+```bash npm2yarn
+npm install crypto-js
+```
+
+然后确保你按照如下方式从 `web` 中导入。
+
+## 使用方法
+
+以下是一个示例：
+
+import CodeBlock from "@theme/CodeBlock";
+import TencentHunyuan from "@examples/models/embeddings/tencent_hunyuan.ts";
+
+<CodeBlock language="typescript">{TencentHunyuan}</CodeBlock>
+
+## 相关内容
+
+- 嵌入模型[概念指南](/docs/concepts/embedding_models)
+- 嵌入模型[操作指南](/docs/how_to/#embedding-models)

@@ -1,0 +1,40 @@
+---
+sidebar_label: AWS Step Functions 工具包
+hide_table_of_contents: true
+---
+
+# AWS Step Functions 工具包
+
+**AWS Step Functions** 是一种可视化的工作流服务，帮助开发者使用 AWS 服务构建分布式应用程序、自动化流程、编排微服务，并创建数据和机器学习 (ML) 管道。
+
+通过在提供给 Agent 的工具列表中包含一个 `AWSSfn` 工具，您可以授予您的 Agent 调用在 AWS 云中运行的异步工作流的能力。
+
+当 Agent 使用 `AWSSfn` 工具时，它会提供一个类型为 `string` 的参数，该参数将传递给此工具支持的某个受支持操作。支持的操作包括：`StartExecution`、`DescribeExecution` 和 `SendTaskSuccess`。
+
+## 安装配置
+
+你需要安装 Node AWS Step Functions SDK：
+
+```bash npm2yarn
+npm install @aws-sdk/client-sfn
+```
+
+## 使用方法
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+### 关于凭证的注意事项：
+
+- 如果你尚未通过 AWS CLI 运行 [`aws configure`](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)，则必须向 `AWSSfn` 构造函数提供 `region`、`accessKeyId` 和 `secretAccessKey`。
+- 与这些凭证对应的 IAM 角色必须具有调用 Step Function 的权限。
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/agents/aws_sfn.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

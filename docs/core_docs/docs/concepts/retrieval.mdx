@@ -1,0 +1,216 @@
+# 信息检索
+
+:::info[前提条件]
+
+- [检索器](/docs/concepts/retrievers/)
+- [向量存储](/docs/concepts/vectorstores/)
+- [嵌入模型](/docs/concepts/embedding_models/)
+- [文本分割器](/docs/concepts/text_splitters/)
+
+:::
+
+:::danger[安全性]
+
+此处回顾的一些概念会使用模型来生成查询（例如，用于SQL或图数据库）。这样做存在固有的风险。请确保数据库连接权限的范围尽可能狭窄以满足应用程序的需求。这将减轻（但不会消除）构建能够查询数据库的模型驱动系统的风险。有关一般安全最佳实践的更多信息，请参阅我们的[安全指南](/docs/security/)。
+
+:::
+
+## 概述
+
+检索系统是许多AI应用的基础，能够从大型数据集中高效地识别相关信息。这些系统支持各种数据格式：
+
+- 非结构化文本（例如文档）通常存储在向量存储或词汇搜索索引中。
+- 结构化数据通常存储在具有定义模式的关系型或图数据库中。
+
+尽管数据格式多样，现代AI应用日益希望使所有类型的数据都可以通过自然语言接口访问。模型在这一过程中起着关键作用，它将自然语言查询转换为与底层搜索索引或数据库兼容的格式。这种转换使得与复杂数据结构的交互更加直观和灵活。
+
+## 关键概念
+
+![检索](/img/retrieval_concept.png)
+
+(1) **查询分析**：模型将原始查询转换或构建为优化检索的过程。
+
+(2) **信息检索**：使用搜索查询从各种检索系统中获取信息。
+
+## 查询分析
+
+虽然用户通常更倾向于使用自然语言与检索系统交互，但检索系统可能需要特定的查询语法或受益于特定的关键词。查询分析在原始用户输入和优化的搜索查询之间架起桥梁。查询分析的一些常见应用包括：
+
+1. **查询重写**：可以重写或扩展查询以改进语义或词汇搜索。
+2. **查询构造**：搜索索引可能需要结构化查询（例如数据库的SQL）。
+
+查询分析使用模型将原始用户输入转换或构建为优化的搜索查询。
+
+### 查询重写
+
+检索系统应理想地处理从简单且措辞不佳的查询到复杂多面问题的广泛用户输入。为了实现这种多功能性，一种流行的方法是使用模型将原始用户查询转换为更有效的搜索查询。这种转换可以从简单的关键词提取到复杂的查询扩展和重新表述。以下是一些使用模型进行查询分析在非结构化数据检索中的关键优势：
+
+1. **查询澄清**：模型可以重新表述模糊或措辞不佳的查询以提高清晰度。
+2. **语义理解**：它们可以捕捉查询背后的意图，超越字面关键词匹配。
+3. **查询扩展**：模型可以生成相关术语或概念以扩大搜索范围。
+4. **复杂查询处理**：它们可以将多部分问题分解为更简单的子查询。
+
+已经开发出各种技术来利用模型进行查询重写，包括：
+
+| 名称                                                                                                      | 使用时机                                                                     | 描述                                                                                                                                                                                                                                                                            |
+| --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [分解](https://github.com/langchain-ai/rag-from-scratch/blob/main/rag_from_scratch_5_to_9.ipynb) | 当一个问题可以分解为更小的子问题时。                    | 将一个问题分解为一组子问题/问题，这些问题可以按顺序解决（使用第一个答案+检索来回答第二个）或并行解决（将每个答案合并成最终答案）。                                                           |
+| [退一步](https://github.com/langchain-ai/rag-from-scratch/blob/main/rag_from_scratch_5_to_9.ipynb)     | 当需要更高层次的概念理解时。                       | 首先提示LLM提出一个关于高层次概念或原则的通用问题，并检索有关这些概念的相关事实。使用这个基础来帮助回答用户问题。[论文](https://arxiv.org/pdf/2310.06117)。                                            |
+| [HyDE](https://github.com/langchain-ai/rag-from-scratch/blob/main/rag_from_scratch_5_to_9.ipynb)          | 如果使用原始用户输入检索相关文档存在挑战。 | 使用LLM将问题转换为假设文档来回答该问题。使用嵌入的假设文档通过文档-文档相似性搜索来检索真实文档，前提是这种搜索可以产生更相关的匹配。[论文](https://arxiv.org/abs/2212.10496)。 |
+
+例如，查询分解可以简单地使用提示和一个强制子问题列表的结构化输出来完成。这些子问题然后可以在下游检索系统上按顺序或并行运行。
+
+```typescript
+import { z } from "zod";
+import { ChatOpenAI } from "@langchain/openai";
+import { SystemMessage, HumanMessage } from "@langchain/core/messages";
+
+// 定义结构化输出的zod对象
+const Questions = z.object({
+  questions: z
+    .array(z.string())
+    .describe("与输入查询相关的子问题列表。"),
+});
+
+// 创建模型实例并强制输出结构
+const model = new ChatOpenAI({ model: "gpt-4o-mini", temperature: 0 });
+const structuredModel = model.withStructuredOutput(Questions);
+
+// 定义系统提示
+const system = `你是一个有帮助的助手，生成与输入问题相关的多个子问题。
+目标是将输入分解为一组可以单独回答的子问题/子问题。`;
+
+// 将问题传递给模型
+const question =
+  "LLM驱动的自主代理系统的主要组成部分是什么？";
+const questions = await structuredModel.invoke([
+  new SystemMessage(system),
+  new HumanMessage(question),
+]);
+```
+
+:::tip
+
+请查看我们的从零开始的RAG视频，了解一些不同的具体方法：
+
+- [多查询](https://youtu.be/JChPi0CRnDY?feature=shared)
+- [分解](https://youtu.be/h0OPWlEOank?feature=shared)
+- [退一步](https://youtu.be/xn1jEjRyj2U?feature=shared)
+- [HyDE](https://youtu.be/SaDzIVkYqyY?feature=shared)
+
+:::
+
+### 查询构造
+
+查询分析也可以专注于将自然语言查询翻译成特定的查询语言或过滤器。这种翻译对于有效与包含结构化或半结构化数据的各种类型数据库交互至关重要。
+
+1. **结构化数据示例**：对于关系型和图数据库，使用领域特定语言（DSL）来查询数据。
+
+   - **自然语言到SQL**：[将自然语言转换为SQL](https://paperswithcode.com/task/text-to-sql) 用于关系型数据库。
+   - **自然语言到Cypher**：[将自然语言转换为Cypher](https://neo4j.com/labs/neodash/2.4/user-guide/extensions/natural-language-queries/) 用于图数据库。
+
+2. **半结构化数据示例**：对于向量存储库，查询可以结合语义搜索和元数据过滤。
+   - **自然语言到元数据过滤器**：将用户查询转换为[适当的元数据过滤器](https://docs.pinecone.io/guides/data/filter-with-metadata)。
+
+这些方法利用模型来弥合用户意图和不同数据存储系统特定查询需求之间的差距。以下是一些流行的技巧：
+
+| 名称                                     | 使用时机                                                                                                                          | 描述                                                                                                                                                                                                                                          |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [自查询](/docs/how_to/self_query/)   | 如果用户的问题更适合通过获取基于元数据而非文本相似度的文档来回答。 | 这使用LLM将用户输入转换为两部分：(1) 用于语义查找的字符串，(2) 相应的元数据过滤器。这很有用，因为通常问题涉及文档的元数据（而非内容本身）。 |
+| [自然语言到SQL](/docs/tutorials/sql_qa/)   | 如果用户的问题需要从可通过SQL访问的关系型数据库中获取信息。                          | 这使用LLM将用户输入转换为SQL查询。                                                                                                                                                                                           |
+| [自然语言到Cypher](/docs/tutorials/graph/) | 如果用户的问题需要从可通过Cypher访问的图数据库中获取信息。                            | 这使用LLM将用户输入转换为Cypher查询。                                                                                                                                                                                        |
+
+例如，以下是使用`SelfQueryRetriever`将自然语言查询转换为元数据过滤器的方法。
+
+```typescript
+import { SelfQueryRetriever } from "langchain/retrievers/self_query";
+import { AttributeInfo } from "langchain/chains/query_constructor";
+import { ChatOpenAI } from "@langchain/openai";
+
+const attributeInfo: AttributeInfo[] = schemaForMetadata;
+const documentContents = "电影的简要摘要";
+const llm = new ChatOpenAI({ model: "gpt-4o-mini", temperature: 0 });
+const retriever = SelfQueryRetriever.fromLLM({
+  llm,
+  vectorStore,
+  documentContents,
+  attributeInfo,
+});
+```
+
+:::info[进一步阅读]
+
+- 请查看我们的[自然语言到SQL](/docs/tutorials/sql_qa/)、[自然语言到Cypher](/docs/tutorials/graph/)和[元数据过滤器的查询分析](/docs/tutorials/rag#query-analysis)教程。
+- 请查看我们的[博客概述](https://blog.langchain.dev/query-construction/)。
+- 请查看我们从零开始的RAG视频关于[查询构造](https://youtu.be/kl6NwWYxvbM?feature=shared)。
+
+:::
+
+## 信息检索
+
+### 常见的检索系统
+
+#### 词汇搜索索引
+
+许多搜索引擎基于将查询中的单词与每个文档中的单词进行匹配。这种方法称为词汇检索，使用[通常基于词频的搜索算法](https://cameronrwolfe.substack.com/p/the-basics-of-ai-powered-vector-search?utm_source=profile&utm_medium=reader2)。直觉很简单：一个词在用户的查询和某个文档中频繁出现，那么这个文档可能是一个好的匹配。
+
+实现这一点的特定数据结构通常是[_倒排索引_](https://www.geeksforgeeks.org/inverted-index/)。这种类型的索引包含一个单词列表以及每个单词到其在各种文档中出现位置的映射。使用这种数据结构，可以高效地将搜索查询中的单词与包含这些单词的文档进行匹配。[BM25](https://en.wikipedia.org/wiki/Okapi_BM25#:~:text=BM25%20is%20a%20bag%2Dof,slightly%20different%20components%20and%20parameters.) 和 [TF-IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) 是[两个流行的词汇搜索算法](https://cameronrwolfe.substack.com/p/the-basics-of-ai-powered-vector-search?utm_source=profile&utm_medium=reader2)。
+
+:::info[进一步阅读]
+
+- 请查看 [BM25](/docs/integrations/retrievers/bm25/) 检索器集成。
+
+:::
+
+#### 向量索引
+
+向量索引是索引和存储非结构化数据的另一种方式。有关详细概述，请参阅我们的概念指南 [向量存储](/docs/concepts/vectorstores/)。简而言之，向量存储库使用[嵌入模型](/docs/concepts/embedding_models/)将文档压缩为高维向量表示，而不是使用词频。这允许通过对嵌入向量进行简单的数学运算（如余弦相似度）进行高效的相似性搜索。
+
+:::info[进一步阅读]
+
+- 请查看我们的[操作指南](/docs/how_to/vectorstore_retriever/)，了解如何使用向量存储库。
+- 请查看我们的[向量存储库集成列表](/docs/integrations/vectorstores/)。
+- 请查看Cameron Wolfe关于[向量搜索基础](https://cameronrwolfe.substack.com/p/the-basics-of-ai-powered-vector-search?utm_source=profile&utm_medium=reader2)的博客文章。
+
+:::
+
+#### 关系型数据库
+
+关系型数据库是许多应用程序中使用的结构化数据存储的基本类型。它们将数据组织成具有预定义模式的表，其中每个表表示一个实体或关系。数据存储在行（记录）和列（属性）中，允许通过SQL（结构化查询语言）进行高效的查询和操作。关系型数据库擅长维护数据完整性、支持复杂查询和处理不同数据实体之间的关系。
+
+:::info[进一步阅读]
+
+- 请查看我们的[教程](/docs/tutorials/sql_qa/)，了解如何使用SQL数据库。
+
+:::
+
+#### 图数据库
+
+图数据库是一种专门设计用于存储和管理高度互连数据的数据库类型。与传统的关系型数据库不同，图数据库使用由节点（实体）、边（关系）和属性组成的灵活结构。这种结构允许高效地表示和查询复杂互连的数据。图数据库以图结构存储数据，包括节点、边和属性。它们特别适用于存储和查询数据点之间的复杂关系，如社交网络、供应链管理、欺诈检测和推荐服务。
+
+:::info[进一步阅读]
+
+- 请查看我们的[教程](/docs/tutorials/graph/)，了解如何使用图数据库。
+- 请查看Neo4j的[LangChain入门套件](https://neo4j.com/developer-blog/langchain-neo4j-starter-kit/)。
+
+:::
+
+### 检索器
+
+LangChain通过[检索器](/docs/concepts/retrievers/)概念提供了一个统一的接口，用于与各种检索系统交互。接口很简单：
+
+1. 输入：一个查询（字符串）
+2. 输出：一个文档列表（标准化的LangChain [文档](https://api.js.langchain.com/classes/_langchain_core.documents.Document.html)对象）
+
+您可以使用上述任何检索系统创建一个检索器。我们讨论的查询分析技巧在这里特别有用，因为它们为通常需要结构化查询语言的数据库启用了自然语言接口。例如，您可以使用自然语言到SQL转换为SQL数据库构建检索器。这允许自然语言查询（字符串）在后台转换为SQL查询。无论底层检索系统如何，LangChain中的所有检索器都共享一个通用接口。您可以使用简单的`invoke`方法使用它们：
+
+```typescript
+const docs = await retriever.invoke(query);
+```
+
+:::info[进一步阅读]
+
+- 请查看我们的[检索器概念指南](/docs/concepts/retrievers/)。
+- 请查看我们的[操作指南](/docs/how_to/#retrievers)了解如何使用检索器。
+
+:::

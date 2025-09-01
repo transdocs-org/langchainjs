@@ -1,0 +1,41 @@
+---
+sidebar_position: 2
+---
+
+# 测试
+
+通常，测试应添加在其要测试的模块所在的目录下的 `tests/` 文件夹中。
+
+**单元测试** 覆盖的是不需要调用外部 API 的模块化逻辑。
+
+如果你添加了新的逻辑，请同时添加一个单元测试。  
+单元测试的文件名应为 `*.test.ts`。
+
+仅运行单元测试，请执行以下命令：
+
+```bash
+yarn test
+```
+
+### 运行单个测试
+
+要运行单个测试，请在工作区中执行以下命令：
+
+```bash
+yarn test:single /path/to/yourtest.test.ts
+```
+
+这在开发单个功能时非常有用。
+
+**集成测试** 覆盖的是需要调用外部 API 的逻辑（通常与其他服务的集成有关）。
+
+如果你添加了对新外部 API 的支持，请添加一个新的集成测试。  
+集成测试的文件名应为 `*.int.test.ts`。
+
+请注意，大多数集成测试需要凭证或其他配置。你可能需要像[示例](https://github.com/langchain-ai/langchainjs/blob/main/langchain/.env.example)中那样创建一个 `langchain/.env` 或 `libs/langchain-community/.env` 文件。
+
+我们通常建议仅使用 `yarn test:single` 来运行集成测试。但如果你想运行所有集成测试，可以执行：
+
+```bash
+yarn test:integration
+```

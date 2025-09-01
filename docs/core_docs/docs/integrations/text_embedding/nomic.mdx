@@ -1,0 +1,34 @@
+---
+sidebar_label: Nomic
+---
+
+# Nomic
+
+`NomicEmbeddings` 类使用 Nomic AI API 为给定文本生成嵌入（embeddings）。
+
+## 准备
+
+为了使用 Nomic API，你需要一个 API 密钥。
+你可以在此处注册 Nomic 账户并创建 API 密钥 [这里](https://atlas.nomic.ai/)。
+
+首先，你需要安装 [`@langchain/nomic`](https://www.npmjs.com/package/@langchain/nomic) 包：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/nomic @langchain/core
+```
+
+## 使用方法
+
+import CodeBlock from "@theme/CodeBlock";
+import NomicExample from "@examples/models/embeddings/nomic.ts";
+
+<CodeBlock language="typescript">{NomicExample}</CodeBlock>
+
+## 相关内容
+
+- 嵌入模型[概念指南](/docs/concepts/embedding_models)
+- 嵌入模型[操作指南](/docs/how_to/#embedding-models)

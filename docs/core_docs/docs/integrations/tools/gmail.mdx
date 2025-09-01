@@ -1,0 +1,43 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Gmail 工具
+
+Gmail 工具允许你的代理从已连接的电子邮件账户创建和查看消息。
+
+## 设置
+
+你可以通过以下两种方式之一进行身份验证：
+
+1. 通过 OAuth2 令牌交换获取访问令牌，并将其提供给凭据对象。
+   这可以是一个字符串或一个函数，以便处理令牌的过期和验证。
+   这可以通过支持从联合连接获取访问令牌的身份提供商来完成。
+   这是最安全的方法，因为访问权限和范围将仅限于特定的最终用户。
+   当使用该工具开发面向终端用户、需使用自己的 Gmail 账户的应用程序时，这种方法更合适。
+2. 你需要从 [Google](https://developers.google.com/gmail/api/guides) 获取一个 API 密钥，
+   并在 [Google Cloud Console](https://console.cloud.google.com/apis/library/gmail.googleapis.com) 中启用 Gmail API。
+   然后，设置 `GMAIL_CLIENT_EMAIL` 环境变量，以及 `GMAIL_PRIVATE_KEY` 或 `GMAIL_KEYFILE` 环境变量。
+
+要使用 Gmail 工具，你需要安装以下官方对等依赖：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core googleapis
+```
+
+## 使用方法
+
+import ToolExample from "@examples/tools/gmail.ts";
+
+<CodeBlock language="typescript">{ToolExample}</CodeBlock>
+
+## 相关内容
+
+- 工具 [概念指南](/docs/concepts/tools)
+- 工具 [操作指南](/docs/how_to/#tools)

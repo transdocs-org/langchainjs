@@ -1,0 +1,44 @@
+---
+sidebar_class_name: node-only
+---
+
+# Gradient AI
+
+`GradientEmbeddings` 类使用 Gradient AI API 为给定文本生成嵌入（embeddings）。
+
+## 准备工作
+
+你需要安装官方的 Gradient Node SDK 作为对等依赖：
+
+```bash npm2yarn
+npm i @langchain/community @langchain/core @gradientai/nodejs-sdk
+```
+
+你还需要设置以下环境变量以使用 Gradient AI API：
+
+```
+export GRADIENT_ACCESS_TOKEN=<YOUR_ACCESS_TOKEN>
+export GRADIENT_WORKSPACE_ID=<YOUR_WORKSPACE_ID>
+```
+
+或者，在实例化 GradientAI 类时，可以分别通过 `gradientAccessKey` 和 `workspaceId` 参数设置这些值。
+例如：
+
+```typescript
+const model = new GradientEmbeddings({
+  gradientAccessKey: "My secret Access Token"
+  workspaceId: "My secret workspace id"
+});
+```
+
+## 使用方法
+
+import CodeBlock from "@theme/CodeBlock";
+import GradientEmbeddingsExample from "@examples/embeddings/gradient_ai.ts";
+
+<CodeBlock language="typescript">{GradientEmbeddingsExample}</CodeBlock>
+
+## 相关内容
+
+- 嵌入模型[概念指南](/docs/concepts/embedding_models)
+- 嵌入模型[操作指南](/docs/how_to/#embedding-models)

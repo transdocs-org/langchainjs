@@ -1,0 +1,62 @@
+import CodeBlock from "@theme/CodeBlock";
+import InMemoryExample from "@examples/embeddings/cache_backed_in_memory.ts";
+import RedisExample from "@examples/embeddings/cache_backed_redis.ts";
+
+# 如何缓存嵌入结果
+
+:::info 预备知识
+
+本指南假设您熟悉以下概念：
+
+- [嵌入](/docs/concepts/embedding_models)
+
+:::
+
+可以存储或临时缓存嵌入结果以避免重复计算它们。
+
+可以使用 `CacheBackedEmbeddings` 实例来实现嵌入缓存。
+
+缓存支持的嵌入器是一个封装了嵌入器的包装器，它将嵌入结果缓存在键值存储中。
+
+文本会被哈希处理，并且该哈希值将作为缓存中的键使用。
+
+初始化 `CacheBackedEmbeddings` 的主要支持方式是使用 `fromBytesStore` 静态方法。它接受以下参数：
+
+- `underlyingEmbeddings`: 要使用的嵌入模型。
+- `documentEmbeddingCache`: 用于存储文档嵌入的缓存。
+- `namespace`: (可选，默认为 "") 文档缓存使用的命名空间。该命名空间用于避免与其他缓存发生冲突。例如，您可以将其设置为所使用的嵌入模型的名称。
+
+**注意：** 请务必设置命名空间参数，以避免使用不同嵌入模型对相同文本进行嵌入时发生冲突。
+
+## 内存缓存
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+以下是一个使用内存缓存的基本测试示例。这种类型的缓存主要用于单元测试或原型设计。
+如果您需要长期存储嵌入结果，请不要使用此缓存：
+
+<CodeBlock language="typescript">{InMemoryExample}</CodeBlock>
+
+## Redis
+
+以下是一个使用 Redis 缓存的示例。
+
+您首先需要安装 `ioredis` 作为对等依赖项，并传入一个已初始化的客户端：
+
+```bash npm2yarn
+npm install ioredis
+```
+
+<CodeBlock language="typescript">{RedisExample}</CodeBlock>
+
+## 下一步
+
+现在您已经学会了如何使用缓存来避免重复计算嵌入结果。
+
+接下来，请查看完整的 [检索增强生成教程](/docs/tutorials/rag)。

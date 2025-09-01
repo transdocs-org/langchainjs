@@ -1,0 +1,50 @@
+---
+sidebar_class_name: node-only
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# ClickHouse
+
+:::tip 兼容性
+仅适用于 Node.js。
+:::
+
+[ClickHouse](https://clickhouse.com/) 是一个强大且开源的列式数据库，用于处理分析查询和高效存储。ClickHouse 的设计旨在将向量搜索和分析功能结合在一起，提供强大的性能支持。
+
+## 配置步骤
+
+1. 启动一个 ClickHouse 集群。详细信息请参考 [ClickHouse 安装指南](https://clickhouse.com/docs/en/getting-started/install/)。
+2. 在启动 ClickHouse 集群后，从集群的 `操作（Actions）` 菜单中获取 `连接详情（Connection Details）`。您需要获取主机地址、端口、用户名和密码。
+3. 在您的工作区中安装 ClickHouse 所需的 Node.js 对等依赖项。
+
+您需要安装以下对等依赖项：
+
+```bash npm2yarn
+npm install -S @clickhouse/client mysql2
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+## 索引和查询文档
+
+import InsertExample from "@examples/indexes/vector_stores/clickhouse_fromTexts.ts";
+
+<CodeBlock language="typescript">{InsertExample}</CodeBlock>
+
+## 从现有集合中查询文档
+
+import SearchExample from "@examples/indexes/vector_stores/clickhouse_search.ts";
+
+<CodeBlock language="typescript">{SearchExample}</CodeBlock>
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

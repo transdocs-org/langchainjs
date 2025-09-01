@@ -1,0 +1,35 @@
+# OUTPUT_PARSING_FAILURE（输出解析失败）
+
+一个 [输出解析器](/docs/concepts/output_parsers) 无法按预期处理模型的输出。
+
+为了说明这一点，假设你有一个输出解析器，期望聊天模型输出被 Markdown 代码块（三个反引号）包裹的 JSON 内容。以下是一个正常输入的示例：
+
+```ts
+AIMessage {
+  content: "```\n{\"foo\": \"bar\"}\n```"
+}
+```
+
+在内部，我们的输出解析器可能会尝试去除 Markdown 代码块标记和换行符，然后运行 `JSON.parse()`。
+
+如果聊天模型生成了类似以下格式错误的 JSON 输出：
+
+```ts
+AIMessage {
+  content: "```\n{\"foo\":\n```"
+}
+```
+
+当我们的输出解析器尝试解析这个内容时，`JSON.parse()` 调用将会失败。
+
+请注意，一些预置的组件（例如 [传统的 LangChain 智能代理](/docs/how_to/agent_executor) 和链）可能在内部使用输出解析器，因此即使你没有显式地实例化和使用输出解析器，也可能遇到此错误。
+
+## 故障排除
+
+以下方法可能有助于解决这个问题：
+
+- 如果可能的话，考虑使用 [工具调用或其他结构化输出技术](/docs/how_to/structured_output/)，避免使用输出解析器，以可靠地输出可解析的值。
+  - 如果你正在使用预置的链或智能代理，可以改用 [LangGraph](https://langchain-ai.github.io/langgraphjs/) 显式地编排你的逻辑。
+- 在你的提示中添加更精确的格式说明。在上面的例子中，在输入中添加 `"你必须始终返回被 Markdown 代码块包裹的有效 JSON。不要返回任何额外的文本。"` 可能有助于引导模型输出期望的格式。
+- 如果你使用的是较小或能力较弱的模型，尝试使用功能更强的模型。
+- 添加 [由大语言模型驱动的重试机制](/docs/how_to/output_parser_fixing/)。

@@ -1,0 +1,92 @@
+# Supabase 混合搜索
+
+Langchain 支持使用 Supabase Postgres 数据库的混合搜索。混合搜索结合了 Postgres 的 `pgvector` 扩展（相似性搜索）和全文搜索（关键词搜索）来检索文档。你可以通过 SupabaseVectorStore 的 `addDocuments` 函数添加文档。 SupabaseHybridKeyWordSearch 接受嵌入向量、supabase 客户端、相似性搜索的结果数量和关键词搜索的结果数量作为参数。 `getRelevantDocuments` 函数生成一个去除了重复项并按相关性得分排序的文档列表。
+
+## 安装
+
+### 安装依赖库
+
+```bash npm2yarn
+npm install -S @supabase/supabase-js
+```
+
+### 在数据库中创建表和搜索函数
+
+在你的数据库中运行以下语句：
+
+```sql
+-- 启用 pgvector 扩展以使用嵌入向量
+create extension vector;
+
+-- 创建一个表来存储你的文档
+create table documents (
+  id bigserial primary key,
+  content text, -- 对应 Document.pageContent
+  metadata jsonb, -- 对应 Document.metadata
+  embedding vector(1536) -- 1536 适用于 OpenAI 嵌入向量，如有需要请调整
+);
+
+-- 创建一个用于相似性搜索的函数
+create function match_documents (
+  query_embedding vector(1536),
+  match_count int DEFAULT null,
+  filter jsonb DEFAULT '{}'
+) returns table (
+  id bigint,
+  content text,
+  metadata jsonb,
+  similarity float
+)
+language plpgsql
+as $$
+#variable_conflict use_column
+begin
+  return query
+  select
+    id,
+    content,
+    metadata,
+    1 - (documents.embedding <=> query_embedding) as similarity
+  from documents
+  where metadata @> filter
+  order by documents.embedding <=> query_embedding
+  limit match_count;
+end;
+$$;
+
+-- 创建一个用于关键词搜索的函数
+create function kw_match_documents(query_text text, match_count int)
+returns table (id bigint, content text, metadata jsonb, similarity real)
+as $$
+
+begin
+return query execute
+format('select id, content, metadata, ts_rank(to_tsvector(content), plainto_tsquery($1)) as similarity
+from documents
+where to_tsvector(content) @@ plainto_tsquery($1)
+order by similarity desc
+limit $2')
+using query_text, match_count;
+end;
+$$ language plpgsql;
+```
+
+## 使用方法
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/retrievers/supabase_hybrid.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 相关内容
+
+- 检索器 [概念指南](/docs/concepts/retrievers)
+- 检索器 [操作指南](/docs/how_to/#retrievers)

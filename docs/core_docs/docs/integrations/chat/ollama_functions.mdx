@@ -1,0 +1,73 @@
+---
+sidebar_label: Ollama 函数功能
+sidebar_class_name: hidden
+---
+
+# Ollama 函数功能
+
+:::warning
+
+LangChain 的 Ollama 集成包已经正式支持工具调用功能。[点击此处查看文档](/docs/integrations/chat/ollama#tools)。
+
+:::
+
+LangChain 提供了一个实验性的封装器，用于通过 [Ollama](https://github.com/jmorganca/ollama) 在本地运行的开源模型，使其具有与 OpenAI Functions 相同的 API。
+
+请注意，功能更强大、能力更强的模型在处理复杂 schema 和/或多个函数时表现更好。以下示例使用了 [Mistral](https://ollama.ai/library/mistral)。
+
+:::warning
+
+这是一个实验性的封装器，尝试为不原生支持工具调用的模型添加该功能。请谨慎使用。
+
+:::
+
+## 环境准备
+
+请按照 [这些说明](https://github.com/jmorganca/ollama) 设置并运行本地 Ollama 实例。
+
+## 初始化模型
+
+你可以像初始化标准 `ChatOllama` 实例一样来初始化这个封装器：
+
+```typescript
+import { OllamaFunctions } from "@langchain/community/experimental/chat_models/ollama_functions";
+
+const model = new OllamaFunctions({
+  temperature: 0.1,
+  model: "mistral",
+});
+```
+
+## 传递函数
+
+现在你可以像 OpenAI 一样传入函数：
+
+import CodeBlock from "@theme/CodeBlock";
+import OllamaFunctionsCalling from "@examples/models/chat/ollama_functions/function_calling.ts";
+
+<CodeBlock language="typescript">{OllamaFunctionsCalling}</CodeBlock>
+
+## 用于信息提取
+
+import OllamaFunctionsExtraction from "@examples/models/chat/ollama_functions/extraction.ts";
+
+<CodeBlock language="typescript">{OllamaFunctionsExtraction}</CodeBlock>
+
+:::tip
+你可以 [在这里](https://smith.langchain.com/public/74692bfc-0224-4221-b187-ddbf20d7ecc0/r) 看到一个简单的 LangSmith 调用轨迹
+:::
+
+## 自定义
+
+在底层，它使用了 Ollama 的 JSON 模式来将输出限制为 JSON 格式，然后将工具的 schema 作为 JSON schema 传入提示词中。
+
+由于不同模型具有不同的优势，传入你自己的系统提示词可能会有所帮助。示例如下：
+
+import OllamaFunctionsCustomPrompt from "@examples/models/chat/ollama_functions/custom_prompt.ts";
+
+<CodeBlock language="typescript">{OllamaFunctionsCustomPrompt}</CodeBlock>
+
+## 相关内容
+
+- 聊天模型 [概念指南](/docs/concepts/chat_models)
+- 聊天模型 [操作指南](/docs/how_to/#chat-models)

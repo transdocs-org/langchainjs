@@ -1,0 +1,33 @@
+---
+sidebar_label: Prem AI
+---
+
+# Prem AI
+
+`PremEmbeddings` 类使用 Prem AI API 为给定文本生成嵌入（embeddings）。
+
+## 准备工作
+
+要使用 Prem API，您需要一个 API 密钥。您可以在此处注册 Prem 账户并创建 API 密钥：[注册链接](https://studio.premai.io/sign-up)。
+
+首先，您需要安装 [`@langchain/community`](https://www.npmjs.com/package/@langchain/community) 包：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+## 使用方法
+
+import CodeBlock from "@theme/CodeBlock";
+import PremExample from "@examples/embeddings/premai.ts";
+
+<CodeBlock language="typescript">{PremExample}</CodeBlock>
+
+## 相关内容
+
+- 嵌入模型[概念指南](/docs/concepts/embedding_models)
+- 嵌入模型[操作指南](/docs/how_to/#embedding-models)

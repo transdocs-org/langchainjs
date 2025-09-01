@@ -1,0 +1,88 @@
+# 如何处理大型数据库
+
+:::info 前提条件
+
+本指南假设您熟悉以下内容：
+
+- [SQL 数据问答](/docs/tutorials/sql_qa)
+
+:::
+
+为了编写有效的数据库查询，我们需要向模型提供表名、表结构以及特征值，以便其进行查询。
+当存在许多表、列和/或高基数列时，我们无法在每次提示中都包含数据库的完整信息。
+因此，我们必须找到方法，动态地将最相关的信息插入到提示中。下面让我们看看一些实现方法。
+
+## 准备工作
+
+首先，安装所需的包并设置环境变量。本示例将使用 OpenAI 作为 LLM。
+
+```bash
+npm install langchain @langchain/community @langchain/openai typeorm sqlite3
+```
+
+```bash
+export OPENAI_API_KEY="your api key"
+# 取消注释以下行以使用 LangSmith。非必需。
+# export LANGSMITH_API_KEY="your api key"
+# export LANGSMITH_TRACING=true
+
+# 如果不在无服务器环境中，可减少追踪延迟
+# export LANGCHAIN_CALLBACKS_BACKGROUND=true
+```
+
+以下示例将使用 Chinook 数据库的 SQLite 连接。请按照这些[安装步骤](https://database.guide/2-sample-databases-sqlite/)在与本笔记本相同目录下创建 `Chinook.db` 文件：
+
+- 将 [此文件](https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sql) 另存为 `Chinook_Sqlite.sql`
+- 运行 `sqlite3 Chinook.db`
+- 执行 `.read Chinook_Sqlite.sql`
+- 测试运行 `SELECT * FROM Artist LIMIT 10;`
+
+现在，`Chinhook.db` 已经在我们的目录中，我们可以使用由 Typeorm 驱动的 `SqlDatabase` 类与其进行交互：
+
+import CodeBlock from "@theme/CodeBlock";
+import DbCheck from "@examples/use_cases/sql/db_check.ts";
+
+<CodeBlock language="typescript">{DbCheck}</CodeBlock>
+
+## 表数量众多
+
+我们需要在提示中包含的最关键信息之一是相关表的结构。
+当表非常多时，无法将所有结构都包含在一个提示中。
+在这种情况下，我们可以先提取与用户输入相关的表名，然后仅包含这些表的结构。
+
+一种简单且可靠的方法是使用 OpenAI 的函数调用和 Zod 模型。LangChain 自带一个内置的 `createExtractionChainZod` 链，可以让我们轻松实现这一点：
+
+import LargeDbExample from "@examples/use_cases/sql/large_db.ts";
+
+<CodeBlock language="typescript">{LargeDbExample}</CodeBlock>
+
+我们已经了解了如何在链中动态地将表结构的一个子集包含在提示中。
+解决这个问题的另一种可能方法是让代理自行决定何时通过提供一个工具来查找表。
+
+## 高基数列
+
+高基数指的是数据库中具有大量唯一值的列。
+这些列的特征是数据条目具有高度的唯一性，例如个人姓名、地址或产品序列号。
+高基数数据在索引和查询方面带来挑战，因为它需要更复杂的策略来高效地过滤和检索特定条目。
+
+为了过滤包含专有名词（如地址、歌曲名称或艺术家）的列，我们首先需要检查拼写是否正确，以便正确过滤数据。
+
+一种简单的策略是创建一个包含数据库中所有唯一专有名词的向量存储。
+然后，我们可以每次用户输入时查询该向量存储，并将最相关的专有名词注入提示中。
+
+首先，我们需要获取每个实体的唯一值，为此我们定义一个函数将结果解析为元素列表：
+
+import HighCardinalityExample from "@examples/use_cases/sql/large_db_high_cardinality.ts";
+
+<CodeBlock language="typescript">{HighCardinalityExample}</CodeBlock>
+
+可以看到，通过检索我们能够纠正拼写错误并返回有效的结果。
+
+解决这个问题的另一种可能方法是让代理自行决定何时查找专有名词。
+
+## 下一步
+
+您现在已经了解了一些改进 SQL 生成的提示策略。
+
+接下来，可以查看本节中的其他一些指南，比如 [如何验证查询](/docs/how_to/sql_query_checking)。
+您可能也会对查询分析指南中的 [高基数处理](/docs/how_to/query_high_cardinality) 感兴趣。

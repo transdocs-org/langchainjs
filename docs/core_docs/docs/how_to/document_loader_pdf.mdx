@@ -1,0 +1,72 @@
+# 如何加载 PDF 文件
+
+> [便携文档格式 (PDF)](https://zh.wikipedia.org/wiki/PDF)，标准化为 ISO 32000，是由 Adobe 于 1992 年开发的一种文件格式，用于以独立于应用程序软件、硬件和操作系统的格式呈现包含文本格式和图像的文档。
+
+本文档介绍了如何将 `PDF` 文档加载为我们后续使用的 Document 格式。
+
+默认情况下，PDF 文件中的每一页都会生成一个文档。你可以通过将 `splitPages` 选项设置为 `false` 来更改此行为。
+
+## 安装
+
+```bash npm2yarn
+npm install pdf-parse
+```
+
+## 使用方式，每页一个文档
+
+```typescript
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+// 或者在 Web 环境中：
+// import { WebPDFLoader } from "@langchain/community/document_loaders/web/pdf";
+// const blob = new Blob(); // 例如来自文件输入
+// const loader = new WebPDFLoader(blob);
+
+const loader = new PDFLoader("src/document_loaders/example_data/example.pdf");
+
+const docs = await loader.load();
+```
+
+## 使用方式，每文件一个文档
+
+```typescript
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+
+const loader = new PDFLoader("src/document_loaders/example_data/example.pdf", {
+  splitPages: false,
+});
+
+const docs = await loader.load();
+```
+
+## 使用方式，自定义 `pdfjs` 构建
+
+默认情况下，我们使用 `pdf-parse` 打包的 `pdfjs` 构建版本，它兼容大多数环境，包括 Node.js 和现代浏览器。如果你想使用更新版本的 `pdfjs-dist` 或者使用自定义构建的 `pdfjs-dist`，你可以提供一个自定义的 `pdfjs` 函数，该函数返回一个解析为 `PDFJS` 对象的 Promise。
+
+在以下示例中，我们使用了 `pdfjs-dist` 的 "legacy"（见 [pdfjs 文档](https://github.com/mozilla/pdf.js/wiki/Frequently-Asked-Questions#which-browsersenvironments-are-supported)）构建版本，它包含了一些默认构建中未包含的 polyfill。
+
+```bash npm2yarn
+npm install pdfjs-dist
+```
+
+```typescript
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+
+const loader = new PDFLoader("src/document_loaders/example_data/example.pdf", {
+  // 你可能需要在导入语句末尾添加 `.then(m => m.default)`
+  pdfjs: () => import("pdfjs-dist/legacy/build/pdf.js"),
+});
+```
+
+## 消除多余的空格
+
+PDF 文件种类繁多，这使得读取它们变得具有挑战性。加载器默认会解析单个文本元素并将它们用空格连接起来，但如果你看到过多的空格，这可能不是你期望的行为。在这种情况下，你可以将分隔符重写为空字符串，如下所示：
+
+```typescript
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+
+const loader = new PDFLoader("src/document_loaders/example_data/example.pdf", {
+  parsedItemSeparator: "",
+});
+
+const docs = await loader.load();
+```

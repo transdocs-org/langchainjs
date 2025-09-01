@@ -1,0 +1,74 @@
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/retrievers/parent_document_retriever.ts";
+import ExampleWithScoreThreshold from "@examples/retrievers/parent_document_retriever_score_threshold.ts";
+import ExampleWithChunkHeader from "@examples/retrievers/parent_document_retriever_chunk_header.ts";
+import ExampleWithRerank from "@examples/retrievers/parent_document_retriever_rerank.ts";
+
+# 如何为一个数据块检索完整文档
+
+:::info 前提条件
+
+本指南假设您已经熟悉以下概念：
+
+- [检索器（Retrievers）](/docs/concepts/retrievers)
+- [文本分割器（Text splitters）](/docs/concepts/text_splitters)
+- [检索增强生成（RAG）](/docs/tutorials/rag)
+
+:::
+
+在对文档进行分割以便检索时，通常会遇到一些相互冲突的需求：
+
+1. 您可能希望文档较小，这样它们的嵌入向量可以更准确地反映其含义。如果文档太长，嵌入向量可能会失去语义。
+2. 您又希望文档足够长，以保留每个块的上下文。
+
+[`ParentDocumentRetriever`](https://api.js.langchain.com/classes/langchain.retrievers_parent_document.ParentDocumentRetriever.html) 通过分割和存储小数据块来平衡这两者。在检索时，它首先获取小数据块，然后查找这些块的父 ID，并返回这些更大的文档。
+
+请注意，“父文档”是指小数据块来源的文档。这可以是完整的原始文档，也可以是较大的数据块。
+
+这是一种更具体的[每个文档生成多个嵌入向量](/docs/how_to/multi_vector)的方式。
+
+## 使用方法
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 使用评分阈值
+
+通过在 `scoreThresholdOptions` 中设置选项，我们可以强制 `ParentDocumentRetriever` 在底层使用 `ScoreThresholdRetriever`。
+这会将 `ScoreThresholdRetriever` 中的向量存储设置为我们在初始化 `ParentDocumentRetriever` 时传递的存储，同时允许我们为检索器设置评分阈值。
+
+当您不确定需要多少文档（或者如果您确定，只需设置 `maxK` 选项），但希望确保所获取的文档在一定相关性阈值范围内时，这会很有帮助。
+
+注意：如果传入了一个检索器，`ParentDocumentRetriever` 将默认使用它来检索小数据块，以及通过 `addDocuments` 方法添加文档。
+
+<CodeBlock language="typescript">{ExampleWithScoreThreshold}</CodeBlock>
+
+## 使用上下文数据块头
+
+考虑这样一种场景：您希望将一组文档存储在向量数据库中，并在其上执行问答任务。仅通过重叠文本对文档进行简单分割，可能无法为大语言模型（LLM）提供足够的上下文来判断多个数据块是否引用相同的信息，或者如何从矛盾的来源中解析信息。
+
+如果知道要过滤的内容，为每个文档添加元数据标签是一个解决方案，但您可能无法预先知道向量数据库将需要处理哪些类型的查询。在每个数据块中以头信息的形式包含额外的上下文信息，可以帮助处理任意查询。
+
+当您有多个需要从向量数据库中正确检索的细粒度子数据块时，这一点尤为重要。
+
+<CodeBlock language="typescript">{ExampleWithChunkHeader}</CodeBlock>
+
+## 使用重新排序（Reranking）
+
+当从向量数据库中获取大量文档并传递给 LLM 时，最终的答案有时会包含来自无关数据块的信息，使其不够精确，有时甚至会导致错误。此外，传递多个无关文档也会增加成本。
+因此，使用 rerank 有两个原因：提高精度和降低成本。
+
+<CodeBlock language="typescript">{ExampleWithRerank}</CodeBlock>
+
+## 下一步
+
+现在您已经了解了如何使用 `ParentDocumentRetriever`。
+
+接下来，您可以查看更通用的[每个文档生成多个嵌入向量](/docs/how_to/multi_vector)方法、更全面的[RAG 教程](/docs/tutorials/rag)，或本节内容了解如何[为任意数据源创建自定义检索器](/docs/how_to/custom_retriever/)。

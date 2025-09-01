@@ -1,0 +1,57 @@
+---
+sidebar_class_name: node-only
+---
+
+# Llama CPP
+
+:::tip 兼容性
+仅适用于 Node.js。
+:::
+
+此模块基于 [node-llama-cpp](https://github.com/withcatai/node-llama-cpp) Node.js 绑定，用于 [llama.cpp](https://github.com/ggerganov/llama.cpp)，它允许你使用本地运行的 LLM。这使得你可以在笔记本电脑环境中运行更小的量化模型，非常适合测试和构思创意，而无需担心产生费用！
+
+## 安装
+
+你需要安装 [node-llama-cpp](https://github.com/withcatai/node-llama-cpp) 模块的主要版本 `3`，以与本地模型通信。
+
+```bash npm2yarn
+npm install -S node-llama-cpp@3
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+你还需要一个本地的 Llama 3 模型（或者 [node-llama-cpp](https://github.com/withcatai/node-llama-cpp) 支持的模型）。你需要将此模型的路径作为参数的一部分传递给 LlamaCpp 模块（参见示例）。
+
+开箱即用的 `node-llama-cpp` 被优化用于搭载 Apple M 系列处理器 Metal GPU 的 macOS 平台。如果你需要关闭此功能或需要支持 CUDA 架构，请参阅 [node-llama-cpp](https://withcatai.github.io/node-llama-cpp/) 上的文档。
+
+关于获取和准备 `llama3` 的建议，请参阅此模块的 LLM 版本文档。
+
+给 LangChain.js 贡献者的提示：如果你想运行与此模块相关的测试，你需要将你的本地模型路径设置在环境变量 `LLAMA_PATH` 中。
+
+## 使用方法
+
+### 基本使用
+
+我们需要提供一个指向本地 Llama3 模型的路径，同时此模块中 `embeddings` 属性始终设置为 `true`。
+
+import CodeBlock from "@theme/CodeBlock";
+import BasicExample from "@examples/embeddings/llama_cpp_basic.ts";
+
+<CodeBlock language="typescript">{BasicExample}</CodeBlock>
+
+### 文档嵌入
+
+import DocsExample from "@examples/embeddings/llama_cpp_docs.ts";
+
+<CodeBlock language="typescript">{DocsExample}</CodeBlock>
+
+## 相关内容
+
+- 嵌入模型 [概念指南](/docs/concepts/embedding_models)
+- 嵌入模型 [操作指南](/docs/how_to/#embedding-models)

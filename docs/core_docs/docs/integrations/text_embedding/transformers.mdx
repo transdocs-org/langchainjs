@@ -1,0 +1,42 @@
+import CodeBlock from "@theme/CodeBlock";
+
+# HuggingFace Transformers
+
+`TransformerEmbeddings` 类使用 [Transformers.js](https://huggingface.co/docs/transformers.js/index) 包为给定文本生成嵌入向量。
+
+它可以在本地运行，甚至可以直接在浏览器中运行，使你能够创建具有内置嵌入功能的网页应用。
+
+## 安装
+
+你需要安装 [@huggingface/transformers](https://www.npmjs.com/package/@huggingface/transformers) 包作为对等依赖：
+
+:::tip 兼容性
+如果你使用的 community 版本早于 0.3.21，请安装旧版的 `@xenova/transformers` 包，并从 `"@langchain/community/embeddings/hf_transformers"` 导入嵌入模块。
+:::
+
+```bash npm2yarn
+npm install @huggingface/transformers
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+## 示例
+
+请注意，如果你在浏览器环境中使用，最好将所有与推理相关的代码放入 Web Worker 中，以避免阻塞主线程。
+
+关于如何设置你的项目，请参阅 [此指南](https://huggingface.co/docs/transformers.js/tutorials/next) 以及 Transformers.js 文档中的其他资源。
+
+import HFTransformersExample from "@examples/models/embeddings/hf_transformers.ts";
+
+<CodeBlock language="typescript">{HFTransformersExample}</CodeBlock>
+
+## 相关内容
+
+- 嵌入模型[概念指南](/docs/concepts/embedding_models)
+- 嵌入模型[操作指南](/docs/how_to/#embedding-models)

@@ -1,0 +1,43 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Discord 工具
+
+Discord 工具使你的智能体具备搜索、读取和向 Discord 频道发送消息的能力。
+当你需要与 Discord 频道进行交互时，该工具将非常有用。
+
+## 准备工作
+
+要使用 Discord 工具，你需要安装以下官方指定的同级依赖：
+
+```bash npm2yarn
+npm install discord.js
+```
+
+## 使用方式，独立使用
+
+import ToolExample from "@examples/tools/discord.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+<CodeBlock language="typescript">{ToolExample}</CodeBlock>
+
+## 使用方式，在智能体中使用
+
+import AgentExample from "@examples/agents/discord.ts";
+
+<CodeBlock language="typescript">{AgentExample}</CodeBlock>
+
+## 相关内容
+
+- 工具 [概念指南](/docs/concepts/tools)
+- 工具 [操作指南](/docs/how_to/#tools)

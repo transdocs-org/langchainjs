@@ -1,0 +1,161 @@
+# 如何将代理数据流式传输到客户端
+
+本指南将逐步介绍我们在此目录中如何使用 [React Server Components](https://react.dev/reference-rsc/server-components) 将代理数据流式传输到客户端。  
+本文档中的代码取自该目录下的 `page.tsx` 和 `action.ts` 文件。要查看完整且未中断的代码，请点击 [此处查看 actions 文件](https://github.com/langchain-ai/langchain-nextjs-template/blob/main/app/ai_sdk/agent/action.ts) 和 [此处查看客户端文件](https://github.com/langchain-ai/langchain-nextjs-template/blob/main/app/ai_sdk/agent/page.tsx)。
+
+:::info 前提条件
+
+本指南假设您已熟悉以下概念：
+
+- [LangChain 表达式语言 (LCEL)](/docs/concepts/lcel)
+- [聊天模型](/docs/concepts/chat_models)
+- [工具调用](/docs/concepts/tool_calling)
+- [代理](/docs/concepts/agents)
+
+:::
+
+## 环境准备
+
+首先，安装必要的 LangChain 和 AI SDK 包：
+
+```bash npm2yarn
+npm install langchain @langchain/core @langchain/community ai
+```
+
+在本演示中，我们将使用 `TavilySearchResults` 工具，它需要一个 API 密钥。您可以 [在此处](https://app.tavily.com/) 获取，或者您可以选择其他不需要 API 密钥的工具，例如 [`WikipediaQueryRun`](/docs/integrations/tools/wikipedia)。
+
+如果您选择使用 `TavilySearchResults`，请按如下方式设置您的 API 密钥：
+
+```bash
+export TAVILY_API_KEY=your_api_key
+```
+
+## 开始使用
+
+第一步是创建一个新的 RSC 文件，并添加运行代理所需的导入语句。在本演示中，我们将它命名为 `action.ts`：
+
+```typescript action.ts
+"use server";
+
+import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
+import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
+import { pull } from "langchain/hub";
+import { createStreamableValue } from "ai/rsc";
+```
+
+接下来，我们将定义一个 `runAgent` 函数。该函数接受一个字符串输入，并包含我们代理的所有逻辑以及将数据流式传输回客户端的功能：
+
+```typescript action.ts
+export async function runAgent(input: string) {
+  "use server";
+}
+```
+
+然后，在函数内部，我们将定义我们选择的聊天模型：
+
+```typescript action.ts
+const llm = new ChatOpenAI({
+  model: "gpt-4o-2024-05-13",
+  temperature: 0,
+});
+```
+
+接下来，我们将使用 `ai` 包提供的 `createStreamableValue` 辅助函数来创建一个可流式传输的值：
+
+```typescript action.ts
+const stream = createStreamableValue();
+```
+
+这在我们开始将数据流式传输回客户端时会非常关键。
+
+接着，在我们的函数中定义异步函数，其中包含代理的逻辑：
+
+```typescript action.ts
+  (async () => {
+    const tools = [new TavilySearchResults({ maxResults: 1 })];
+
+    const prompt = await pull<ChatPromptTemplate>(
+      "hwchase17/openai-tools-agent",
+    );
+
+    const agent = createToolCallingAgent({
+      llm,
+      tools,
+      prompt,
+    });
+
+    const agentExecutor = new AgentExecutor({
+      agent,
+      tools,
+    });
+```
+
+:::tip
+从 `langchain` 版本 `0.2.8` 开始，`createToolCallingAgent` 函数现在支持 [OpenAI 格式的工具](https://api.js.langchain.com/interfaces/langchain_core.language_models_base.ToolDefinition.html)。
+:::
+
+在上面的代码中可以看到我们做了几件事：
+
+首先，我们定义了工具列表（本例中只使用了一个工具），并从 LangChain 的提示词中心拉取了提示词。
+
+之后，我们将 LLM、工具和提示词传给 `createToolCallingAgent` 函数，它将构建并返回一个可运行的代理。
+
+然后，将其传入 `AgentExecutor` 类，由它来处理代理的执行与流式传输。
+
+最后，我们将调用 `.streamEvents` 并将流式数据返回到我们之前定义的 `stream` 变量中，
+
+```typescript action.ts
+    const streamingEvents = agentExecutor.streamEvents(
+      { input },
+      { version: "v2" },
+    );
+
+    for await (const item of streamingEvents) {
+      stream.update(JSON.parse(JSON.stringify(item, null, 2)));
+    }
+
+    stream.done();
+  })();
+```
+
+如上所示，我们通过对数据进行字符串化和解析，做了一些特殊的处理。这是由于 RSC 流式传输代码中的一个 bug，但如果您像我们上面那样进行字符串化和解析，就不会遇到这个问题。
+
+最后，在函数底部返回流式值：
+
+```typescript action.ts
+return { streamData: stream.value };
+```
+
+一旦我们实现了服务器端操作，就可以在客户端函数中添加几行代码来请求并流式传输这些数据：
+
+首先，添加必要的导入：
+
+```typescript page.tsx
+"use client";
+
+import { useState } from "react";
+import { readStreamableValue } from "ai/rsc";
+import { runAgent } from "./action";
+```
+
+然后在我们的 `Page` 函数中，调用 `runAgent` 函数非常简单：
+
+```typescript page.tsx
+export default function Page() {
+  const [input, setInput] = useState("");
+  const [data, setData] = useState<StreamEvent[]>([]);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    const { streamData } = await runAgent(input);
+    for await (const item of readStreamableValue(streamData)) {
+      setData((prev) => [...prev, item]);
+    }
+  }
+}
+```
+
+就这样！您已成功构建了一个能将数据流式传输回客户端的代理。现在可以运行您的应用程序，并实时查看数据的流式传输。

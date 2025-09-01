@@ -1,0 +1,40 @@
+# @mozilla/readability
+
+在摄入 HTML 文档以供后续检索时，我们通常只关注网页的实际内容，而非语义结构。  
+使用 MozillaReadabilityTransformer 从文档中剥离 HTML 标签可以生成内容更丰富的片段，从而提升检索效果。
+
+## 安装配置
+
+你需要安装 [`@mozilla/readability`](https://www.npmjs.com/package/@mozilla/readability) 和 [`jsdom`](https://www.npmjs.com/package/jsdom) 这两个 npm 包：
+
+```bash npm2yarn
+npm install @mozilla/readability jsdom
+```
+
+虽然对于该转换器本身而言不是必须的，但以下使用示例中需要用到 [`cheerio`](https://www.npmjs.com/package/cheerio) 进行网页抓取：
+
+```bash npm2yarn
+npm install cheerio
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+## 使用方法
+
+以下示例抓取了一个 Hacker News 主题页面，根据 HTML 标签对内容进行分割，从而基于标签的语义信息将内容分组为多个片段，然后从每个片段中提取内容：
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_transformers/mozilla_readability.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 自定义配置
+
+你可以向该转换器传入任何 `@mozilla/readability` 包所支持的参数，以自定义其行为：  
+[参考 `@mozilla/readability` 的参数文档](https://www.npmjs.com/package/@mozilla/readability)。

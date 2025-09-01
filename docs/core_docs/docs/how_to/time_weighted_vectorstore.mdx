@@ -1,0 +1,50 @@
+# 如何创建一个时间加权检索器
+
+:::info 前提条件
+
+本指南假定您熟悉以下概念：
+
+- [检索器](/docs/concepts/retrievers)
+- [向量存储](/docs/concepts/#vectorstores)
+- [增强生成检索（RAG）](/docs/tutorials/rag)
+
+:::
+
+本指南介绍 [`TimeWeightedVectorStoreRetriever`](https://api.js.langchain.com/classes/langchain.retrievers_time_weighted.TimeWeightedVectorStoreRetriever.html)，它结合了语义相似性和时间衰减。
+
+评分算法如下：
+
+```
+语义相似性 + (1.0 - 衰减率) ^ 经过的小时数
+```
+
+需要注意的是，`hours_passed` 指的是自检索器中的对象**最后一次被访问**以来经过的小时数，而不是自其创建以来的时间。这意味着频繁访问的对象会保持“新鲜”。
+
+```typescript
+let score = (1.0 - this.decayRate) ** hoursPassed + vectorRelevance;
+```
+
+其中，`this.decayRate` 是一个在 0 到 1 之间的可配置小数。数值越低，表示文档会被“记住”更长时间；数值越高，则更强调最近访问的文档。
+
+请注意，当衰减率设置为精确的 0 或 1 时，`hoursPassed` 将变得无关紧要，并且此检索器将等同于标准的向量查找。
+
+由于需要特定的元数据，所有文档必须使用 **检索器** 上的 `addDocuments` 方法添加到底层向量存储中，而不是直接使用向量存储本身的方法。
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/retrievers/time-weighted-retriever.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 下一步
+
+现在您已经了解了如何在执行检索时将时间作为影响因素之一。
+
+接下来，可以查看关于 RAG 的[完整教程](/docs/tutorials/rag)，或者本部分的[如何为任意数据源创建自定义检索器](/docs/how_to/custom_retriever/)。

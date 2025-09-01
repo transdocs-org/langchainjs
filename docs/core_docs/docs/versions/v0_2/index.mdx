@@ -1,0 +1,96 @@
+---
+sidebar_position: 1
+sidebar_label: v0.2
+---
+
+# LangChain v0.2
+
+LangChain v0.2 于 2024 年 5 月发布。此版本包含多个破坏性变更和弃用项。本文档包含升级到 0.2.x 的指南，以及弃用项和破坏性变更的列表。
+
+:::note 参考
+
+- [迁移到 Astream Events v2](/docs/versions/v0_2/migrating_astream_events)
+
+:::
+
+## 迁移
+
+本文档将帮助你将代码升级到 LangChain `0.2.x`。为了准备迁移，我们首先建议你执行以下步骤：
+
+1. 安装 `@langchain/core` 和 langchain 的 0.2.x 版本，并将你可能使用的其他包升级到较新的版本（例如 `@langchain/langgraph`、`@langchain/community`、`@langchain/openai` 等）。
+2. 验证你的代码在新包下能否正常运行（例如单元测试通过）
+3. 安装较新版本的 `langchain-cli`，并使用该工具将代码中的旧导入替换为新的导入。（见下方说明。）
+4. 手动解决任何剩余的弃用警告
+5. 重新运行单元测试
+
+### 升级到新导入
+
+我们创建了一个工具来帮助迁移你的代码。该工具仍处于 **beta** 阶段，可能无法覆盖所有情况，但我们希望它能帮助你更快速地迁移代码。
+
+迁移脚本有以下限制：
+
+1. 它仅限于帮助用户从旧导入迁移到新导入。它不会帮助解决其他弃用问题。
+2. 它无法处理包含 `as` 的导入。
+3. 新导入始终放置在全局作用域中，即使被替换的旧导入位于某个局部作用域内（例如函数体内）。
+4. 它可能会遗漏一些已弃用的导入。
+
+以下是迁移脚本可以自动应用的导入更改示例：
+
+| 来源包           | 目标包                 | 已弃用的导入                                                          | 新导入                                                                       |
+| ------------------ | ---------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `langchain`        | `@langchain/community` | `import { UpstashVectorStore } from "langchain/vectorstores/upstash"` | `import { UpstashVectorStore } from "@langchain/community/vectorstores/upstash"` |
+| `@langchain/community` | `@langchain/openai`    | `import { ChatOpenAI } from "@langchain/community/chat_models/openai"` | `import { ChatOpenAI } from "@langchain/openai"`                             |
+| `langchain`        | `@langchain/core`      | `import { Document } from "langchain/schema/document"`                | `import { Document } from "@langchain/core/documents"`                       |
+| `langchain`        | `@langchain/textsplitters` | `import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"` | `import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters"` |
+
+#### 弃用时间线
+
+我们主要有两种类型的弃用：
+
+1. 代码从 `langchain` 移动到其他包中（例如 `@langchain/community`）
+
+如果你尝试从 `langchain` 导入它，由于入口点已被移除，导入将会失败。
+
+2. 代码已有更好的替代方案可用，并最终将被删除，以便只保留一种实现方式（例如，ChatModels 中的 `predictMessages` 方法已被弃用，推荐使用 `invoke`）。
+
+其中许多功能在 0.2 版本中标记为移除。我们已将其移除时间推迟到 0.3。
+
+#### 安装
+
+:::note
+0.2.X 的迁移脚本仅在版本 `0.0.14-rc.1` 或更高版本中可用。
+:::
+
+```bash npm2yarn
+npm i @langchain/scripts@0.0.14-rc.1
+```
+
+#### 使用方法
+
+鉴于迁移脚本并不完美，你应该首先备份你的代码（例如使用版本控制工具如 `git`）。
+
+例如，假设你的代码仍然使用 `import ChatOpenAI from "@langchain/community/chat_models/openai";`：
+
+调用迁移脚本会将此导入替换为 `import ChatOpenAI from "@langchain/openai";`。
+
+```typescript
+import { updateEntrypointsFrom0_x_xTo0_2_x } from "@langchain/scripts/migrations";
+
+const pathToMyProject = "..."; // 此路径用于以下 glob 模式：`${projectPath}/**/*.{ts,tsx,js,jsx}`。
+
+updateEntrypointsFrom0_x_xTo0_2_x({
+  projectPath: pathToMyProject,
+  shouldLog: true,
+});
+```
+
+#### 其他选项
+
+```typescript
+updateEntrypointsFrom0_x_xTo0_2_x({
+  projectPath: pathToMyProject,
+  tsConfigPath: "tsconfig.json", // tsConfig 文件的路径。这将用于将所有项目文件加载到脚本中。
+  testRun: true, // 如果为 true，脚本不会保存任何更改，但会记录将进行的更改。
+  files: ["..."], // 要检查的 `.ts` 文件路径列表。如果提供了此参数，脚本将仅检查这些文件。
+});
+```

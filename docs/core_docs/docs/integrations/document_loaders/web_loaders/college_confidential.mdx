@@ -1,0 +1,25 @@
+---
+hide_table_of_contents: true
+---
+
+# College Confidential
+
+该示例介绍了如何使用 Cheerio 从 College Confidential 网站加载数据。每个页面将生成一个文档。
+
+## 准备
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core cheerio
+```
+
+## 使用方法
+
+```typescript
+import { CollegeConfidentialLoader } from "@langchain/community/document_loaders/web/college_confidential";
+
+const loader = new CollegeConfidentialLoader(
+  "https://www.collegeconfidential.com/colleges/brown-university/"
+);
+
+const docs = await loader.load();
+```

@@ -1,0 +1,25 @@
+# 如何根据长度选择示例
+
+:::info 前置条件
+
+本指南假定你已经熟悉以下概念：
+
+- [提示模板](/docs/concepts/prompt_templates)
+- [示例选择器](/docs/how_to/example_selectors)
+
+:::
+
+此示例选择器根据长度选择要使用的示例。  
+当你担心构造的提示词会超出上下文窗口长度时，这将非常有用。  
+对于较长的输入，它会选择较少的示例；而对于较短的输入，它会选择更多的示例。
+
+import CodeBlock from "@theme/CodeBlock";
+import ExampleLength from "@examples/prompts/length_based_example_selector.ts";
+
+<CodeBlock language="typescript">{ExampleLength}</CodeBlock>
+
+## 后续步骤
+
+现在你已经了解了一些关于基于长度的示例选择器的使用方法。
+
+接下来，请查看关于如何使用[基于相似度的示例选择器](/docs/how_to/example_selectors_similarity)的指南。

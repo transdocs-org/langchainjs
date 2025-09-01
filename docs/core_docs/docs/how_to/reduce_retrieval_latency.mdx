@@ -1,0 +1,59 @@
+# 如何减少检索延迟
+
+:::info 前提条件
+
+本指南假设您熟悉以下概念：
+
+- [检索器（Retrievers）](/docs/concepts/retrievers)
+- [嵌入模型（Embeddings）](/docs/concepts/embedding_models)
+- [向量存储（Vector stores）](/docs/concepts/#vectorstores)
+- [基于检索增强生成（RAG）](/docs/tutorials/rag)
+
+:::
+
+一种减少检索延迟的方法是使用一种称为“自适应检索（Adaptive Retrieval）”的技术。
+[`MatryoshkaRetriever`](https://api.js.langchain.com/classes/langchain.retrievers_matryoshka_retriever.MatryoshkaRetriever.html) 使用
+Matryoshka Representation Learning (MRL) 技术，通过两个步骤为给定查询检索文档：
+
+- **首次检索**：使用来自 MRL 嵌入的低维子向量进行初始快速但准确度较低的搜索。
+
+- **二次检索**：使用完整高维嵌入对首次检索的结果进行重新排序，以提高准确度。
+
+![Matryoshka 检索器](/img/adaptive_retrieval.png)
+
+它基于这篇 [Supabase](https://supabase.com/) 博客文章
+["Matryoshka embeddings: faster OpenAI vector search using Adaptive Retrieval"](https://supabase.com/blog/matryoshka-embeddings)。
+
+### 安装设置
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+要运行以下示例，您需要一个 OpenAI API 密钥：
+
+```bash
+export OPENAI_API_KEY=your-api-key
+```
+
+我们还将使用 `chroma` 作为我们的向量存储。请按照 [此处](/docs/integrations/vectorstores/chroma) 的说明进行设置。
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/retrievers/matryoshka_retriever.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+:::note
+由于某些向量存储的限制，大型嵌入元数据字段在存储之前会被序列化（`JSON.stringify`）。这意味着从向量存储中检索时需要对元数据字段进行解析（`JSON.parse`）。
+:::
+
+## 下一步
+
+您现在已经学习了一种可以加快检索查询的技术。
+
+接下来，查看关于 RAG 的[完整教程](/docs/tutorials/rag)，或查看本节内容学习如何
+[在任何数据源上创建自定义检索器](/docs/how_to/custom_retriever/)。

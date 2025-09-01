@@ -1,0 +1,66 @@
+# Zep 开源项目
+
+> [Zep](https://www.getzep.com) 是一个为 AI 助手应用提供的长期记忆服务。
+> 使用 Zep，你可以让 AI 助手具备回忆过去对话的能力，无论这些对话多么久远，
+> 同时还能减少幻觉、降低延迟和成本。
+
+> 对 Zep Cloud 感兴趣？请参阅 [Zep Cloud 安装指南](https://help.getzep.com/sdks)
+
+import CodeBlock from "@theme/CodeBlock";
+
+**注意：** `ZepVectorStore` 与 `Documents` 一起工作，用于作为 `Retriever` 使用。
+它与 Zep 的 `ZepMemory` 类提供不同的功能，后者用于持久化、丰富和搜索用户的聊天历史。
+
+## 为什么选择 Zep 的 VectorStore？🤖🚀
+
+Zep 使用部署在 Zep 服务器本地的低延迟模型，自动对添加到 Zep Vector Store 的文档进行嵌入。
+Zep 的 TypeScript/JavaScript 客户端可以在非 Node 的边缘环境中使用。
+这两者结合 Zep 的聊天记忆功能，使 Zep 成为构建对延迟和性能要求较高的对话式 LLM 应用的理想选择。
+
+### 支持的搜索类型
+
+Zep 支持相似性搜索和最大边界相关性（MMR）搜索。MMR 搜索在检索增强生成（RAG）应用中特别有用，因为它会对结果重新排序，以确保返回的文档具有多样性。
+
+## 安装
+
+请参考 [Zep 开源快速入门指南](https://help.getzep.com/quickstart)，了解如何安装和开始使用 Zep。
+
+## 使用方法
+
+你需要提供 Zep API 的 URL，以及可选的 API 密钥，以使用 Zep VectorStore。更多信息请参见 [Zep 文档](https://help.getzep.com/welcome)。
+
+在下面的示例中，我们使用了 Zep 的自动嵌入功能，它会使用 Zep 服务器上的低延迟嵌入模型自动对文档进行嵌入。由于 LangChain 需要传入一个 `Embeddings` 实例，我们传入了 `FakeEmbeddings`。
+
+**注意：** 如果你传入的 `Embeddings` 实例不是 `FakeEmbeddings`，则该类将用于对文档进行嵌入。
+你还必须将文档集合的 `isAutoEmbedded` 设置为 `false`。请参见下面的 `OpenAIEmbeddings` 示例。
+
+### 示例：从文档创建 ZepVectorStore 并进行查询
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+import ExampleDocs from "@examples/indexes/vector_stores/zep/zep_from_docs.ts";
+
+<CodeBlock language="typescript">{ExampleDocs}</CodeBlock>
+
+### 示例：使用元数据过滤器查询 ZepVectorStore
+
+import ExampleMetadata from "@examples/indexes/vector_stores/zep/zep_with_metadata.ts";
+
+<CodeBlock language="typescript">{ExampleMetadata}</CodeBlock>
+
+### 示例：使用 LangChain 的嵌入类，例如 `OpenAIEmbeddings`
+
+import ExampleOpenAI from "@examples/indexes/vector_stores/zep/zep_with_openai_embeddings.ts";
+
+<CodeBlock language="typescript">{ExampleOpenAI}</CodeBlock>
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

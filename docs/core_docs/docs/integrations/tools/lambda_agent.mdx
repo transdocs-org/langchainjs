@@ -1,0 +1,61 @@
+---
+sidebar_label: 使用 AWS Lambda 的 Agent
+hide_table_of_contents: true
+---
+
+# 与 AWS Lambda 集成的 Agent
+
+完整文档请见：https://docs.aws.amazon.com/lambda/index.html
+
+**AWS Lambda** 是 Amazon Web Services（AWS）提供的无服务器计算服务，旨在让开发人员能够构建和运行应用程序及服务，而无需预置或管理服务器。这种无服务器架构使您能够专注于编写和部署代码，同时 AWS 自动处理运行您的应用程序所需的基础设施的扩展、补丁和管理。
+
+通过在提供给 Agent 的工具列表中包含 AWSLambda，您可以赋予 Agent 调用您在 AWS 云中运行的代码的能力，以实现您所需的任何目的。
+
+当 Agent 使用 AWSLambda 工具时，它将提供一个类型为 `string` 的参数，该参数随后将通过 `event` 参数传递到 Lambda 函数中。
+
+本快速入门将演示 Agent 如何使用 Lambda 函数通过 [Amazon Simple Email Service](https://aws.amazon.com/ses/) 发送电子邮件。发送电子邮件的 Lambda 代码未提供，但如果您想了解如何实现，请参见[此处](https://repost.aws/knowledge-center/lambda-send-email-ses)。请注意，这是一个有意设计得简单的示例；Lambda 还可以用于执行几乎无限数量的其他用途的代码（包括执行更多的 Langchains）！
+
+### 关于凭证的注意事项：
+
+- 如果您尚未通过 AWS CLI 运行 [`aws configure`](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)，则必须向 AWSLambda 构造函数提供 `region`、`accessKeyId` 和 `secretAccessKey`。
+- 对应于这些凭证的 IAM 角色必须具有调用 Lambda 函数的权限。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+```typescript
+import { OpenAI } from "@langchain/openai";
+import { SerpAPI } from "langchain/tools";
+import { AWSLambda } from "langchain/tools/aws_lambda";
+import { initializeAgentExecutorWithOptions } from "langchain/agents";
+
+const model = new OpenAI({ temperature: 0 });
+const emailSenderTool = new AWSLambda({
+  name: "email-sender",
+  // 告诉 Agent 这个工具的具体功能
+  description:
+    "将指定内容的电子邮件发送至 testing123@gmail.com",
+  region: "us-east-1", // 可选：部署该函数的 AWS 区域
+  accessKeyId: "abc123", // 可选：具有调用权限的 IAM 用户的访问密钥 ID
+  secretAccessKey: "xyz456", // 可选：该 IAM 用户的秘密访问密钥
+  functionName: "SendEmailViaSES", // 在 AWS 控制台中看到的函数名称
+});
+const tools = [emailSenderTool, new SerpAPI("api_key_goes_here")];
+const executor = await initializeAgentExecutorWithOptions(tools, model, {
+  agentType: "zero-shot-react-description",
+});
+
+const input = `查出克罗地亚的首都。一旦找到，将答案通过电子邮件发送到 testing123@gmail.com。`;
+const result = await executor.invoke({ input });
+console.log(result);
+```
+
+## 相关内容
+
+- 工具 [概念指南](/docs/concepts/tools)
+- 工具 [操作指南](/docs/how_to/#tools)

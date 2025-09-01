@@ -1,0 +1,52 @@
+# TypeORM
+
+为了在通用的 PostgreSQL 数据库中启用向量搜索，LangChain.js 支持使用 [TypeORM](https://typeorm.io/) 和 [`pgvector`](https://github.com/pgvector/pgvector) Postgres 扩展。
+
+## 安装设置
+
+要使用 TypeORM，你需要安装 `typeorm` 和 `pg` 包：
+
+```bash npm2yarn
+npm install typeorm
+```
+
+```bash npm2yarn
+npm install pg
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+### 使用 `docker-compose` 设置 `pgvector` 自托管实例
+
+`pgvector` 提供了一个预构建的 Docker 镜像，可以用来快速搭建自托管的 Postgres 实例。
+在下方创建一个名为 `docker-compose.yml` 的文件：
+
+import CodeBlock from "@theme/CodeBlock";
+import DockerExample from "@examples/indexes/vector_stores/typeorm_vectorstore/docker-compose.example.yml";
+
+<CodeBlock language="yml" name="docker-compose.yml">
+  {DockerExample}
+</CodeBlock>
+
+然后在相同的目录中运行 `docker compose up` 启动容器。
+
+你可以在 [官方仓库](https://github.com/pgvector/pgvector) 中找到更多关于如何设置 `pgvector` 的信息。
+
+## 使用方法
+
+import Example from "@examples/indexes/vector_stores/typeorm_vectorstore/typeorm.ts";
+
+以下是一个使用 `TypeORMVectorStore` 的完整示例：
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

@@ -1,0 +1,31 @@
+# Minimax
+
+`MinimaxEmbeddings` 类使用 Minimax API 为给定文本生成嵌入（embeddings）。
+
+# 准备工作
+
+要使用 Minimax 模型，你需要一个 Minimax 账号、一个 API 密钥和一个 Group ID。
+
+# 使用方法
+
+```typescript
+import { MinimaxEmbeddings } from "langchain/embeddings/minimax";
+
+export const run = async () => {
+  /* 嵌入查询 */
+  const embeddings = new MinimaxEmbeddings();
+  const res = await embeddings.embedQuery("你好世界");
+  console.log(res);
+  /* 嵌入文档 */
+  const documentRes = await embeddings.embedDocuments([
+    "你好世界",
+    "再见",
+  ]);
+  console.log({ documentRes });
+};
+```
+
+## 相关内容
+
+- 嵌入模型[概念指南](/docs/concepts/embedding_models)
+- 嵌入模型[操作指南](/docs/how_to/#embedding-models)

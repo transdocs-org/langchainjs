@@ -1,0 +1,64 @@
+import ThemedImage from "@theme/ThemedImage";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
+# 架构
+
+LangChain 是由多个包组成的框架。
+
+<ThemedImage
+  alt="描述 LangChain 框架层级结构的示意图，展示了跨多个层级的相互关联部分。"
+  sources={{
+    light: useBaseUrl("/svg/langchain_stack_062024.svg"),
+    dark: useBaseUrl("/svg/langchain_stack_062024_dark.svg"),
+  }}
+  title="LangChain 框架概览"
+  style={{ width: "100%" }}
+/>
+
+## @langchain/core
+
+这个包包含各种组件的基础抽象以及组合它们的方式。
+核心组件（如聊天模型、向量存储、工具等）的接口在这里定义。
+这里不包含任何第三方集成。
+依赖非常轻量。
+
+## langchain
+
+主要的 `langchain` 包包含组成应用程序认知架构的链和检索策略。
+这些不是第三方集成。
+这里的链、代理和检索策略不特定于任何特定的集成，而是适用于所有集成的通用实现。
+
+## 集成包
+
+流行的集成拥有自己的包（例如 `@langchain/openai`、`@langchain/anthropic` 等），以便能够进行适当的版本控制并保持轻量化。
+
+更多信息请参见：
+
+- [集成包列表](/docs/integrations/platforms/)
+- [API 参考文档](https://api.js.langchain.com/)，您可以在其中找到有关每个集成包的详细信息。
+
+## @langchain/community
+
+这个包包含由 LangChain 社区维护的第三方集成。
+关键的集成包是独立分开的（见上文）。
+它包含了各种组件（聊天模型、向量存储、工具等）的集成。
+此包中的所有依赖都是可选的，以确保包尽可能轻量。
+
+## @langchain/langgraph
+
+`@langchain/langgraph` 是一个编排框架，旨在通过将步骤建模为图中的边和节点，构建强大且有状态的多角色 LLM 应用程序。
+
+LangGraph 提供了用于创建常见类型代理的高级接口，以及用于组合自定义流程的低级 API。
+
+:::info [进一步阅读]
+
+- 请参阅我们关于 LangGraph 的概述 [此处](https://langchain-ai.github.io/langgraphjs/concepts/high_level/#core-principles)。
+- 请参阅我们的 LangGraph 学院课程 [此处](https://academy.langchain.com/courses/intro-to-langgraph)。
+
+:::
+
+## LangSmith
+
+一个开发者平台，允许您调试、测试、评估和监控 LLM 应用程序。
+
+更多信息请参见 [LangSmith 文档](https://docs.smith.langchain.com)

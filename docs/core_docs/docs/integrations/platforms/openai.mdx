@@ -1,0 +1,58 @@
+---
+keywords: [openai]
+---
+
+# OpenAI
+
+所有与 OpenAI 相关的功能。
+
+> [OpenAI](https://en.wikipedia.org/wiki/Openai) 是一家美国的人工智能（AI）研究实验室，
+> 包括非盈利组织 `OpenAI Incorporated` 及其盈利性子公司 `OpenAI Limited Partnership`。
+> `OpenAI` 进行人工智能研究，并声明其目标是推动和发展友好的人工智能（Friendly AI）。
+> `OpenAI` 的系统运行在 `Microsoft` 提供支持的基于 `Azure` 的超级计算平台上。
+
+> [OpenAI API](https://platform.openai.com/docs/models) 由一系列具有不同功能和价格点的模型提供支持。
+
+> [ChatGPT](https://chat.openai.com) 是由 `OpenAI` 开发的人工智能（AI）聊天机器人。
+
+## 安装与配置
+
+- 获取一个 OpenAI 的 API 密钥，并将其设置为环境变量（`OPENAI_API_KEY`）
+
+## 聊天模型
+
+查看[使用示例](/docs/integrations/chat/openai)。
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+```
+
+## 大语言模型（LLM）
+
+查看[使用示例](/docs/integrations/llms/openai)。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+```typescript
+import { OpenAI } from "@langchain/openai";
+```
+
+## 文本嵌入模型
+
+查看[使用示例](/docs/integrations/text_embedding/openai)
+
+```typescript
+import { OpenAIEmbeddings } from "@langchain/openai";
+```
+
+## 链式调用
+
+```typescript
+import { OpenAIModerationChain } from "langchain/chains";
+```

@@ -1,0 +1,25 @@
+---
+hide_table_of_contents: true
+---
+
+import loadExample from "@examples/document_loaders/airtable_load";
+import CodeBlock from "@theme/CodeBlock";
+
+# AirtableLoader
+
+`AirtableLoader` 类提供了从 Airtable 表格加载文档的功能。它支持两种主要方法：
+
+1. `load()`：一次性检索所有记录，适用于小型到中型数据集。
+2. `loadLazy()`：逐条记录获取，适用于大型数据集，内存效率更高。
+
+## 前提条件
+
+请确保你的 Airtable API 密钥已作为环境变量提供：
+
+```typescript
+process.env.AIRTABLE_API_TOKEN = "YOUR_AIRTABLE_API_TOKEN";
+```
+
+## 使用方法
+
+<CodeBlock language="typescript">{loadExample}</CodeBlock>

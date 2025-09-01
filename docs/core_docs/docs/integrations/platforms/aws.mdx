@@ -1,0 +1,88 @@
+---
+keywords: [bedrock]
+---
+
+# AWS
+
+所有与 [Amazon AWS](https://aws.amazon.com/) 平台相关的功能。
+
+## 聊天模型
+
+### Bedrock
+
+参见[使用示例](/docs/integrations/chat/bedrock)。
+
+```typescript
+import { BedrockChat } from "@langchain/community/chat_models/bedrock";
+```
+
+## LLMs
+
+### Bedrock
+
+参见[使用示例](/docs/integrations/llms/bedrock)。
+
+```typescript
+import { Bedrock } from "@langchain/community/llms/bedrock";
+```
+
+### SageMaker 终端节点
+
+> [Amazon SageMaker](https://aws.amazon.com/sagemaker/) 是一个可以使用完全托管的基础设施、工具和工作流来构建、训练和部署机器学习 (ML) 模型的系统。
+
+我们使用 `SageMaker` 来托管模型，并将其作为 `SageMaker 终端节点` 暴露出来。
+
+参见[使用示例](/docs/integrations/llms/aws_sagemaker)。
+
+```typescript
+import {
+  SagemakerEndpoint,
+  SageMakerLLMContentHandler,
+} from "@langchain/community/llms/sagemaker_endpoint";
+```
+
+## 文本嵌入模型
+
+### Bedrock
+
+参见[使用示例](/docs/integrations/text_embedding/bedrock)。
+
+```typescript
+import { BedrockEmbeddings } from "@langchain/aws";
+```
+
+## 文档加载器
+
+### AWS S3 目录和文件
+
+> [Amazon Simple Storage Service (Amazon S3)](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-folders.html) 是一个对象存储服务。
+> [AWS S3 目录](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-folders.html) > [AWS S3 存储桶](https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingBucket.html)
+
+参见 [S3FileLoader 使用示例](/docs/integrations/document_loaders/web_loaders/s3)。
+
+```bash npm2yarn
+npm install @aws-sdk/client-s3
+```
+
+```typescript
+import { S3Loader } from "@langchain/community/document_loaders/web/s3";
+```
+
+## 内存管理
+
+### AWS DynamoDB
+
+> [AWS DynamoDB](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/dynamodb/index.html)
+> 是一个完全托管的 `NoSQL` 数据库服务，提供快速且可预测的性能，并具有无缝扩展能力。
+
+我们需要配置 [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)。
+
+```bash npm2yarn
+npm install @aws-sdk/client-dynamodb
+```
+
+参见[使用示例](/docs/integrations/memory/dynamodb)。
+
+```typescript
+import { DynamoDBChatMessageHistory } from "@langchain/community/stores/message/dynamodb";
+```

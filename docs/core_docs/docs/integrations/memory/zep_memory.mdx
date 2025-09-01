@@ -1,0 +1,49 @@
+---
+hide_table_of_contents: true
+---
+
+# Zep 开源记忆系统
+
+> 回忆、理解并从聊天历史中提取数据，打造个性化的 AI 体验。
+
+> [Zep](https://www.getzep.com) 是一个面向 AI 助手应用的长期记忆服务。
+> 通过 Zep，您可以赋予 AI 助手回忆过去对话的能力，无论这些对话多久以前发生过，
+> 同时还能减少幻觉、延迟和成本。
+
+## Zep 的工作原理
+
+Zep 持久化并回忆聊天历史，并自动从这些历史记录中生成摘要和其他相关数据。
+它还会对消息和摘要进行嵌入处理，使您能够搜索 Zep 以获取过去对话中的相关上下文信息。
+Zep 以异步方式完成所有这些操作，确保这些操作不会影响用户的聊天体验。
+数据会被持久化存储到数据库中，当业务增长时，您可以轻松进行扩展。
+
+Zep 还提供了一个简单易用的文档向量搜索抽象接口，称为文档集合（Document Collections）。
+它旨在补充 Zep 的核心记忆功能，但并不是通用的向量数据库。
+
+Zep 让您能够更有目的地构建提示词（prompt）：
+
+- 自动添加若干最近的消息，数量可根据您的应用进行自定义；
+- 在上述消息之前，添加最近对话的摘要；
+- 和/或从整个会话中提取相关的上下文摘要或消息；
+- 和/或从 Zep 文档集合中获取相关的业务数据。
+
+> 对 Zep Cloud 感兴趣？请参阅 [Zep Cloud 安装指南](https://help.getzep.com/sdks)
+
+## 安装配置
+
+有关在本地或通过自动化托管提供商运行服务器的说明，请参阅 [Zep 开源项目](https://github.com/getzep/zep)。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+## 使用方法
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/memory/zep.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

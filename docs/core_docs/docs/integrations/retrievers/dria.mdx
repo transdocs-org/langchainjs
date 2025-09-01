@@ -1,0 +1,44 @@
+---
+hide_table_of_contents: true
+---
+
+# Dria 检索器
+
+[ Dria ](https://dria.co/) 检索器允许代理在整个知识库中执行基于文本的搜索。
+
+## 安装配置
+
+要使用 Dria 检索器，首先安装 Dria JS 客户端：
+
+```bash npm2yarn
+npm install dria
+```
+
+你需要向检索器提供以下两项信息：
+
+- **API 密钥**：在你创建账户后，可以在你的[个人资料页面](https://dria.co/)获取。
+- **合约 ID**：在查看某个知识条目时，位于页面顶部或其 URL 中即可找到。
+  例如，比特币白皮书在 Dria 上的地址为 https://dria.co/knowledge/2KxNbEb040GKQ1DSDNDsA-Fsj_BlQIEAlzBNuiapBR0，因此其合约 ID 为 `2KxNbEb040GKQ1DSDNDsA-Fsj_BlQIEAlzBNuiapBR0`。
+  合约 ID 在实例化时可以省略，之后可通过 `dria.contractId = "your-contract"` 设置。
+
+Dria 检索器还公开了底层的 [Dria 客户端](https://npmjs.com/package/dria)，有关客户端的更多信息，请参阅 [Dria 文档](https://github.com/firstbatchxyz/dria-js-client?tab=readme-ov-file#usage)。
+
+## 使用方法
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install dria @langchain/community @langchain/core
+```
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/retrievers/dria.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 相关内容
+
+- 检索器 [概念指南](/docs/concepts/retrievers)
+- 检索器 [操作指南](/docs/how_to/#retrievers)

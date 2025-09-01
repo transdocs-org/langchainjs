@@ -1,0 +1,77 @@
+---
+sidebar_class_name: node-only
+---
+
+# Convex
+
+LangChain.js 支持 [Convex](https://convex.dev/) 作为 [向量存储](https://docs.convex.dev/vector-search)，并支持标准的相似性搜索。
+
+## 安装设置
+
+### 创建项目
+
+首先创建一个可用的 [Convex](https://docs.convex.dev/) 项目，例如使用以下命令：
+
+```bash
+npm create convex@latest
+```
+
+### 添加数据库访问器
+
+将查询和变更的辅助工具添加到 `convex/langchain/db.ts` 文件中：
+
+```ts title="convex/langchain/db.ts"
+export * from "@langchain/community/utils/convex";
+```
+
+### 配置你的数据库模式
+
+配置你的模式（用于向量索引）：
+
+```ts title="convex/schema.ts"
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+  documents: defineTable({
+    embedding: v.array(v.number()),
+    text: v.string(),
+    metadata: v.any(),
+  }).vectorIndex("byEmbedding", {
+    vectorField: "embedding",
+    dimensions: 1536,
+  }),
+});
+```
+
+## 使用
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/community @langchain/core
+```
+
+### 数据导入
+
+import CodeBlock from "@theme/CodeBlock";
+import Ingestion from "@examples/indexes/vector_stores/convex/fromTexts.ts";
+
+<CodeBlock language="typescript" title="convex/myActions.ts">
+  {Ingestion}
+</CodeBlock>
+
+### 搜索
+
+import Search from "@examples/indexes/vector_stores/convex/search.ts";
+
+<CodeBlock language="typescript" title="convex/myActions.ts">
+  {Search}
+</CodeBlock>
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)

@@ -1,0 +1,29 @@
+---
+sidebar_label: Deep Infra
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# DeepInfra
+
+LangChain 通过 `DeepInfra` 封装器支持 [Deep Infra](https://deepinfra.com/) 所托管的 LLM。  
+首先，你需要安装 `@langchain/community` 包：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+你需要获取一个 API 密钥，并将其设置为名为 `DEEPINFRA_API_TOKEN` 的环境变量（或者直接传入构造函数），然后按照以下方式调用模型：
+
+import Example from "@examples/models/llm/deepinfra.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+## 相关内容
+
+- LLM [概念指南](/docs/concepts/text_llms)
+- LLM [操作指南](/docs/how_to/#llms)

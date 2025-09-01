@@ -1,0 +1,56 @@
+# 无效的提示输入
+
+一个 [提示模板](/docs/concepts/prompt_templates) 接收到缺失或无效的输入变量。
+
+一种意想不到的出错方式是，如果你将一个 JSON 对象直接添加到提示模板中：
+
+```ts
+import { PromptTemplate } from "@langchain/core/prompts";
+import { ChatOpenAI } from "@langchain/openai";
+
+const prompt = PromptTemplate.fromTemplate(`You are a helpful assistant.
+
+Here is an example of how you should respond:
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "age": 21
+}
+
+Now, answer the following question:
+
+{question}`);
+```
+
+你可能认为上面的提示模板只需要一个名为 `question` 的输入键，但该 JSON 对象会被解释为一个额外的变量，因为花括号 `{` 没有进行转义。应使用两个花括号进行转义，如下所示：
+
+```ts
+import { PromptTemplate } from "@langchain/core/prompts";
+import { ChatOpenAI } from "@langchain/openai";
+
+const prompt = PromptTemplate.fromTemplate(`You are a helpful assistant.
+
+Here is an example of how you should respond:
+
+{{
+  "firstName": "John",
+  "lastName": "Doe",
+  "age": 21
+}}
+
+Now, answer the following question:
+
+{question}`);
+```
+
+## 故障排除
+
+以下方法可能有助于解决此错误：
+
+- 仔细检查你的提示模板以确保它是正确的。
+  - 如果你使用的是默认的格式化方式，并且在模板中的任何位置使用了花括号 `{`，则应该使用双重花括号 `{{` 进行转义，如上所示。
+- 如果你正在使用 [`MessagesPlaceholder`](/docs/concepts/prompt_templates/#messagesplaceholder)，请确保传入的是消息或类消息对象的数组。
+  - 如果你使用简写元组声明你的提示模板，请确保变量名被花括号包裹 (`["placeholder", "{messages}"]`)。
+- 尝试使用 [LangSmith](https://docs.smith.langchain.com/) 或日志语句查看传入提示模板的输入，以确认它们是否如预期那样显示。
+- 如果你从 [LangChain Prompt Hub](https://smith.langchain.com/prompts) 获取了一个提示，请尝试单独拉取并打印它，或者使用示例输入运行它以确认它是否符合预期。

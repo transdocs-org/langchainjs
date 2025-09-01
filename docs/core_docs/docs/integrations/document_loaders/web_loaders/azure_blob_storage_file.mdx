@@ -1,0 +1,33 @@
+---
+hide_table_of_contents: true
+sidebar_class_name: node-only
+---
+
+# Azure Blob Storage 文件
+
+:::tip 兼容性
+仅适用于 Node.js。
+:::
+
+本文介绍了如何将 Azure 文件加载到 LangChain 文档中。
+
+## 准备工作
+
+要使用此加载器，您需要已经设置好并可以使用 Unstructured，且可通过某个可用的 URL 端点访问。也可以配置为在本地运行。
+
+有关如何操作的信息，请参阅此处的文档 [here](/docs/integrations/document_loaders/file_loaders/unstructured)。
+
+此外，您还需要安装官方的 Azure Storage Blob 客户端库：
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core @azure/storage-blob
+```
+
+## 使用方法
+
+配置好 Unstructured 后，您可以使用 Azure Blob Storage File 加载器加载文件，然后将其转换为 Document。
+
+import CodeBlock from "@theme/CodeBlock";
+import Example from "@examples/document_loaders/azure_blob_storage_file.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

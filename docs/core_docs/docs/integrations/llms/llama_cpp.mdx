@@ -1,0 +1,124 @@
+---
+sidebar_class_name: node-only
+---
+
+# Llama CPP
+
+:::tip 兼容性
+仅适用于 Node.js。
+:::
+
+该模块基于 [node-llama-cpp](https://github.com/withcatai/node-llama-cpp) Node.js 绑定，用于 [llama.cpp](https://github.com/ggerganov/llama.cpp)，使您能够使用本地运行的语言模型（LLM）。这使您能够使用一个更小的量化模型，可以在笔记本电脑环境中运行，非常适合测试和快速验证想法，而无需担心费用问题！
+
+## 安装
+
+您需要安装 [node-llama-cpp](https://github.com/withcatai/node-llama-cpp) 模块的主要版本 `3` 来与本地模型通信。
+
+```bash npm2yarn
+npm install -S node-llama-cpp@3
+```
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/community @langchain/core
+```
+
+您还需要一个本地的 Llama 3 模型（或 [node-llama-cpp](https://github.com/withcatai/node-llama-cpp) 支持的模型）。您需要将该模型的路径作为参数传递给 LlamaCpp 模块（参见示例）。
+
+开箱即用的 `node-llama-cpp` 是为在 MacOS 平台上运行而优化的，支持 Apple M 系列处理器的 Metal GPU。如果您需要关闭此功能或需要支持 CUDA 架构，请参考 [node-llama-cpp](https://withcatai.github.io/node-llama-cpp/) 的文档。
+
+给 LangChain.js 贡献者的提示：如果您想运行与此模块相关的测试，您需要将本地模型的路径设置到环境变量 `LLAMA_PATH` 中。
+
+## 安装 Llama3 指南
+
+在本地运行 Llama3 模型是使用该模块的前提条件。以下是快速获取并构建 Llama 3.1-8B（最小版本）并进行量化以在笔记本电脑上顺利运行的指南。要完成这些步骤，您需要在机器上安装 `python3`（推荐 3.11），以及 `gcc` 和 `make`，以便可以构建 `llama.cpp`。
+
+### 获取 Llama3 模型
+
+要获取 Llama3 的副本，您需要访问 [Meta AI](https://ai.meta.com/resources/models-and-libraries/llama-downloads/) 并申请模型访问权限。Meta AI 授予您访问权限后，您将收到一封包含唯一 URL 的电子邮件，用于访问模型文件，这将在后续步骤中使用。
+
+现在创建一个工作目录，例如：
+
+```
+mkdir llama3
+cd llama3
+```
+
+接下来，我们需要访问 Meta AI 的 `llama-models` 仓库，地址为 [这里](https://github.com/meta-llama/llama-models)。在仓库中，有下载所需模型的说明，您应使用电子邮件中收到的唯一 URL 下载模型。
+
+本教程的其余部分假设您已下载 `Llama3.1-8B`，但之后的任何模型都应适用。下载模型后，请确保保存模型的下载路径，后续步骤中将使用它。
+
+### 转换和量化模型
+
+在这一步中，我们需要使用 `llama.cpp`，因此需要下载该仓库。
+
+```
+cd ..
+git clone https://github.com/ggerganov/llama.cpp.git
+cd llama.cpp
+```
+
+现在我们需要构建 `llama.cpp` 工具并设置 `python` 环境。以下步骤中假设您可以使用 `python3` 运行 Python，并且虚拟环境可以命名为 `llama3`，请根据您的实际情况进行调整。
+
+```
+cmake -B build
+cmake --build build --config Release
+python3 -m venv llama3
+source llama3/bin/activate
+```
+
+激活您的 llama3 环境后，您应该会在命令提示符前看到 `(llama3)`，表示当前环境已激活。注意：如果您需要重新构建另一个模型或重新量化模型，请不要忘记再次激活环境；如果您更新了 `llama.cpp`，也需要重新构建工具并可能安装新的或更新的依赖项！
+
+现在我们已经激活了 Python 环境，接下来需要安装 Python 依赖项。
+
+```
+python3 -m pip install -r requirements.txt
+```
+
+完成此操作后，我们可以开始转换和量化 Llama3 模型，以便通过 `llama.cpp` 在本地使用。首先需要将其转换为 Hugging Face 模型，然后转换为 GGUF 模型。
+
+首先，我们需要找到 `convert_llama_weights_to_hf.py` 脚本。将此脚本复制粘贴到当前工作目录中。请注意，使用该脚本可能需要 pip 安装额外的依赖项，请根据需要进行操作。
+
+然后，我们需要转换模型。在转换之前，让我们创建目录来存储我们的 Hugging Face 转换模型和最终模型。
+
+```
+mkdir models/8B
+mkdir models/8B-GGUF
+python3 convert_llama_weights_to_hf.py --model_size 8B --input_dir <dir-to-your-model> --output_dir models/8B --llama_version 3
+python3 convert_hf_to_gguf.py --outtype f16 --outfile models/8B-GGUF/gguf-llama3-f16.bin models/8B
+```
+
+这应该会在我们创建的目录中生成一个转换后的 Hugging Face 模型和最终的 GGUF 模型。请注意，这只是原始模型的转换版本，大小约为 16GB，下一步我们将对其进行量化，使其缩小到大约 4GB。
+
+```
+./build/bin/llama-quantize ./models/8B-GGUF/gguf-llama3-f16.bin ./models/8B-GGUF/gguf-llama3-Q4_0.bin Q4_0
+```
+
+运行此命令后，应该会在 `models\8B-GGUF` 目录中生成一个新的模型文件，名为 `gguf-llama3-Q4_0.bin`，这就是我们可以在 langchain 中使用的模型。您可以通过使用 `llama.cpp` 工具测试该模型是否正常工作。
+
+```
+./build/bin/llama-cli -m ./models/8B-GGUF/gguf-llama3-Q4_0.bin -cnv -p "You are a helpful assistant"
+```
+
+运行此命令会启动模型进行对话。顺便说一句，如果您磁盘空间不足，这个小模型是我们唯一需要的，因此可以备份并删除原始和转换后的 13.5GB 模型。
+
+## 使用
+
+import CodeBlock from "@theme/CodeBlock";
+import LlamaCppExample from "@examples/models/llm/llama_cpp.ts";
+
+<CodeBlock language="typescript">{LlamaCppExample}</CodeBlock>
+
+## 流式传输
+
+import LlamaCppStreamExample from "@examples/models/llm/llama_cpp_stream.ts";
+
+<CodeBlock language="typescript">{LlamaCppStreamExample}</CodeBlock>;
+
+## 相关内容
+
+- LLM [概念指南](/docs/concepts/text_llms)
+- LLM [操作指南](/docs/how_to/#llms)

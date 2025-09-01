@@ -1,0 +1,83 @@
+---
+sidebar_class_name: node-only
+---
+
+# Llama CPP
+
+:::tip 兼容性
+仅适用于 Node.js。
+:::
+
+该模块基于 [node-llama-cpp](https://github.com/withcatai/node-llama-cpp) Node.js 绑定库，用于 [llama.cpp](https://github.com/ggerganov/llama.cpp)，允许你使用本地运行的 LLM。这使得你可以运行更小的量化模型，适合在笔记本电脑环境中使用，非常适合测试和快速验证想法，而无需担心产生费用！
+
+## 安装配置
+
+你需要安装 [node-llama-cpp](https://github.com/withcatai/node-llama-cpp) 模块的主要版本 `3` 来与本地模型通信。
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install -S node-llama-cpp@3 @langchain/community @langchain/core
+```
+
+你还需要一个本地的 Llama 3 模型（或者 [node-llama-cpp](https://github.com/withcatai/node-llama-cpp) 支持的其他模型）。你需要将该模型的路径传递给 LlamaCpp 模块的参数中（见示例）。
+
+开箱即用的 `node-llama-cpp` 是为在 macOS 平台上运行而优化的，支持 Apple M 系列处理器的 Metal GPU。如果你需要关闭此功能或需要支持 CUDA 架构，请参考 [node-llama-cpp](https://withcatai.github.io/node-llama-cpp/) 的文档。
+
+关于如何获取和准备 `llama3` 模型，请参阅该模块对应版本的文档。
+
+给 LangChain.js 贡献者的提示：如果你想运行与此模块相关的测试，你需要将你的本地模型路径设置在环境变量 `LLAMA_PATH` 中。
+
+## 使用方法
+
+### 基本用法
+
+在这种情况下，我们传入一个封装为消息的提示，并期望得到一个响应。
+
+import CodeBlock from "@theme/CodeBlock";
+import BasicExample from "@examples/models/chat/integration_llama_cpp.ts";
+
+<CodeBlock language="typescript">{BasicExample}</CodeBlock>
+
+### 系统消息
+
+我们也可以提供系统消息，注意在 `llama_cpp` 模块中，系统消息将导致创建一个新的会话。
+
+import SystemExample from "@examples/models/chat/integration_llama_cpp_system.ts";
+
+<CodeBlock language="typescript">{SystemExample}</CodeBlock>
+
+### 链式调用（Chains）
+
+此模块也可以与链式调用一起使用，但请注意，使用更复杂的链可能需要功能更强大的 `llama3` 版本，例如 70B 的版本。
+
+import ChainExample from "@examples/models/chat/integration_llama_cpp_chain.ts";
+
+<CodeBlock language="typescript">{ChainExample}</CodeBlock>
+
+### 流式传输
+
+我们也可以使用 Llama CPP 进行流式传输，可以使用原始的“单提示”字符串：
+
+import StreamExample from "@examples/models/chat/integration_llama_cpp_stream.ts";
+
+<CodeBlock language="typescript">{StreamExample}</CodeBlock>
+
+或者你可以提供多个消息，注意这会将输入进行处理，并向模型提交一个格式化为 Llama3 的提示。
+
+import StreamMultiExample from "@examples/models/chat/integration_llama_cpp_stream_multi.ts";
+
+<CodeBlock language="typescript">{StreamMultiExample}</CodeBlock>
+
+使用 `invoke` 方法，我们也可以实现流式生成，并使用 `signal` 来中断生成。
+
+import StreamInvokeExample from "@examples/models/chat/integration_llama_cpp_stream_invoke.ts";
+
+<CodeBlock language="typescript">{StreamInvokeExample}</CodeBlock>
+
+## 相关内容
+
+- 聊天模型 [概念指南](/docs/concepts/chat_models)
+- 聊天模型 [操作指南](/docs/how_to/#chat-models)

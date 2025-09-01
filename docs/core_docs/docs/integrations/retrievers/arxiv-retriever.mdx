@@ -1,0 +1,104 @@
+# ArxivRetriever
+
+`arXiv Retriever` 允许用户查询 arXiv 数据库中的学术文章。它同时支持全文检索（PDF 解析）和基于摘要的检索。
+
+有关 ArxivRetriever 所有功能和配置的详细文档，请前往 [API 参考文档](https://api.js.langchain.com/classes/_langchain_community.retrievers_arxiv.ArxivRetriever.html)
+
+## 特性
+
+- **查询灵活性**：可以使用自然语言查询或特定的 arXiv ID 进行搜索。
+- **全文检索**：可选获取并解析 PDF。
+- **摘要作为文档**：获取摘要以获得更快的结果。
+- **可定制选项**：配置最大返回结果数和输出格式。
+
+## 集成细节
+
+| 检索器           | 来源                         | 包                                                                          |
+| ---------------- | ---------------------------- | ---------------------------------------------------------------------------- |
+| `ArxivRetriever` | 来自 arXiv 的学术文章        | [`@langchain/community`](https://www.npmjs.com/package/@langchain/community) |
+
+## 准备工作
+
+请确保安装了以下依赖：
+
+- `pdf-parse` 用于解析 PDF
+- `fast-xml-parser` 用于解析 arXiv API 的 XML 响应
+
+```npm2yarn
+npm install pdf-parse fast-xml-parser
+```
+
+## 实例化
+
+```typescript
+const retriever = new ArxivRetriever({
+  getFullDocuments: false, // 设置为 true 以获取完整文档（PDF）
+  maxSearchResults: 5, // 最多检索的结果数量
+});
+```
+
+## 使用方法
+
+使用 `invoke` 方法在 arXiv 中搜索相关文章。你可以使用自然语言查询或特定的 arXiv ID。
+
+```typescript
+const query = "量子计算";
+
+const documents = await retriever.invoke(query);
+documents.forEach((doc) => {
+  console.log("标题:", doc.metadata.title);
+  console.log("内容:", doc.pageContent); // 解析后的 PDF 内容
+});
+```
+
+## 在链中使用
+
+与其他检索器一样，`ArxivRetriever` 可通过链（chains）集成到 LLM 应用程序中。以下是在链中使用检索器的示例：
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import {
+  RunnablePassthrough,
+  RunnableSequence,
+} from "@langchain/core/runnables";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import type { Document } from "@langchain/core/documents";
+
+const llm = new ChatOpenAI({
+  model: "gpt-4o-mini",
+  temperature: 0,
+});
+
+const prompt = ChatPromptTemplate.fromTemplate(`
+仅基于提供的上下文回答问题。
+
+上下文: {context}
+
+问题: {question}`);
+
+const formatDocs = (docs: Document[]) => {
+  return docs.map((doc) => doc.pageContent).join("\n\n");
+};
+
+const ragChain = RunnableSequence.from([
+  {
+    context: retriever.pipe(formatDocs),
+    question: new RunnablePassthrough(),
+  },
+  prompt,
+  llm,
+  new StringOutputParser(),
+]);
+
+await ragChain.invoke("量子计算领域的最新进展是什么？");
+```
+
+## API 参考
+
+有关 ArxivRetriever 所有功能和配置的详细文档，请前往 [API 参考文档](https://api.js.langchain.com/classes/_langchain_community.retrievers_arxiv.ArxivRetriever.html)
+
+## 相关内容
+
+- 检索器 [概念指南](/docs/concepts/#retrievers)
+- 检索器 [操作指南](/docs/how_to/#retrievers)

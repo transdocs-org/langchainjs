@@ -1,0 +1,27 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Motörhead 内存服务
+
+[Motörhead](https://github.com/getmetal/motorhead) 是一个使用 Rust 实现的内存服务器。它会在后台自动处理增量摘要，从而支持无状态的应用程序。
+
+## 安装配置
+
+关于如何在本地运行该服务器，请参阅 [Motörhead](https://github.com/getmetal/motorhead) 的说明，或者访问 https://getmetal.io 获取托管版本的 API 密钥。
+
+## 使用方法
+
+import Example from "@examples/memory/motorhead.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+<CodeBlock language="typescript">{Example}</CodeBlock>

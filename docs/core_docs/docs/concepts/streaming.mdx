@@ -1,0 +1,182 @@
+# 流式传输
+
+:::info 前提条件
+
+- [Runnable 接口](/docs/concepts/runnables)
+- [聊天模型](/docs/concepts/chat_models)
+
+:::
+
+**流式传输**对于增强基于[LLM](/docs/concepts/chat_models)构建的应用程序的响应能力至关重要。通过逐步显示输出，甚至在完整响应准备就绪之前，流式传输显著改善了用户体验（UX），尤其是在处理LLM的延迟时。
+
+## 概览
+
+从[LLM](/docs/concepts/chat_models)生成完整响应通常需要几秒钟的延迟，这在包含多个模型调用的复杂应用程序中尤为明显。幸运的是，LLM是迭代生成响应的，允许在生成过程中显示中间结果。通过流式传输这些中间输出，LangChain能够在LLM驱动的应用中实现更流畅的用户体验，并在其设计核心提供对流式传输的内置支持。
+
+在本指南中，我们将讨论LLM应用程序中的流式传输，并探讨LangChain的流式传输API如何促进应用程序中各个组件的实时输出。
+
+## 在LLM应用中流式传输的内容
+
+在涉及LLM的应用程序中，可以通过流式传输多种类型的数据来改善用户体验，减少感知延迟并提高透明度。这些包括：
+
+### 1. 流式传输LLM输出
+
+最常见且最关键的是流式传输LLM本身生成的输出。LLM通常需要较长时间来生成完整响应，通过实时流式传输输出，用户可以在生成过程中看到部分结果。这提供了即时反馈，并有助于减少用户的等待时间。
+
+### 2. 流式传输管道或工作流程进度
+
+除了流式传输LLM输出之外，流式传输复杂工作流程或管道的进度也很有用，这可以向用户展示应用程序的整体进展。这可能包括：
+
+- **在LangGraph工作流程中：**
+  使用[LangGraph](/docs/concepts/architecture#langgraph)，工作流程由代表各个步骤的节点和边组成。流式传输在这里涉及跟踪**图状态**的变化，当单个**节点**请求更新时。这允许更细粒度地监控当前处于活动状态的工作流程中的节点，提供工作流程在不同阶段进展时的实时状态更新。
+
+- **在LCEL管道中：**
+  从[LCEL](/docs/concepts/lcel)管道流式传输更新涉及捕获来自各个**子Runnable**的进度。例如，当管道的不同步骤或组件执行时，你可以流式传输当前正在运行的子Runnable，提供对整个管道进度的实时洞察。
+
+流式传输管道或工作流程进度对于向用户提供应用程序执行过程中的清晰画面至关重要。
+
+### 3. 流式传输自定义数据
+
+在某些情况下，你可能需要流式传输**自定义数据**，这些数据超出了管道或工作流程结构提供的信息。这些自定义信息是在工作流程中的特定步骤中注入的，无论是工具还是LangGraph节点。例如，你可以实时流式传输工具正在执行的操作的更新，或LangGraph节点的进度。这种粒度数据直接从步骤内部发出，为工作流程的执行提供更多详细洞察，特别适用于需要更多可见性的复杂过程。
+
+## 流式传输API
+
+LangChain提供了两个主要的API用于实时流式传输输出。这些API被任何实现了[Runnable接口](/docs/concepts/runnables)的组件支持，包括[LLM](/docs/concepts/chat_models)、[编译后的LangGraph图](https://langchain-ai.github.io/langgraphjs/concepts/low_level/)，以及使用[LCEL](/docs/concepts/lcel)生成的任何Runnable。
+
+1. [`stream`](https://api.js.langchain.com/classes/_langchain_core.runnables.Runnable.html#stream)：用于流式传输来自单个Runnable（例如聊天模型）的输出，或流式传输使用LangGraph创建的任何工作流程。
+2. [`streamEvents`](https://api.js.langchain.com/classes/_langchain_core.runnables.Runnable.html#streamEvents)：使用这个API访问完全使用[LCEL](/docs/concepts/lcel)构建的LLM应用程序中的自定义事件和中间输出。请注意，这个API可用，但在使用LangGraph时不需要。
+
+:::note
+此外，还有一个**遗留**的[streamLog](https://api.js.langchain.com/classes/_langchain_core.runnables.Runnable.html#streamLog) API。不建议在新项目中使用这个API，因为它比其他流式传输API更复杂且功能更少。
+:::
+
+### `stream()`
+
+`stream()`方法返回一个迭代器，该迭代器在输出生成时同步地产生输出块。你可以使用`for await`循环来实时处理每个块。例如，当使用LLM时，这允许输出在生成时逐步流式传输，从而减少用户的等待时间。
+
+`stream()`方法产生的块的类型取决于正在流式传输的组件。例如，当从[LLM](/docs/concepts/chat_models)流式传输时，每个块将是一个[`AIMessageChunk`](/docs/concepts/messages#aimessagechunk)；然而，对于其他组件，块可能是不同的。
+
+`stream()`方法返回一个迭代器，该迭代器在块生成时产生这些块。例如：
+
+```typescript
+for await (const chunk of await component.stream(someInput)) {
+  // 重要：保持每个块的处理尽可能高效。
+  // 在处理当前块时，上游组件正在等待生成下一个块。
+  // 例如，如果使用LangGraph，
+  // 在处理当前块时图的执行将暂停。
+  // 在极端情况下，这甚至可能导致超时（例如，当llm输出通过具有超时的API流式传输时）。
+  console.log(chunk);
+}
+```
+
+#### 与聊天模型一起使用
+
+当将`stream()`与聊天模型一起使用时，输出将作为[`AIMessageChunks`](/docs/concepts/messages#aimessagechunk)在生成时流式传输。这允许你逐步呈现或处理LLM的输出，这在交互式应用程序或界面中特别有用。
+
+#### 与LangGraph一起使用
+
+[LangGraph](/docs/concepts/architecture#langgraph)编译后的图是[Runnables](/docs/concepts/runnables)并支持标准的流式传输API。
+
+当将_stream_方法与LangGraph一起使用时，你可以选择一个或多个[流式传输模式](https://langchain-ai.github.io/langgraphjs/reference/classes/langgraph.Pregel.html#streamMode)，这些模式允许你控制流式传输的输出类型。可用的流式传输模式包括：
+
+- **"values"**: 每个步骤中发出[状态](https://langchain-ai.github.io/langgraphjs/concepts/low_level/)的所有值。
+- **"updates"**: 仅发出节点名称和每个步骤后节点返回的更新。
+- **"debug"**: 发出每个步骤的调试事件。
+- **"messages"**: 逐个[token](/docs/concepts/tokens)发出LLM的[消息](/docs/concepts/messages)。
+
+更多信息，请参见：
+
+- [LangGraph流式传输概念指南](https://langchain-ai.github.io/langgraphjs/concepts/streaming/)，了解更多关于使用LangGraph时流式传输的信息。
+- [LangGraph流式传输操作指南](https://langchain-ai.github.io/langgraphjs/how-tos/#streaming)，获取流式传输在LangGraph中的具体示例。
+
+#### 与LCEL一起使用
+
+如果你使用[LangChain表达式语言（LCEL）](/docs/concepts/lcel)组合多个Runnable，则`stream()`方法将按约定流式传输链中最后一步的输出。这允许逐步流式传输最终处理结果。**LCEL**会尝试优化管道中的流式传输延迟，使得最后一步的流式传输结果能够尽快可用。
+
+### `streamEvents`
+
+<span data-heading-keywords="streamEvents,stream_events,stream events"></span>
+
+:::tip
+使用`streamEvents` API访问完全使用[LCEL](/docs/concepts/lcel)构建的LLM应用程序中的自定义数据和中间输出。
+
+虽然这个API也可以用于[LangGraph](/docs/concepts/architecture#langgraph)，但在使用LangGraph时通常不需要，因为`stream`方法为LangGraph图提供了全面的流式传输功能。
+:::
+
+对于使用**LCEL**构建的链，`.stream()`方法仅流式传输链中最后一步的输出。这在某些应用程序中可能已经足够，但当你构建包含多个LLM调用的复杂链时，你可能希望使用链的中间值以及最终输出。例如，你可能希望在构建文档聊天应用程序时，同时返回来源和最终生成。
+
+有几种方法可以做到这一点[使用回调](/docs/concepts/callbacks)，或者通过构建你的链，使其通过类似链式`.assign()`调用的方式将中间值传递到末尾，但LangChain还包括一个`.streamEvents()`方法，它结合了回调的灵活性和`.stream()`的易用性。当调用时，它返回一个迭代器，该迭代器会产生[各种类型的事件](/docs/how_to/streaming/#event-reference)，你可以根据项目需求进行过滤和处理。
+
+以下是一个简单的示例，打印包含流式传输聊天模型输出的事件：
+
+```typescript
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ChatAnthropic } from "@langchain/anthropic";
+
+const model = new ChatAnthropic({ model: "claude-3-sonnet-20240229" });
+
+const prompt = ChatPromptTemplate.fromTemplate("tell me a joke about {topic}");
+const parser = StringOutputParser();
+const chain = prompt.pipe(model).pipe(parser);
+
+for await (const event of await chain.streamEvents(
+  { topic: "parrot" },
+  { version: "v2" }
+)) {
+  if (event.event === "on_chat_model_stream") {
+    console.log(event);
+  }
+}
+```
+
+你可以粗略地将其视为回调事件的迭代器（尽管格式不同） - 并且你可以在几乎所有LangChain组件上使用它！
+
+有关如何使用`.streamEvents()`的更多详细信息，请参见[此指南](/docs/how_to/streaming/#using-stream-events)，包括列出可用事件的表格。
+
+## 向流中写入自定义数据
+
+要向流中写入自定义数据，你需要根据正在使用的组件选择以下方法之一：
+
+1. [dispatch_events](https://api.js.langchain.com/functions/_langchain_core.callbacks_dispatch.dispatchCustomEvent.html#)可用于写入自定义数据，这些数据将通过**streamEvents** API显现。有关更多信息，请参见[如何分发自定义回调事件](/docs/how_to/callbacks_custom_events/#stream-events-api)。
+
+## “自动流式传输”聊天模型
+
+LangChain通过在某些情况下自动启用流式传输模式，简化了从[聊天模型](/docs/concepts/chat_models)的流式传输，即使你没有显式调用流式传输方法也是如此。当你使用非流式传输的`invoke`方法但仍希望流式传输整个应用程序（包括聊天模型的中间结果）时，这尤其有用。
+
+### 工作原理
+
+当你在聊天模型上调用`invoke`方法时，LangChain将在检测到你试图流式传输整个应用程序时自动切换到流式传输模式。
+
+在底层，它会让`invoke`使用`stream`方法生成其输出。就使用`invoke`的代码而言，调用的结果是相同的；然而，在聊天模型流式传输期间，LangChain会负责在LangChain的[回调系统](/docs/concepts/callbacks)中触发`on_llm_new_token`事件。这些回调事件允许LangGraph的`stream`和`streamEvents`实时显示聊天模型的输出。
+
+示例：
+
+```typescript
+const node = (state) => {
+    ...
+    // 以下代码使用了invoke方法，但LangChain将
+    // 在检测到整个应用程序正在流式传输时
+    // 自动切换到流式传输模式。
+    ai_message = model.invoke(state["messages"])
+    ...
+
+    for await (const chunk of await compiledGraph.stream(..., { streamMode: "messages" })) {
+      // ... 做一些操作
+    }
+}
+```
+
+## 相关资源
+
+请参见以下操作指南，获取LangChain中流式传输的具体示例：
+
+- [LangGraph关于流式传输的概念指南](https://langchain-ai.github.io/langgraphjs/concepts/streaming/)
+- [LangGraph流式传输操作指南](https://langchain-ai.github.io/langgraphjs/how-tos/#streaming)
+- [如何流式传输Runnable](/docs/how_to/streaming/)：此操作指南介绍了使用LangChain组件（例如聊天模型）和使用[LCEL](/docs/concepts/lcel)进行流式传输的常见模式。
+- [如何流式传输聊天模型](/docs/how_to/chat_streaming/)
+- [如何流式传输工具调用](/docs/how_to/tool_streaming/)
+
+有关向流中写入自定义数据，请参见以下资源：
+
+- 如果使用LCEL，请参见[如何分发自定义回调事件](/docs/how_to/callbacks_custom_events/#stream-events-api)

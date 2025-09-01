@@ -1,0 +1,33 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Python 解释器工具
+
+:::warning
+此工具可以执行代码，并且可能会执行破坏性操作。请注意，您应信任传递给它的任何代码！
+:::
+
+LangChain 提供了一个用于执行任意 Python 代码的实验性工具。  
+此工具可以与能够生成代码以执行更强大计算的 LLM 结合使用，非常有用。
+
+## 使用方法
+
+import ToolExample from "@examples/tools/pyinterpreter.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+<CodeBlock language="typescript">{ToolExample}</CodeBlock>
+
+## 相关内容
+
+- 工具 [概念指南](/docs/concepts/tools)
+- 工具 [操作指南](/docs/how_to/#tools)

@@ -1,0 +1,93 @@
+---
+sidebar_position: 5
+---
+
+# 如何跟踪 Token 使用情况
+
+:::info 前提条件
+
+本指南假定您已经熟悉以下概念：
+
+- [聊天模型](/docs/concepts/chat_models)
+
+:::
+
+本笔记本将介绍如何跟踪特定调用的 Token 使用情况。
+
+## 使用 `AIMessage.usage_metadata`
+
+许多模型提供商会将 Token 使用信息作为聊天生成响应的一部分返回。当可用时，这些信息将包含在相应模型生成的 `AIMessage` 对象中。
+
+LangChain 的 `AIMessage` 对象为支持的提供者包含一个 [`usage_metadata`](https://api.js.langchain.com/classes/langchain_core.messages.AIMessage.html#usage_metadata) 属性。当填充时，该属性将是一个包含标准键的对象（例如，"input_tokens" 和 "output_tokens"）。
+
+#### OpenAI
+
+import CodeBlock from "@theme/CodeBlock";
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+import UsageMetadataExample from "@examples/models/chat/usage_metadata.ts";
+
+<CodeBlock language="typescript">{UsageMetadataExample}</CodeBlock>
+
+#### Anthropic
+
+```bash npm2yarn
+npm install @langchain/anthropic @langchain/core
+```
+
+import UsageMetadataExampleAnthropic from "@examples/models/chat/usage_metadata_anthropic.ts";
+
+<CodeBlock language="typescript">{UsageMetadataExampleAnthropic}</CodeBlock>
+
+## 使用 `AIMessage.response_metadata`
+
+许多模型提供商会将 Token 使用信息作为聊天生成响应的一部分返回。当可用时，这些信息将包含在 `AIMessage.response_metadata` 字段中。
+
+#### OpenAI
+
+import Example from "@examples/models/chat/token_usage_tracking.ts";
+
+<CodeBlock language="typescript">{Example}</CodeBlock>
+
+#### Anthropic
+
+import AnthropicExample from "@examples/models/chat/token_usage_tracking_anthropic.ts";
+
+<CodeBlock language="typescript">{AnthropicExample}</CodeBlock>
+
+## 流式传输
+
+某些提供者在流式传输上下文中支持 Token 计数元数据。
+
+#### OpenAI
+
+例如，OpenAI 将在流的末尾返回一个包含 Token 使用信息的消息块。此行为由 `@langchain/openai` >= 0.1.0 支持，可以通过在调用时传递 `stream_options` 参数来启用。
+
+:::info
+默认情况下，流中的最后一条消息块将在消息的 `response_metadata` 属性中包含一个 `finish_reason`。如果我们在流模式下包含 Token 使用信息，则会在流的末尾添加一个包含使用元数据的额外消息块，这样 `finish_reason` 将出现在倒数第二条消息块上。
+:::
+
+import OpenAIStreamTokens from "@examples/models/chat/integration_openai_stream_tokens.ts";
+
+<CodeBlock language="typescript">{OpenAIStreamTokens}</CodeBlock>
+
+## 使用回调
+
+您还可以使用 `handleLLMEnd` 回调来获取 LLM 的完整输出，包括支持模型的 Token 使用情况。
+以下是一个如何实现的示例：
+
+import CallbackExample from "@examples/models/chat/token_usage_tracking_callback.ts";
+
+<CodeBlock language="typescript">{CallbackExample}</CodeBlock>
+
+## 下一步
+
+您现在已经了解了如何在支持的提供者中跟踪聊天模型 Token 使用情况的一些示例。
+
+接下来，请查看本节中有关聊天模型的其他指南，例如 [如何让模型返回结构化输出](/docs/how_to/structured_output) 或 [如何为聊天模型添加缓存](/docs/how_to/chat_model_caching)。

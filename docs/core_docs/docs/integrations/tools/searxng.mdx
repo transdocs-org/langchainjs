@@ -1,0 +1,30 @@
+---
+hide_table_of_contents: true
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+# Searxng 搜索工具
+
+`SearxngSearch` 工具可将你的智能代理（agents）和链（chains）连接到互联网。
+
+该工具封装了 SearxNG API，适用于通过 SearxNG API 执行元搜索引擎查询。它在回答与时事相关的问题时特别有用。
+
+## 使用方法
+
+import ToolExample from "@examples/tools/searxng_search.ts";
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install @langchain/openai @langchain/core
+```
+
+<CodeBlock language="typescript">{ToolExample}</CodeBlock>
+
+## 相关内容
+
+- 工具 [概念指南](/docs/concepts/tools)
+- 工具 [操作指南](/docs/how_to/#tools)

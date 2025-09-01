@@ -1,0 +1,254 @@
+---
+sidebar_label: 困惑度
+title: ChatPerplexity
+---
+
+export const quartoRawHtml = [
+  `
+<table style="width:100%;">
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">类</th>
+<th style="text-align: left;">包</th>
+<th style="text-align: center;">本地</th>
+<th style="text-align: center;">可序列化</th>
+<th style="text-align: center;"><a href="https://python.langchain.com/docs/integrations/chat/perplexity/">PY 支持</a></th>
+<th style="text-align: center;">包下载量</th>
+<th style="text-align: center;">最新包</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a href="https://api.js.langchain.com/classes/_langchain_community.chat_models_perplexity.ChatPerplexity.html"><code>ChatPerplexity</code></a></td>
+<td style="text-align: left;"><a href="https://npmjs.com/@langchain/community"><code>@langchain/community</code></a></td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">beta</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;"><img src="https://img.shields.io/npm/dm/@langchain/community?style=flat-square&amp;label=%20&amp;.png" alt="NPM - 下载量" /></td>
+<td style="text-align: center;"><img src="https://img.shields.io/npm/v/@langchain/community?style=flat-square&amp;label=%20&amp;.png" alt="NPM - 版本" /></td>
+</tr>
+</tbody>
+</table>
+`,
+  `
+<table style="width:100%;">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><a href="../../../docs/how_to/tool_calling">工具调用</a></th>
+<th style="text-align: center;"><a href="../../../docs/how_to/structured_output/">结构化输出</a></th>
+<th style="text-align: center;">JSON 模式</th>
+<th style="text-align: center;"><a href="../../../docs/how_to/multimodal_inputs/">图像输入</a></th>
+<th style="text-align: center;">音频输入</th>
+<th style="text-align: center;">视频输入</th>
+<th style="text-align: center;"><a href="../../../docs/how_to/chat_streaming/">逐 token 流式传输</a></th>
+<th style="text-align: center;"><a href="../../../docs/how_to/chat_token_usage_tracking/">token 使用情况</a></th>
+<th style="text-align: center;"><a href="../../../docs/how_to/logprobs/">logprobs</a></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+</tr>
+</tbody>
+</table>
+`,
+];
+
+本指南将帮助您入门 Perplexity 的[聊天模型](../../../docs/concepts/#chat-models)。关于 `ChatPerplexity` 所有功能和配置的详细文档，请参阅 [API 参考](https://api.js.langchain.com/classes/_langchain_community.chat_models_perplexity.ChatPerplexity.html)。
+
+## 概览
+
+### 集成细节
+
+<div dangerouslySetInnerHTML={{ __html: quartoRawHtml[0] }} />
+
+### 模型功能
+
+有关如何使用特定功能的指南，请参阅下表标题中的链接。
+
+<div dangerouslySetInnerHTML={{ __html: quartoRawHtml[1] }} />
+
+请注意，在撰写本文时，Perplexity 仅在某些使用层级上支持结构化输出。
+
+## 安装与配置
+
+要访问 Perplexity 模型，您需要创建一个 Perplexity 账户，获取 API 密钥，并安装 `@langchain/community` 集成包。
+
+### 凭据
+
+前往 https://perplexity.ai 注册 Perplexity 并生成一个 API 密钥。完成此操作后，请设置 `PERPLEXITY_API_KEY` 环境变量：
+
+```bash
+export PERPLEXITY_API_KEY="your-api-key"
+```
+
+如果您希望自动追踪模型调用，您也可以取消下面的注释以设置 [LangSmith](https://docs.smith.langchain.com/) API 密钥：
+
+```bash
+# export LANGSMITH_TRACING="true"
+# export LANGSMITH_API_KEY="your-api-key"
+```
+
+### 安装
+
+LangChain 的 Perplexity 集成位于 `@langchain/community` 包中：
+
+```mdx-code-block
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+import Npm2Yarn from "@theme/Npm2Yarn";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+<Npm2Yarn>
+  @langchain/community @langchain/core
+</Npm2Yarn>
+
+```
+
+## 实例化
+
+现在我们可以实例化我们的模型对象并生成聊天补全内容：
+
+```typescript
+import { ChatPerplexity } from "@langchain/community/chat_models/perplexity";
+
+const llm = new ChatPerplexity({
+  model: "sonar",
+  temperature: 0,
+  maxTokens: undefined,
+  timeout: undefined,
+  maxRetries: 2,
+  // 其他参数...
+});
+```
+
+## 调用
+
+```typescript
+const aiMsg = await llm.invoke([
+  {
+    role: "system",
+    content:
+      "你是一个能将英文翻译成法文的助手。请翻译用户的句子。",
+  },
+  {
+    role: "user",
+    content: "I love programming.",
+  },
+]);
+aiMsg;
+```
+
+```text
+AIMessage {
+  "id": "run-71853938-aa30-4861-9019-f12323c09f9a",
+  "content": "J'adore la programmation。",
+  "additional_kwargs": {
+    "citations": [
+      "https://careersatagoda.com/blog/why-we-love-programming/",
+      "https://henrikwarne.com/2012/06/02/why-i-love-coding/",
+      "https://forum.freecodecamp.org/t/i-love-programming-but/497502",
+      "https://ilovecoding.org",
+      "https://thecodinglove.com"
+    ]
+  },
+  "response_metadata": {
+    "tokenUsage": {
+      "promptTokens": 20,
+      "completionTokens": 9,
+      "totalTokens": 29
+    }
+  },
+  "tool_calls": [],
+  "invalid_tool_calls": []
+}
+```
+
+```typescript
+console.log(aiMsg.content);
+```
+
+```text
+J'adore la programmation。
+```
+
+## 链接调用
+
+我们可以将模型与提示模板进行[链接](../../../docs/how_to/sequence/)，如下所示：
+
+```typescript
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+
+const prompt = ChatPromptTemplate.fromMessages([
+  [
+    "system",
+    "你是一个能将 {input_language} 翻译成 {output_language} 的助手。",
+  ],
+  ["human", "{input}"],
+]);
+
+const chain = prompt.pipe(llm);
+await chain.invoke({
+  input_language: "English",
+  output_language: "German",
+  input: "I love programming.",
+});
+```
+
+```text
+AIMessage {
+  "id": "run-a44dc452-4a71-423d-a4ee-50a2d7c90abd",
+  "content": "**英语到德语翻译：**\n\n\"I love programming\" 翻译为 **\"Ich liebe das Programmieren.\"**\n\n如果您想更详细地表达您对编程的热爱，以下是一些额外的翻译：\n\n- **\"Programming is incredibly rewarding and fulfilling.\"** 翻译为 **\"Das Programmieren ist unglaublich lohnend und erfüllend.\"**\n- **\"I enjoy solving problems through coding.\"** 翻译为 **\"Ich genieße es, Probleme durch Codieren zu lösen.\"**\n- **\"I find the process of creating something from nothing very satisfying.\"** 翻译为 **\"Ich finde den Prozess, etwas aus dem Nichts zu schaffen, sehr befriedigend.\"**",
+  "additional_kwargs": {
+    "citations": [
+      "https://careersatagoda.com/blog/why-we-love-programming/",
+      "https://henrikwarne.com/2012/06/02/why-i-love-coding/",
+      "https://dev.to/dvddpl/coding-is-boring-why-do-you-love-coding-cl0",
+      "https://forum.freecodecamp.org/t/i-love-programming-but/497502",
+      "https://ilovecoding.org"
+    ]
+  },
+  "response_metadata": {
+    "tokenUsage": {
+      "promptTokens": 15,
+      "completionTokens": 149,
+      "totalTokens": 164
+    }
+  },
+  "tool_calls": [],
+  "invalid_tool_calls": []
+}
+```
+
+## API 参考
+
+关于 ChatPerplexity 所有功能和配置的详细文档，请参阅 API 参考：
+https://api.js.langchain.com/classes/\_langchain_community.chat_models_perplexity.ChatPerplexity.html

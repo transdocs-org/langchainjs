@@ -1,0 +1,88 @@
+# SAP HANA Cloud 向量引擎
+
+[SAP HANA Cloud 向量引擎](https://www.sap.com/events/teched/news-guide/ai.html#article8) 是一个完全集成到 `SAP HANA Cloud 数据库` 中的向量存储。
+
+## 配置
+
+你首先需要安装 [`@sap/hana-client`](https://www.npmjs.com/package/@sap/hana-client) 或 [`hdb`](https://www.npmjs.com/package/hdb) 包，以及 [`@langchain/community`](https://www.npmjs.com/package/@langchain/community) 包：
+
+import IntegrationInstallTooltip from "@mdx_components/integration_install_tooltip.mdx";
+
+<IntegrationInstallTooltip></IntegrationInstallTooltip>
+
+```bash npm2yarn
+npm install -S @langchain/community @langchain/core @sap/hana-client
+# 或
+npm install -S @langchain/community @langchain/core hdb
+```
+
+你还需要能够连接到 HANA Cloud 实例的数据库连接。
+
+import CodeBlock from "@theme/CodeBlock";
+import EnvVars from "@examples/indexes/vector_stores/hana_vector/.env.example";
+
+<CodeBlock language="text">{EnvVars}</CodeBlock>
+
+## 从文本创建新索引
+
+import ExampleTexts from "@examples/indexes/vector_stores/hana_vector/fromTexts.ts";
+
+<CodeBlock language="typescript">{ExampleTexts}</CodeBlock>
+
+## 从加载器创建新索引并执行相似性搜索
+
+import ExampleLoader from "@examples/indexes/vector_stores/hana_vector/fromDocs.ts";
+
+<CodeBlock language="typescript">{ExampleLoader}</CodeBlock>
+
+## 创建 HNSW 向量索引
+
+向量索引可以显著加速向量的 top-k 最近邻查询。用户可以使用 `create_hnsw_index` 函数创建分层可导航小世界（HNSW）向量索引。
+
+有关在数据库级别创建索引的更多信息（例如参数要求），请参阅[官方文档](https://help.sap.com/docs/hana-cloud-database/sap-hana-cloud-sap-hana-database-vector-engine-guide/create-vector-index-statement-data-definition)。
+
+import ExampleIndex from "@examples/indexes/vector_stores/hana_vector/createHnswIndex.ts";
+
+<CodeBlock language="typescript">{ExampleIndex}</CodeBlock>
+
+## 基础向量存储操作
+
+import ExampleBasic from "@examples/indexes/vector_stores/hana_vector/basics.ts";
+
+<CodeBlock language="typescript">{ExampleBasic}</CodeBlock>
+
+## 高级过滤
+
+import { Table, Tr, Th, Td } from "@mdx-js/react";
+
+除了基本的值过滤功能外，还可以使用更高级的过滤功能。下表显示了可用的过滤运算符。
+
+| 运算符     | 语义                                                                     |
+| ---------- | ------------------------------------------------------------------------ |
+| `$eq`      | 等于（==）                                                               |
+| `$ne`      | 不等于（!=）                                                             |
+| `$lt`      | 小于（<）                                                                |
+| `$lte`     | 小于等于（<=）                                                           |
+| `$gt`      | 大于（>）                                                                |
+| `$gte`     | 大于等于（>=）                                                           |
+| `$in`      | 包含在给定值集合中（in）                                                 |
+| `$nin`     | 不包含在给定值集合中（not in）                                           |
+| `$between` | 介于两个边界值之间                                                       |
+| `$like`    | 基于 SQL 中 "LIKE" 语义进行文本匹配（使用 "%" 作为通配符）                |
+| `$and`     | 逻辑 "and"，支持两个或更多操作数                                         |
+| `$or`      | 逻辑 "or"，支持两个或更多操作数                                          |
+
+import ExampleAdvancedFilter from "@examples/indexes/vector_stores/hana_vector/advancedFiltering.ts";
+
+<CodeBlock language="typescript">{ExampleAdvancedFilter}</CodeBlock>
+
+## 在链中使用向量存储作为检索器以进行检索增强生成（RAG）
+
+import ExampleChain from "@examples/indexes/vector_stores/hana_vector/chains.ts";
+
+<CodeBlock language="typescript">{ExampleChain}</CodeBlock>
+
+## 相关内容
+
+- 向量存储 [概念指南](/docs/concepts/#vectorstores)
+- 向量存储 [操作指南](/docs/how_to/#vectorstores)
